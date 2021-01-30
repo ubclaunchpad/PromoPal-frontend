@@ -1,13 +1,9 @@
-import React, {
-  CSSProperties,
-  ReactElement,
-  useCallback,
-  useState,
-} from 'react';
+import React, { CSSProperties, ReactElement, useCallback, useEffect, useState } from 'react';
 import { Checkbox, Col, Dropdown as DD, Row } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 
-import { Dropdown as DropdownType } from '../../types/dropdown';
+import { DispatchAction, useDropdown } from '../../contexts/DropdownContext';
+import { Dropdown as DropdownType, DropdownAction } from '../../types/dropdown';
 import './Dropdown.css';
 
 const styles: { [identifier: string]: CSSProperties } = {
@@ -37,6 +33,8 @@ const styles: { [identifier: string]: CSSProperties } = {
   menu: {
     backgroundColor: '#fff',
     borderRadius: 20,
+    maxHeight: '80vh',
+    overflow: 'scroll',
     paddingTop: 15,
     paddingBottom: 15,
   },
@@ -49,10 +47,7 @@ const styles: { [identifier: string]: CSSProperties } = {
  * @param text The text to display on the dropdown button
  * @param options The list of options for this dropdown
  */
-export default function DropdownMultiSelect({
-  text,
-  options,
-}: DropdownType): ReactElement {
+export default function DropdownMultiSelect({ text, options }: DropdownType): ReactElement {
   /**
    * The list of keys of the selected options
    */
@@ -63,6 +58,8 @@ export default function DropdownMultiSelect({
    */
   const [visible, setVisible] = useState<boolean>(false);
 
+  const { dispatch } = useDropdown();
+
   const dropdownButtonStyle = {
     ...styles.button,
     ...(selectedKeys.length > 0 && styles.active),
@@ -72,8 +69,7 @@ export default function DropdownMultiSelect({
    * Adds or removes key to selectedKeys array and performs the given action
    */
   const onClickHandler = useCallback(
-    (action: () => void, text: string) => {
-      // Update the selectedKeys array
+    (action: DropdownAction, text: string) => {
       let newSelectedKeys = [];
       const textIndex = selectedKeys.indexOf(text);
       if (textIndex >= 0) {
@@ -83,12 +79,20 @@ export default function DropdownMultiSelect({
         newSelectedKeys = [...selectedKeys, text];
       }
       changeSelectedKeys(newSelectedKeys);
-
-      // Run the given action
-      action();
+      action(newSelectedKeys);
     },
     [selectedKeys]
   );
+
+  /**
+   * On component mount, add reset callback to dropdown state
+   */
+  useEffect(() => {
+    dispatch({
+      type: DispatchAction.ADD_RESET_CALLBACK,
+      payload: { resetCallback: () => changeSelectedKeys([]) },
+    });
+  }, [dispatch]);
 
   const dropdownOptions = (
     <Col style={styles.menu}>
@@ -97,6 +101,7 @@ export default function DropdownMultiSelect({
           <Checkbox
             style={styles.checkbox}
             onClick={() => onClickHandler(action, text)}
+            checked={selectedKeys.includes(text)}
           >
             <Col style={styles.option}>{text}</Col>
           </Checkbox>
