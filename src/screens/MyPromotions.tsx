@@ -5,38 +5,60 @@ import DropdownMenu from '../components/DropdownMenu';
 import PromotionCard from '../components/promotion/PromotionCard';
 import UploadPromoButton from '../components/button/UploadPromoButton';
 
-import { DropdownOption, Dropdown } from '../types/dropdown';
+import { Dropdown, DropdownType } from '../types/dropdown';
 import { Promotion, User } from '../types/promotion';
-
-const options: DropdownOption[] = [
-  {
-    action: () => {
-      /* stub */
-    },
-    text: 'Option 1',
-  },
-  {
-    action: () => {
-      /* stub */
-    },
-    text: 'Option 2',
-  },
-  {
-    action: () => {
-      /* stub */
-    },
-    text: 'Option 3',
-  },
-];
 
 const dropdowns: Dropdown[] = [
   {
     text: 'Sort',
-    options,
+    type: DropdownType.Radio,
+    options: [
+      {
+        action: () => {
+          /* stub */
+        },
+        description: 'Sort by Option 1',
+        text: 'Option 1',
+      },
+      {
+        action: () => {
+          /* stub */
+        },
+        description: 'Sort by Option 2',
+        text: 'Option 2',
+      },
+      {
+        action: () => {
+          /* stub */
+        },
+        description: 'Sort by Option 3',
+        text: 'Option 3',
+      },
+    ],
   },
   {
     text: 'Category',
-    options,
+    type: DropdownType.MultiSelect,
+    options: [
+      {
+        action: () => {
+          /* stub */
+        },
+        text: 'Option 1',
+      },
+      {
+        action: () => {
+          /* stub */
+        },
+        text: 'Option 2',
+      },
+      {
+        action: () => {
+          /* stub */
+        },
+        text: 'Option 3',
+      },
+    ],
   },
 ];
 
@@ -137,9 +159,9 @@ const styles: { [identifier: string]: CSSProperties } = {
   },
 };
 
-function onChange() {
+const onChange = () => {
   /* stub */
-}
+};
 
 export default function MyPromotions(): ReactElement {
   return (
