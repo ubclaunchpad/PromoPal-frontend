@@ -11,6 +11,8 @@ import {
 import { Promotion } from '../types/promotion';
 import { enumContainsValue } from '../utils/enum';
 
+/* eslint-disable  @typescript-eslint/no-unused-vars */
+
 export async function get(): Promise<Promotion[]> {
   return fetch('/promotions')
     .then((res: Response) => res.json())
