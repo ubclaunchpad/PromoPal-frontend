@@ -1,14 +1,11 @@
-import React, {
-  CSSProperties,
-  ReactElement,
-  useCallback,
-  useState,
-} from 'react';
-import { Col, Dropdown, Radio } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
-
-import { Dropdown as DropdownType } from '../../types/dropdown';
 import './Dropdown.css';
+
+import { DownOutlined } from '@ant-design/icons';
+import { Col, Dropdown, Radio } from 'antd';
+import React, { CSSProperties, ReactElement, useCallback, useEffect, useState } from 'react';
+
+import { DispatchAction, useDropdown } from '../../contexts/DropdownContext';
+import { Dropdown as DropdownType, DropdownAction } from '../../types/dropdown';
 
 const { Group } = Radio;
 
@@ -28,14 +25,19 @@ const styles: { [identifier: string]: CSSProperties } = {
     paddingLeft: 15,
     paddingRight: 15,
   },
+  largeText: {
+    fontSize: '1.1em',
+  },
   menu: {
     backgroundColor: '#fff',
     borderRadius: 20,
+    maxHeight: '80vh',
+    overflow: 'scroll',
     paddingTop: 15,
+    paddingBottom: 15,
   },
   option: {
     display: 'inline',
-    fontSize: '1.1em',
     top: 2,
   },
   optionDescription: {
@@ -44,7 +46,9 @@ const styles: { [identifier: string]: CSSProperties } = {
     color: 'gray',
   },
   radio: {
+    margin: 0,
     paddingLeft: 10,
+    paddingRight: 10,
     width: '100%',
   },
 };
@@ -56,14 +60,13 @@ const styles: { [identifier: string]: CSSProperties } = {
  * @param text The text to display on the dropdown button
  * @param options The list of options for this dropdown
  */
-export default function DropdownSelect({
-  text,
-  options,
-}: DropdownType): ReactElement {
+export default function DropdownSelect({ text, options }: DropdownType): ReactElement {
   /**
    * The key of the currently selected option
    */
   const [activeKey, setActiveKey] = useState<string>('');
+
+  const { dispatch } = useDropdown();
 
   const dropdownButtonStyle = {
     ...styles.button,
@@ -73,23 +76,40 @@ export default function DropdownSelect({
   /**
    * Sets activeKey for this dropdown and performs given action
    */
-  const onClickHandler = useCallback((action: () => void, text: string) => {
+  const onClickHandler = useCallback((action: DropdownAction, text: string) => {
     setActiveKey(text);
-    action();
+    action(text);
   }, []);
+
+  /**
+   * On component mount, add reset callback to dropdown state
+   */
+  useEffect(() => {
+    dispatch({
+      type: DispatchAction.ADD_RESET_CALLBACK,
+      payload: { resetCallback: () => setActiveKey('') },
+    });
+  }, [dispatch]);
 
   const dropdownOptions = () => (
     <Col style={styles.menu}>
       <Group name={text} defaultValue={0}>
         {options.map(({ action, description, text }, index) => (
-          <Col className="dropdown-option-radio" key={index}>
-            <Radio
-              style={styles.radio}
-              value={index}
-              onClick={() => onClickHandler(action, text)}
-            >
-              <Col style={styles.option}>{text}</Col>
-              <Col style={styles.optionDescription}>{description}</Col>
+          <Col
+            className="dropdown-option-multi"
+            key={index}
+            style={{ height: description ? 50 : 30 }}
+          >
+            <Radio style={styles.radio} value={index} onClick={() => onClickHandler(action, text)}>
+              <Col
+                style={{
+                  ...styles.option,
+                  ...(description && styles.largeText),
+                }}
+              >
+                {text}
+              </Col>
+              {description && <Col style={styles.optionDescription}>{description}</Col>}
             </Radio>
           </Col>
         ))}
