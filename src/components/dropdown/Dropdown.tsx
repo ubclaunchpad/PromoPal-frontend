@@ -25,4 +25,4 @@ export default function Dropdown(dropdown: DDType): ReactElement {
   }
 }
 
-export { DropdownSelect, DropdownMultiSelect };
+export { DropdownMultiSelect, DropdownSelect };

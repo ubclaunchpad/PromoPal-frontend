@@ -1,10 +1,9 @@
+import { Checkbox, Col, Row } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
-import { Checkbox, Row, Col } from 'antd';
 
+import UploadPromoButton from '../components/button/UploadPromoButton';
 import DropdownMenu from '../components/DropdownMenu';
 import PromotionCard from '../components/promotion/PromotionCard';
-import UploadPromoButton from '../components/button/UploadPromoButton';
-
 import { Dropdown, DropdownType } from '../types/dropdown';
 import { Promotion, Schedule, User } from '../types/promotion';
 

@@ -1,5 +1,5 @@
-import React, { ReactElement } from 'react';
 import { Skeleton } from 'antd';
+import React, { ReactElement } from 'react';
 
 import { PromotionImage as PromotionImageProps } from '../../types/promotion';
 

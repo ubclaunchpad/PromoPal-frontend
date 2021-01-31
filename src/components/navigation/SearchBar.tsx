@@ -1,5 +1,5 @@
-import React, { CSSProperties, ReactElement } from 'react';
 import { Input } from 'antd';
+import React, { CSSProperties, ReactElement } from 'react';
 
 const { Search } = Input;
 

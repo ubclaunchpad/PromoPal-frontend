@@ -1,10 +1,11 @@
-import React, { CSSProperties, ReactElement, useCallback, useEffect, useState } from 'react';
-import { Checkbox, Col, Dropdown as DD, Row } from 'antd';
+import './Dropdown.css';
+
 import { DownOutlined } from '@ant-design/icons';
+import { Checkbox, Col, Dropdown as DD, Row } from 'antd';
+import React, { CSSProperties, ReactElement, useCallback, useEffect, useState } from 'react';
 
 import { DispatchAction, useDropdown } from '../../contexts/DropdownContext';
 import { Dropdown as DropdownType, DropdownAction } from '../../types/dropdown';
-import './Dropdown.css';
 
 const styles: { [identifier: string]: CSSProperties } = {
   active: {

@@ -3,13 +3,15 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import DropdownMenu from '../components/DropdownMenu';
 import MapContainer from '../components/MapContainer';
 import PromotionList from '../components/PromotionList';
+import RestaurantCard from '../components/restaurant/RestaurantCard';
 import { DispatchAction, usePromotionsList } from '../contexts/PromotionsListContext';
+import { useRestaurantCard } from '../contexts/RestaurantCardContext';
 import { getEnum } from '../services/EnumService';
 import { Dropdown, DropdownType } from '../types/dropdown';
 import { Sort } from '../types/promotion';
 import Routes from '../utils/routes';
 
-const mapWidth = 60;
+const mapWidth = 70;
 
 export default function Home(): ReactElement {
   const [height, setHeight] = useState<string>('');
@@ -21,6 +23,7 @@ export default function Home(): ReactElement {
   const [promotionTypes, setPromotionTypes] = useState<string[]>([]);
 
   const { dispatch } = usePromotionsList();
+  const { state: restaurantCardState } = useRestaurantCard();
 
   /**
    * On component mount, load dropdown options
@@ -156,7 +159,8 @@ export default function Home(): ReactElement {
   return (
     <>
       <DropdownMenu dropdowns={dropdowns} shadow />
-      <div id="content-container" style={{ display: 'inline-flex', height }}>
+      <div id="content-container" style={{ display: 'inline-flex', height, position: 'relative' }}>
+        {restaurantCardState.showCard && <RestaurantCard {...restaurantCardState.restaurant} />}
         <MapContainer dimensions={{ width: `${mapWidth}vw`, height }} />
         <PromotionList dimensions={{ width: `${100 - mapWidth}vw`, height }} />
       </div>

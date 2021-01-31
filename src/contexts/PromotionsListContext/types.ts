@@ -1,6 +1,6 @@
 import { Dispatch } from 'react';
 
-import { Sort, FilterOptions, Promotion } from '../../types/promotion';
+import { FilterOptions, Promotion, Sort } from '../../types/promotion';
 
 export enum DispatchAction {
   // Data is being fetched from the API

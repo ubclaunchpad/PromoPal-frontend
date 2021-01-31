@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import * as dotenv from 'dotenv';
+
 import { RestaurantDetails } from '.././types/RestaurantDetails';
 import { RestaurantInfo } from '../types/RestaurantInfo';
 

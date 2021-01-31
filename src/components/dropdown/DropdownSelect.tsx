@@ -1,11 +1,11 @@
-import React, { CSSProperties, ReactElement, useCallback, useEffect, useState } from 'react';
-import { Col, Dropdown, Radio } from 'antd';
+import './Dropdown.css';
+
 import { DownOutlined } from '@ant-design/icons';
+import { Col, Dropdown, Radio } from 'antd';
+import React, { CSSProperties, ReactElement, useCallback, useEffect, useState } from 'react';
 
 import { DispatchAction, useDropdown } from '../../contexts/DropdownContext';
-import { Dropdown as DropdownType } from '../../types/dropdown';
-import { DropdownAction } from '../../types/dropdown';
-import './Dropdown.css';
+import { Dropdown as DropdownType, DropdownAction } from '../../types/dropdown';
 
 const { Group } = Radio;
 

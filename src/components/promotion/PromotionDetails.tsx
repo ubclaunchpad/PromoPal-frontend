@@ -1,5 +1,5 @@
-import React, { CSSProperties, ReactElement } from 'react';
 import { HeartOutlined } from '@ant-design/icons';
+import React, { CSSProperties, ReactElement } from 'react';
 
 import { Promotion } from '../../types/promotion';
 

@@ -20,7 +20,7 @@ export default function PromotionList({
 }): ReactElement {
   const [promotions, setPromotions] = useState<Promotion[]>([]);
 
-  const { state, dispatch } = usePromotionsList();
+  const { state: promotionListState, dispatch } = usePromotionsList();
 
   const containerStyles = {
     marginLeft: `calc(100vw - ${dimensions.width})`,
@@ -29,13 +29,16 @@ export default function PromotionList({
   };
 
   /**
-   * Fetches promotions satisfying the current query and sorts them
+   * This hook is run everytime the promotionsListState changes. This function sorts and filters the promotions
+   * according to the `filter` and `sort` keys so that this component is displaying the appropriate list.
    */
   useEffect(() => {
     dispatch({ type: DispatchAction.DATA_LOADING });
-    filterPromotions(state.filter)
-      .then((filteredPromotions) => sortPromotions(filteredPromotions, state.sort))
-      .then((sortedPromotions) => {
+    filterPromotions(promotionListState.filter)
+      .then((filteredPromotions: Promotion[]) =>
+        sortPromotions(filteredPromotions, promotionListState.sort)
+      )
+      .then((sortedPromotions: Promotion[]) => {
         dispatch({ type: DispatchAction.DATA_SUCCESS });
         setPromotions(sortedPromotions);
       })
@@ -43,7 +46,7 @@ export default function PromotionList({
         dispatch({ type: DispatchAction.DATA_FAILURE });
         setPromotions([]);
       });
-  }, [state.filter, state.sort, dispatch]);
+  }, [promotionListState.filter, promotionListState.sort, dispatch]);
 
   return (
     <div style={containerStyles}>
