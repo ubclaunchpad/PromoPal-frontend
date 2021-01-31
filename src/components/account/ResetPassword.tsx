@@ -44,12 +44,7 @@ export default function ResetPassword(): ReactElement {
       <InputPasswordWrapper label="Current Password" />
       <InputPasswordWrapper label="New Password" />
       <InputPasswordWrapper label="Confirm New Password" />
-      <Button
-        size="large"
-        shape="round"
-        onClick={handleClick}
-        style={styles.button}
-      >
+      <Button size="large" shape="round" onClick={handleClick} style={styles.button}>
         Save
       </Button>
     </div>
