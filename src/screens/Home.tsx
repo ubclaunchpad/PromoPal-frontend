@@ -11,7 +11,7 @@ import { Dropdown, DropdownType } from '../types/dropdown';
 import { Sort } from '../types/promotion';
 import Routes from '../utils/routes';
 
-const mapWidth = 70;
+const mapWidth = 65;
 
 export default function Home(): ReactElement {
   const [height, setHeight] = useState<string>('');

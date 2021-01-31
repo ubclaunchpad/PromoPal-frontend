@@ -24,12 +24,14 @@ const styles: { [identifier: string]: CSSProperties } = {
 };
 
 export default function RestaurantCard(restaurant: Restaurant): ReactElement {
+  const containerPadding = '15px';
+
   return (
     <div style={styles.container}>
       <Col
         style={{
           ...styles.card,
-          left: `calc(70% - 15px - ${styles.card.width}px)`,
+          left: `calc(65% - ${containerPadding} - ${styles.card.width}px)`,
         }}
       >
         <Header {...restaurant} />
