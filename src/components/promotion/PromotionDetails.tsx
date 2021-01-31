@@ -4,7 +4,7 @@ import { ClockCircleOutlined, HeartOutlined } from '@ant-design/icons';
 import { Col, Row, Typography } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
 
-import { Promotion } from '../../types/promotion';
+import { Promotion, Schedule } from '../../types/promotion';
 
 const { Title, Text } = Typography;
 
@@ -53,6 +53,7 @@ export default function PromotionDetails({
   description,
   expirationDate,
   restaurantName,
+  schedules,
 }: Promotion): ReactElement {
   /**
    * Returns display text for age of promotion.
@@ -104,6 +105,30 @@ export default function PromotionDetails({
     }
   };
 
+  const displaySchedules = (schedules: Schedule[]) => {
+    const formatTime = (startTime: string): string => {
+      const [hour, minute] = startTime.split(':');
+
+      const hourNum = parseInt(hour);
+      const minuteNum = parseInt(minute);
+
+      let formattedTime = `${hourNum === 12 ? hourNum : hourNum % 12}`;
+      if (minuteNum !== 0) {
+        formattedTime += `:${minuteNum}`;
+      }
+      formattedTime += hourNum < 12 ? ' AM' : ' PM';
+      return formattedTime;
+    };
+
+    return schedules.map(({ dayOfWeek, startTime, endTime }) => (
+      <Row>
+        <Text style={styles.schedule}>
+          {dayOfWeek}: {formatTime(startTime) + ' - ' + formatTime(endTime)}
+        </Text>
+      </Row>
+    ));
+  };
+
   const Info = () => (
     <>
       <Row style={styles.header}>
@@ -126,16 +151,9 @@ export default function PromotionDetails({
   const Schedule = () => (
     <Row style={styles.scheduleContainer}>
       <Col span={2}>
-        <ClockCircleOutlined style={{ fontSize: '1em', ...styles.schedule }} />
+        <ClockCircleOutlined style={styles.schedule} />
       </Col>
-      <Col span={22}>
-        <Row>
-          <Text style={styles.schedule}>Tuesday: 10 AM - Late</Text>
-        </Row>
-        <Row>
-          <Text style={styles.schedule}>Wednesday: 7 PM - Late</Text>
-        </Row>
-      </Col>
+      <Col span={22}>{displaySchedules(schedules)}</Col>
     </Row>
   );
 
