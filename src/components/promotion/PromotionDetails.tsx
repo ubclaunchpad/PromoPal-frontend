@@ -49,10 +49,61 @@ const styles: { [identifier: string]: CSSProperties } = {
 
 export default function PromotionDetails({
   name,
+  dateAdded,
   description,
   expirationDate,
-  restaurantName = 'Restaurant',
+  restaurantName,
 }: Promotion): ReactElement {
+  /**
+   * Returns display text for age of promotion.
+   *
+   * - If dateAdded < 1 day, displays "X hours ago"
+   * - If 1 day <= dateAdded < 1 week, displays "X days ago"
+   * - If 1 week <= dateAdded < 1 month, displays "X weeks ago"
+   * - If 1 month <= dateAdded < 1 year, displays "X months ago"
+   * - If 1 year <= dateAdded, displays "X years ago"
+   */
+  const promotionAge = (dateAdded: string) => {
+    const oneDayInMs = 24 * 60 * 60 * 1000;
+    const msElapsed = new Date().getTime() - new Date(dateAdded).getTime();
+    const daysAgo = msElapsed / oneDayInMs;
+
+    if (daysAgo < 1) {
+      const oneHourInMs = oneDayInMs / 24;
+      const hoursAgo = msElapsed / oneHourInMs;
+      if (hoursAgo === 1) {
+        return '1 hour ago';
+      }
+      return `${hoursAgo.toFixed(0)} hours ago`;
+    } else if (daysAgo < 7) {
+      if (daysAgo === 1) {
+        return '1 day ago';
+      }
+      return `${oneDayInMs.toFixed(0)} days ago`;
+    } else if (daysAgo < 30) {
+      const oneWeekInMs = oneDayInMs * 7;
+      const weeksAgo = msElapsed / oneWeekInMs;
+      if (weeksAgo === 1) {
+        return '1 week ago';
+      }
+      return `${weeksAgo.toFixed(0)} weeks ago`;
+    } else if (daysAgo < 365) {
+      const oneMonthInMs = oneDayInMs * 30;
+      const monthsAgo = msElapsed / oneMonthInMs;
+      if (monthsAgo === 1) {
+        return '1 month ago';
+      }
+      return `${monthsAgo.toFixed(0)} months ago`;
+    } else if (daysAgo >= 365) {
+      const oneYearInMs = oneDayInMs * 365;
+      const yearsAgo = msElapsed / oneYearInMs;
+      if (yearsAgo === 1) {
+        return '1 year ago';
+      }
+      return `${yearsAgo.toFixed(0)} years ago`;
+    }
+  };
+
   const Info = () => (
     <>
       <Row style={styles.header}>
@@ -97,7 +148,7 @@ export default function PromotionDetails({
         </Text>
       </Col>
       <Col>
-        <Text style={styles.footer}>8 days ago</Text>
+        <Text style={styles.footer}>{promotionAge(dateAdded)}</Text>
       </Col>
     </Row>
   );
