@@ -13,7 +13,7 @@ const styles: { [identifier: string]: CSSProperties } = {
 };
 
 export default function PromotionImage({
-  // TODO: remove default image
+  // TODO: see https://github.com/ubclaunchpad/PromoPal-backend/issues/101
   src = 'https://d1ralsognjng37.cloudfront.net/92a7b4fb-892c-47bb-b5bb-884c89c254a2.jpeg',
 }: PromotionImageProps): ReactElement {
   return (
