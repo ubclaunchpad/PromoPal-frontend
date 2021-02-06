@@ -16,15 +16,16 @@ const styles: { [identifier: string]: CSSProperties } = {
     marginRight: 10,
     textDecoration: 'underline',
   },
+  // todo: styling
   dropdownMenu: {
     alignItems: 'center',
-    paddingBottom: 20,
+    // paddingBottom: 20,
     position: 'relative',
-    width: '100%',
-    zIndex: 1000,
+    // width: '100%',
+    // zIndex: 1000,
   },
   shadow: {
-    boxShadow: '0 4px 4px 0 #40333333',
+    // boxShadow: '0 4px 4px 0 #40333333',
   },
 };
 

@@ -91,6 +91,16 @@ export function promotionsListReducer(state: State, { type, payload }: DispatchP
       nextState = { ...nextState, sort };
       break;
     }
+
+    /**
+     * Sets search query
+     */
+    case DispatchAction.SEARCH_QUERY: {
+      const { searchQuery } = payload as { searchQuery: string };
+      nextState = { ...nextState, searchQuery };
+      break;
+    }
+
     default:
       break;
   }

@@ -14,6 +14,7 @@ export const defaultFilters: FilterOptions = {
 };
 
 export const defaultSort = Sort.Default;
+export const defaultSearchQuery = '';
 
 const initialState: State = {
   isLoading: false,
@@ -21,6 +22,7 @@ const initialState: State = {
   data: [],
   filter: defaultFilters,
   sort: defaultSort,
+  searchQuery: defaultSearchQuery,
 };
 
 const PromotionsListContext = createContext<Context>({

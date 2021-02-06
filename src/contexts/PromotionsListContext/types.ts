@@ -15,6 +15,8 @@ export enum DispatchAction {
   RESET_FILTERS,
   // A sort key was selected
   SORT,
+  // A search query was initiated
+  SEARCH_QUERY,
 }
 
 /**
@@ -50,6 +52,7 @@ export type DispatchParams = {
  * @property data - The entire list of promotions
  * @property filter - The current filters selected to filter the promotions by
  * @property sort - The key which to sort the promotions by
+ * @property searchQuery - The search query to search inside promotion titles and descriptions
  */
 export type State = {
   hasError: boolean;
@@ -57,4 +60,5 @@ export type State = {
   data: Promotion[];
   filter: FilterOptions;
   sort: Sort;
+  searchQuery: string;
 };

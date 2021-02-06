@@ -13,6 +13,9 @@ export interface Promotion {
   restaurantName: string;
   schedules: Schedule[];
   user: User;
+  boldDescription?: string;
+  boldName?: string;
+  rank?: number;
 }
 
 export interface User {
