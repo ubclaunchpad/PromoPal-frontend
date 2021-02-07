@@ -6,7 +6,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "eject": "react-scripts eject",
-    "lint": "eslint . --ext .ts,.tsx --fix",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lintFix": "eslint . --ext .ts,.tsx --fix",
     "prettier": "prettier --write .",
     "test": "jest"
   },
@@ -62,7 +63,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "yarn lint",
+      "yarn lintFix",
       "yarn prettier"
     ]
   },
