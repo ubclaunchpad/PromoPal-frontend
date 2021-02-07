@@ -1,5 +1,5 @@
+import { GoogleApiWrapper, Map, Marker } from 'google-maps-react';
 import React, { ReactElement, useEffect, useState } from 'react';
-import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
 
 const locations: google.maps.LatLngLiteral[] = [
   { lat: 49.246213, lng: -123.1691 },

@@ -3849,7 +3849,7 @@ data-urls@^1.0.0, data-urls@^1.1.0:
     whatwg-mimetype "^2.2.0"
     whatwg-url "^7.0.0"
 
-date-fns@^2.15.0:
+date-fns@^2.15.0, date-fns@^2.16.1:
   version "2.16.1"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.16.1.tgz#05775792c3f3331da812af253e1a935851d3834b"
   integrity sha512-sAJVKx/FqrLYHAQeN7VpJrPhagZc9R4ImZIWYRFZaaohR3KzmuK88touwsSwSVT8Qcbd4zoDsnGfX4GFB4imyQ==
@@ -4499,6 +4499,11 @@ eslint-plugin-react@7.19.0:
     semver "^6.3.0"
     string.prototype.matchall "^4.0.2"
     xregexp "^4.3.0"
+
+eslint-plugin-simple-import-sort@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-simple-import-sort/-/eslint-plugin-simple-import-sort-7.0.0.tgz#a1dad262f46d2184a90095a60c66fef74727f0f8"
+  integrity sha512-U3vEDB5zhYPNfxT5TYR7u01dboFZp+HNpnGhkDB2g/2E4wZ/g1Q9Ton8UwCLfRV9yAKyYqDh62oHOamvkFxsvw==
 
 eslint-scope@^4.0.3:
   version "4.0.3"

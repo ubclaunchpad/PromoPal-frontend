@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { AxiosError } from 'axios';
+import * as dotenv from 'dotenv';
+
 import { GooglePlacesService } from '../../src/services/GooglePlacesService';
 import { RestaurantDetails } from '../../src/types/RestaurantDetails';
-import * as dotenv from 'dotenv';
 import { RestaurantInfo } from '../../src/types/RestaurantInfo';
 
 describe('Unit tests for GooglePlacesService', function () {

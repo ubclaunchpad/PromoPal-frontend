@@ -1,7 +1,7 @@
+import { PlusOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
 
 const styles: { [identifier: string]: CSSProperties } = {
   button: {
