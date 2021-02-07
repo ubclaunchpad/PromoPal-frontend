@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import './PromotionDetails.css';
 
 import { ClockCircleOutlined, HeartOutlined } from '@ant-design/icons';
