@@ -4,6 +4,7 @@ import { RestaurantDetails } from '../../src/types/RestaurantDetails';
 import * as dotenv from 'dotenv';
 import { RestaurantInfo } from '../../src/types/RestaurantInfo';
 
+/* eslint-disable  @typescript-eslint/no-unused-vars */
 describe('Unit tests for GooglePlacesService', function () {
   const googlePlacesAPI = new GooglePlacesService();
   dotenv.config();
