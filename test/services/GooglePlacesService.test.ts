@@ -40,7 +40,7 @@ describe('Unit tests for GooglePlacesService', function () {
   });
 
   test('Get details for a place using placeID, should be successful', () => {
-    // placeID can only be retrieved from getGooglePlacesSearch
+    // placeID can only be retrieved from getRestaurantInfo
     return googlePlacesAPI
       .getRestaurantDetails('ChIJb0n5cWl3hlQRIbVGYLiTEgE')
       .then((result: RestaurantDetails) => {
@@ -52,7 +52,7 @@ describe('Unit tests for GooglePlacesService', function () {
         expect(result).toHaveProperty('name', 'RIB & CHICKEN');
         expect(result).toHaveProperty('opening_hours');
         expect(result).toHaveProperty('photos');
-        expect(result).toHaveProperty('rating', 4.5);
+        expect(result).toHaveProperty('rating');
         expect(result).toHaveProperty('reviews');
         expect(result).toHaveProperty(
           'map_url',
@@ -65,6 +65,17 @@ describe('Unit tests for GooglePlacesService', function () {
       })
       .catch((error: AxiosError) => {
         fail('Did not expect to fail: ' + error.message);
+      });
+  });
+
+  test('Get details for a place using invalid placeID, should be unsuccessful', () => {
+    return googlePlacesAPI
+      .getRestaurantDetails('ChIJ2fF6zviX9YgRflKEZNrpLrQ')
+      .then((result: RestaurantDetails) => {
+        fail('Did not expect to pass: ' + result);
+      })
+      .catch((error: AxiosError) => {
+        expect(error.message).toEqual('NOT_FOUND');
       });
   });
 
@@ -82,7 +93,7 @@ describe('Unit tests for GooglePlacesService', function () {
           'map_url',
           'https://maps.google.com/?cid=77286563717231905'
         );
-        expect(restaurant).toHaveProperty('total_rating', 84);
+        expect(restaurant).toHaveProperty('total_rating');
         expect(restaurant).toHaveProperty(
           'website',
           'https://www.ribandchicken.ca/'
@@ -135,6 +146,58 @@ describe('Unit tests for GooglePlacesService', function () {
       })
       .catch((error: AxiosError) => {
         fail('Did not expect to fail: ' + error.message);
+      });
+  });
+
+  test('Refreshing placeID, should be successful', () => {
+    return googlePlacesAPI
+      .refreshPlaceID('ChIJb0n5cWl3hlQRIbVGYLiTEgE')
+      .then((result: string) => {
+        expect(result).toEqual('ChIJb0n5cWl3hlQRIbVGYLiTEgE');
+      })
+      .catch((error: AxiosError) => {
+        fail('Did not expect to fail: ' + error.message);
+      });
+  });
+
+  test('Refreshing placeID, should be unsuccessful', () => {
+    return googlePlacesAPI
+      .refreshPlaceID('ChIJ2fF6zviX9YgRflKEZNrpLrQ')
+      .then((result: string) => {
+        fail('Did not expect to pass: ' + result);
+      })
+      .catch((error: AxiosError) => {
+        expect(error.message).toEqual('NOT_FOUND');
+      });
+  });
+
+  test('Refreshing and getting details, should be successful', () => {
+    return googlePlacesAPI
+      .refreshPlaceIDAndGetDetails('ChIJb0n5cWl3hlQRIbVGYLiTEgE')
+      .then((result: RestaurantDetails) => {
+        expect(result).toHaveProperty('name', 'RIB & CHICKEN');
+        expect(result).toHaveProperty(
+          'map_url',
+          'https://maps.google.com/?cid=77286563717231905'
+        );
+        expect(result).toHaveProperty(
+          'website',
+          'https://www.ribandchicken.ca/'
+        );
+      })
+      .catch((error: AxiosError) => {
+        fail('Did not expect to fail: ' + error.message);
+      });
+  });
+
+  test('Refreshing and getting details, should be unsuccessful', () => {
+    return googlePlacesAPI
+      .refreshPlaceIDAndGetDetails('ChIJ2fF6zviX9YgRflKEZNrpLrQ')
+      .then((result: RestaurantDetails) => {
+        fail('Did not expect to pass: ' + result);
+      })
+      .catch((error: AxiosError) => {
+        expect(error.message).toEqual('NOT_FOUND');
       });
   });
 });

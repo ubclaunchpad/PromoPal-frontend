@@ -87,7 +87,14 @@ class GooglePlacesService {
         },
       })
       .then((response: AxiosResponse) => {
-        const restaurantResults = response?.data?.result;
+        const restaurantData = response?.data;
+        const restaurantResults = restaurantData?.result;
+
+        // check if placeID is valid
+        if (restaurantData.status && restaurantData.status === 'NOT_FOUND') {
+          return this.refreshPlaceIDAndGetDetails(placeID);
+        }
+
         const restaurant = {
           name: restaurantResults.name,
           price_level: restaurantResults.price_level,
@@ -113,6 +120,31 @@ class GooglePlacesService {
       });
   }
 
+  // refreshes the invalid placeID, may also result in NOT_FOUND error
+  refreshPlaceID(placeID: string): Promise<string> {
+    return axios
+      .get('https://maps.googleapis.com/maps/api/place/details/json?', {
+        params: {
+          place_id: placeID,
+          fields: 'place_id',
+          key: process.env.REACT_APP_GOOGLE_PLACES_API_KEY,
+        },
+      })
+      .then((response: AxiosResponse) => {
+        const data = response?.data;
+
+        if (data.status && data.status === 'NOT_FOUND') {
+          return Promise.reject(new Error('NOT_FOUND'));
+        }
+
+        const placeID = data.result?.place_id;
+        return Promise.resolve(placeID);
+      })
+      .catch((err: AxiosError) => {
+        return Promise.reject(err);
+      });
+  }
+
   // gets photos for certain placeID
   getRestaurantPhoto(photoReference: string): Promise<HTMLImageElement> {
     return axios
@@ -126,6 +158,17 @@ class GooglePlacesService {
       .then((response: AxiosResponse) => {
         const result: HTMLImageElement = response.data;
         return Promise.resolve(result);
+      })
+      .catch((err: AxiosError) => {
+        return Promise.reject(err);
+      });
+  }
+
+  // helper function used to refresh place ID and call getRestaurantDetails again for NOT_FOUND error
+  refreshPlaceIDAndGetDetails(placeID: string): Promise<RestaurantDetails> {
+    return this.refreshPlaceID(placeID)
+      .then((newPlaceID: string) => {
+        return this.getRestaurantDetails(newPlaceID);
       })
       .catch((err: AxiosError) => {
         return Promise.reject(err);
