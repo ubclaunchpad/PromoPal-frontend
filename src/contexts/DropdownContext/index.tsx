@@ -5,6 +5,9 @@ import { Context, DispatchAction, DispatchParams, State } from './types';
 
 const initialState: State = { resetCallbacks: [] };
 
+/**
+ * Holds the most up-to-date context object.
+ */
 const DropdownContext = createContext<Context>({
   state: initialState,
   dispatch: () => null,
@@ -30,6 +33,7 @@ export function DropdownProvider({
 
 /**
  * Use this function to access the context object.
+ * Destructure the return value to access `state` and `dispatch`.
  */
 export function useDropdown(): Context {
   const context = useContext(DropdownContext);

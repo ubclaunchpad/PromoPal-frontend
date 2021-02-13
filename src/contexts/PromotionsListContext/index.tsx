@@ -1,9 +1,8 @@
-import React, { createContext, ReactElement, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, ReactElement, useContext, useEffect, useReducer } from 'react';
 
 import { promotionsListReducer } from '../../reducers/PromotionsListReducer';
 import { getPromotions } from '../../services/PromotionService';
-import { Sort, FilterOptions, Promotion } from '../../types/promotion';
-
+import { FilterOptions, Promotion, Sort } from '../../types/promotion';
 import { Context, DispatchAction, DispatchParams, State } from './types';
 
 export const defaultFilters: FilterOptions = {
@@ -25,6 +24,9 @@ const initialState: State = {
   searchQuery: defaultSearchQuery,
 };
 
+/**
+ * Holds the most up-to-date context object.
+ */
 const PromotionsListContext = createContext<Context>({
   state: initialState,
   dispatch: () => null,
@@ -68,6 +70,7 @@ export function PromotionsListProvider({
 
 /**
  * Use this function to access the context object.
+ * Destructure the return value to access `state` and `dispatch`.
  */
 export function usePromotionsList(): Context {
   const context = useContext(PromotionsListContext);

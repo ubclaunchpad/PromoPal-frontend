@@ -5,8 +5,13 @@ import {
   DispatchParams,
   State,
 } from '../contexts/PromotionsListContext';
-import { Promotion, FilterOptions, Sort } from '../types/promotion';
+import { FilterOptions, Promotion, Sort } from '../types/promotion';
 
+/**
+ * @function promotionsListReducer Reducer for managing state of list of promotions.
+ *
+ * Updates state to include the given filter key, sort key, and/or list of promotions.
+ */
 export function promotionsListReducer(state: State, { type, payload }: DispatchParams): State {
   let nextState = state;
 

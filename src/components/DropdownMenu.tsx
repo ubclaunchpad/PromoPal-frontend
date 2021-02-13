@@ -1,10 +1,10 @@
-import React, { CSSProperties, ReactElement, useCallback } from 'react';
 import { Col, Row, Typography } from 'antd';
+import React, { CSSProperties, ReactElement, useCallback } from 'react';
 
-import Dropdown from './dropdown/Dropdown';
 import { useDropdown } from '../contexts/DropdownContext';
 import { DispatchAction, usePromotionsList } from '../contexts/PromotionsListContext';
 import { Dropdown as DropdownType } from '../types/dropdown';
+import Dropdown from './dropdown/Dropdown';
 
 const { Text } = Typography;
 

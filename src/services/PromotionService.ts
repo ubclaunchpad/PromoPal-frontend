@@ -1,4 +1,5 @@
 import { FilterOptions, Promotion, Sort } from '../types/promotion';
+import { Restaurant } from '../types/restaurant';
 import Routes from '../utils/routes';
 
 type PromotionsSuccess = Promotion[];
@@ -43,6 +44,32 @@ export async function getPromotions(query?: Record<string, string>[]): Promise<P
       // Allow caller to handle error
       throw err;
     });
+}
+
+export async function getRestaurant({ id }: Promotion): Promise<Restaurant> {
+  // TODO: find restaurant given placeId from promotion
+  return {
+    id,
+    address: '1850 W 4th Ave, Vancouver, BC V6J 1M3',
+    cuisineType: 'Italian',
+    distance: 500,
+    name: 'Trattoria',
+    phoneNumber: '604-732-1441',
+    photos: [],
+    price: '$$',
+    rating: 4.1,
+    reviews: 'https://google.com',
+    website: 'https://www.glowbalgroup.com/trattoria/trattoria-burnaby.html',
+    hours: {
+      sunday: '10:30 AM - Late',
+      monday: '11:30 AM - Late',
+      tuesday: '11:30 AM - Late',
+      wednesday: '11:30 AM - Late',
+      thursday: '11:30 AM - Late',
+      friday: '11:30 AM - Late',
+      saturday: '10:30 AM - Late',
+    },
+  };
 }
 
 /**

@@ -7,6 +7,7 @@ import { Promotion } from '../types/promotion';
 
 const styles: { [identifier: string]: CSSProperties } = {
   container: {
+    backgroundColor: '#FFEDDC',
     padding: 15,
     paddingBottom: 0,
     overflow: 'auto',
@@ -14,29 +15,33 @@ const styles: { [identifier: string]: CSSProperties } = {
 };
 
 export default function PromotionList({
-  dimensions,
+  dimensions: { width, height },
 }: {
   dimensions: { width: string; height: string };
 }): ReactElement {
   const [promotions, setPromotions] = useState<Promotion[]>([]);
 
-  const { state, dispatch } = usePromotionsList();
+  const { state: promotionListState, dispatch } = usePromotionsList();
 
   const containerStyles = {
-    marginLeft: `calc(100vw - ${dimensions.width})`,
-    ...dimensions,
+    height,
+    width,
+    marginLeft: `calc(100vw - ${width})`,
     ...styles.container,
   };
 
   /**
-   * Fetches promotions satisfying the current query and sorts them
+   * This hook is run everytime the promotionsListState changes. This function sorts and filters the promotions
+   * according to the `filter` and `sort` keys so that this component is displaying the appropriate list.
    */
   useEffect(() => {
     dispatch({ type: DispatchAction.DATA_LOADING });
 
-    filterPromotions(state.filter)
-      .then((filteredPromotions) => sortPromotions(filteredPromotions, state.sort))
-      .then((sortedPromotions) => {
+    filterPromotions(promotionListState.filter)
+      .then((filteredPromotions: Promotion[]) =>
+        sortPromotions(filteredPromotions, promotionListState.sort)
+      )
+      .then((sortedPromotions: Promotion[]) => {
         dispatch({ type: DispatchAction.DATA_SUCCESS });
         setPromotions(sortedPromotions);
       })
@@ -44,19 +49,19 @@ export default function PromotionList({
         dispatch({ type: DispatchAction.DATA_FAILURE });
         setPromotions([]);
       });
-  }, [dispatch, state.filter, state.sort]);
+  }, [promotionListState.filter, promotionListState.sort, dispatch]);
 
   /**
    * When a search query is set, fetches promotions that satisfy the query.
    */
   useEffect(() => {
-    if (state.searchQuery) {
-      getPromotions([{ searchQuery: state.searchQuery }]).then((promotions) => {
+    if (promotionListState.searchQuery) {
+      getPromotions([{ searchQuery: promotionListState.searchQuery }]).then((promotions) => {
         dispatch({ type: DispatchAction.DATA_SUCCESS });
         setPromotions(promotions);
       });
     }
-  }, [dispatch, state.searchQuery]);
+  }, [dispatch, promotionListState.searchQuery]);
 
   return (
     <div style={containerStyles}>
