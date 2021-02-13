@@ -1,5 +1,6 @@
 import {
   defaultFilters,
+  defaultSearchQuery,
   defaultSort,
   DispatchAction,
   DispatchParams,
@@ -103,6 +104,14 @@ export function promotionsListReducer(state: State, { type, payload }: DispatchP
     case DispatchAction.SEARCH_QUERY: {
       const { searchQuery } = payload as { searchQuery: string };
       nextState = { ...nextState, searchQuery };
+      break;
+    }
+
+    /**
+     * Resets search query to default
+     */
+    case DispatchAction.RESET_SEARCH_QUERY: {
+      nextState = { ...nextState, searchQuery: defaultSearchQuery };
       break;
     }
 

@@ -43,6 +43,10 @@ export default function PromotionList({
       )
       .then((sortedPromotions: Promotion[]) => {
         dispatch({ type: DispatchAction.DATA_SUCCESS });
+
+        // If search bar contains keyword, reset it. This is only minimal behaviour, needs work with PP-68
+        dispatch({ type: DispatchAction.RESET_SEARCH_QUERY });
+
         setPromotions(sortedPromotions);
       })
       .catch(() => {

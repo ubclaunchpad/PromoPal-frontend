@@ -17,6 +17,8 @@ export enum DispatchAction {
   SORT,
   // A search query was initiated
   SEARCH_QUERY,
+  // Reset search query to default
+  RESET_SEARCH_QUERY,
 }
 
 /**

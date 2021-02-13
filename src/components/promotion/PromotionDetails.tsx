@@ -91,7 +91,7 @@ export default function PromotionDetails({
     <>
       <Row style={styles.header}>
         <Col span={22}>
-          <Title style={styles.promotionName}>{boldName ? parse(boldName) : <h2>{name}</h2>}</Title>
+          <Title style={styles.promotionName}>{boldName ? parse(boldName) : name}</Title>
         </Col>
         <Col span={2}>
           <HeartOutlined style={styles.heart} />
