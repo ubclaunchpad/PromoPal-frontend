@@ -1,4 +1,4 @@
-import React, { CSSProperties, ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 
 import DropdownMenu from '../components/DropdownMenu';
 import MapContainer from '../components/MapContainer';
@@ -8,7 +8,6 @@ import { getEnum } from '../services/EnumService';
 import { Dropdown, DropdownType } from '../types/dropdown';
 import { Sort } from '../types/promotion';
 import Routes from '../utils/routes';
-import SearchBar from '../components/navigation/SearchBar';
 
 const mapWidth = 60;
 
@@ -23,16 +22,6 @@ export default function Home(): ReactElement {
 
   const { dispatch } = usePromotionsList();
 
-  // todo: styling
-  const styles: { [identifier: string]: CSSProperties } = {
-    bar: {
-      display: 'flex',
-      paddingBottom: '20px',
-      boxShadow: '0 4px 4px 0 #40333333',
-      zIndex: 1000,
-      width: '100%',
-    },
-  };
   /**
    * On component mount, load dropdown options
    */
@@ -166,10 +155,7 @@ export default function Home(): ReactElement {
 
   return (
     <>
-      <div style={styles.bar}>
-        <DropdownMenu dropdowns={dropdowns} shadow />
-        <SearchBar />
-      </div>
+      <DropdownMenu dropdowns={dropdowns} shadow />
       <div id="content-container" style={{ display: 'inline-flex', height }}>
         <MapContainer dimensions={{ width: `${mapWidth}vw`, height }} />
         <PromotionList dimensions={{ width: `${100 - mapWidth}vw`, height }} />

@@ -34,25 +34,29 @@ export default function PromotionList({
   useEffect(() => {
     dispatch({ type: DispatchAction.DATA_LOADING });
 
-    // val promotionsPromise = if (state.searchQuery)
+    filterPromotions(state.filter)
+      .then((filteredPromotions) => sortPromotions(filteredPromotions, state.sort))
+      .then((sortedPromotions) => {
+        dispatch({ type: DispatchAction.DATA_SUCCESS });
+        setPromotions(sortedPromotions);
+      })
+      .catch(() => {
+        dispatch({ type: DispatchAction.DATA_FAILURE });
+        setPromotions([]);
+      });
+  }, [dispatch, state.filter, state.sort]);
+
+  /**
+   * When a search query is set, fetches promotions that satisfy the query.
+   */
+  useEffect(() => {
     if (state.searchQuery) {
       getPromotions([{ searchQuery: state.searchQuery }]).then((promotions) => {
         dispatch({ type: DispatchAction.DATA_SUCCESS });
         setPromotions(promotions);
       });
-    } else {
-      filterPromotions(state.filter)
-        .then((filteredPromotions) => sortPromotions(filteredPromotions, state.sort))
-        .then((sortedPromotions) => {
-          dispatch({ type: DispatchAction.DATA_SUCCESS });
-          setPromotions(sortedPromotions);
-        })
-        .catch(() => {
-          dispatch({ type: DispatchAction.DATA_FAILURE });
-          setPromotions([]);
-        });
     }
-  }, [state.filter, state.sort, state.searchQuery, dispatch]);
+  }, [dispatch, state.searchQuery]);
 
   return (
     <div style={containerStyles}>

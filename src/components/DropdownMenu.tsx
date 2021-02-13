@@ -2,9 +2,9 @@ import React, { CSSProperties, ReactElement, useCallback } from 'react';
 import { Col, Row, Typography } from 'antd';
 
 import Dropdown from './dropdown/Dropdown';
+import { useDropdown } from '../contexts/DropdownContext';
 import { DispatchAction, usePromotionsList } from '../contexts/PromotionsListContext';
 import { Dropdown as DropdownType } from '../types/dropdown';
-import { DropdownProvider, useDropdown } from '../contexts/DropdownContext';
 
 const { Text } = Typography;
 
@@ -16,16 +16,15 @@ const styles: { [identifier: string]: CSSProperties } = {
     marginRight: 10,
     textDecoration: 'underline',
   },
-  // todo: styling
   dropdownMenu: {
     alignItems: 'center',
-    // paddingBottom: 20,
+    paddingBottom: 20,
     position: 'relative',
-    // width: '100%',
-    // zIndex: 1000,
+    width: '100%',
+    zIndex: 1000,
   },
   shadow: {
-    // boxShadow: '0 4px 4px 0 #40333333',
+    boxShadow: '0 4px 4px 0 #40333333',
   },
 };
 
@@ -69,15 +68,13 @@ export default function DropdownMenu({
   };
 
   return (
-    <DropdownProvider>
-      <Row id="dropdown-menu" style={dropdownStyle}>
-        {dropdowns.map((dropdown, index) => (
-          <Col key={index}>
-            <Dropdown {...dropdown} />
-          </Col>
-        ))}
-        <ClearAllButton />
-      </Row>
-    </DropdownProvider>
+    <Row id="dropdown-menu" style={dropdownStyle}>
+      {dropdowns.map((dropdown, index) => (
+        <Col key={index}>
+          <Dropdown {...dropdown} />
+        </Col>
+      ))}
+      <ClearAllButton />
+    </Row>
   );
 }
