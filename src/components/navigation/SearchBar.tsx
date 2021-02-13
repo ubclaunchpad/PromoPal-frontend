@@ -1,5 +1,5 @@
-import React, { CSSProperties, ReactElement, useCallback } from 'react';
 import { Input } from 'antd';
+import React, { CSSProperties, ReactElement, useCallback } from 'react';
 
 import { useDropdown } from '../../contexts/DropdownContext';
 import { DispatchAction, usePromotionsList } from '../../contexts/PromotionsListContext';
