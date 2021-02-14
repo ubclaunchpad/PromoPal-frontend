@@ -2,9 +2,10 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import * as dotenv from 'dotenv';
 
-import { RestaurantDetails } from '.././types/RestaurantDetails';
+import { RestaurantDetails } from '../types/RestaurantDetails';
 import { RestaurantInfo } from '../types/RestaurantInfo';
 
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 class GooglePlacesService {
   // maintains a mapping of restaurant placeIDs with associated restaurant details (see types)
   public currRestaurants: Map<string, RestaurantDetails>;

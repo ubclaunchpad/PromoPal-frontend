@@ -4,7 +4,7 @@ module.exports = {
   plugins: ['@typescript-eslint', 'import', 'simple-import-sort'],
   parser: '@typescript-eslint/parser',
   rules: {
-    quotes: ['error', 'single'],
+    quotes: ['error', 'single', { avoidEscape: true }],
     '@typescript-eslint/no-explicit-any': ['error', { ignoreRestArgs: true }],
     'import/first': 'error',
     'import/order': 'off',

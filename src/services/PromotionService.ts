@@ -1,4 +1,4 @@
-import { FilterOptions, Promotion, Sort } from '../types/promotion';
+import { FilterOptions, Promotion, PromotionDTO, Sort } from '../types/promotion';
 import { Restaurant } from '../types/restaurant';
 import Routes from '../utils/routes';
 
@@ -17,11 +17,11 @@ type PromotionsResponse = PromotionsSuccess | PromotionsError;
  *
  * @param query [optional] - An array of objects with key-value pairs for the query parameters
  */
-export async function getPromotions(query?: Record<string, string>[]): Promise<Promotion[]> {
+export async function getPromotions(query?: PromotionDTO[]): Promise<Promotion[]> {
   let endpoint = Routes.PROMOTIONS;
   if (query && query.length > 0) {
     endpoint += '?';
-    query.forEach((param: Record<string, string>, index: number) => {
+    query.forEach((param: PromotionDTO, index: number) => {
       const [key] = Object.keys(param);
       const [value] = Object.values(param);
 

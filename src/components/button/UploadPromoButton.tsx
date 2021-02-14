@@ -1,12 +1,15 @@
-import { PlusOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
 import { useHistory } from 'react-router-dom';
 
 const styles: { [identifier: string]: CSSProperties } = {
   button: {
-    backgroundColor: '#ccc',
+    backgroundColor: '#FFC529',
+  },
+
+  text: {
     color: 'black',
+    fontWeight: 'bold',
   },
 };
 
@@ -18,6 +21,8 @@ export default function UploadPromoButton(): ReactElement {
   }
 
   return (
-    <Button shape="circle" icon={<PlusOutlined />} onClick={handleClick} style={styles.button} />
+    <Button size="large" shape="round" onClick={handleClick} style={styles.button}>
+      <div style={styles.text}> Upload Promo </div>
+    </Button>
   );
 }
