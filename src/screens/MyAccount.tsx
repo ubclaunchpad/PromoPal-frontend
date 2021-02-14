@@ -1,10 +1,10 @@
 import { Col, Row } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
 
-import { User } from '../types/promotion';
-import AccountPhoto from '../components/account/AccountPhoto';
 import AccountDetails from '../components/account/AccountDetails';
+import AccountPhoto from '../components/account/AccountPhoto';
 import ResetPassword from '../components/account/ResetPassword';
+import { User } from '../types/promotion';
 
 const user: User = {
   id: 'u1',

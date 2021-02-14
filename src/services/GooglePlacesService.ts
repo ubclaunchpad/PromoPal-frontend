@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import * as dotenv from 'dotenv';
+
 import { RestaurantDetails } from '../types/RestaurantDetails';
 import { RestaurantInfo } from '../types/RestaurantInfo';
 
@@ -15,25 +17,19 @@ class GooglePlacesService {
 
   // gets the placeID, lat and lon associated with restaurant
   // for restaurants with multiple locations, verified with string "includes" with user-inputted location
-  getRestaurantInfo(
-    restaurantName: string,
-    restaurantLocation: string
-  ): Promise<RestaurantInfo> {
+  getRestaurantInfo(restaurantName: string, restaurantLocation: string): Promise<RestaurantInfo> {
     const dataURI: string = encodeURIComponent(restaurantName);
     let responseData: any[];
 
     return axios
-      .get(
-        'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?',
-        {
-          params: {
-            input: dataURI,
-            inputtype: 'textquery',
-            fields: 'place_id,formatted_address,geometry',
-            key: process.env.REACT_APP_GOOGLE_PLACES_API_KEY,
-          },
-        }
-      )
+      .get('https://maps.googleapis.com/maps/api/place/findplacefromtext/json?', {
+        params: {
+          input: dataURI,
+          inputtype: 'textquery',
+          fields: 'place_id,formatted_address,geometry',
+          key: process.env.REACT_APP_GOOGLE_PLACES_API_KEY,
+        },
+      })
       .then((response: AxiosResponse) => {
         responseData = response.data?.candidates;
         let matchingRestaurant;
@@ -70,9 +66,7 @@ class GooglePlacesService {
   getRestaurantDetails(placeID: string): Promise<RestaurantDetails> {
     // if mapping already contains this placeID, return value
     if (this.currRestaurants.has(placeID)) {
-      const restaurantDetails = this.currRestaurants.get(
-        placeID
-      ) as RestaurantDetails;
+      const restaurantDetails = this.currRestaurants.get(placeID) as RestaurantDetails;
       return Promise.resolve(restaurantDetails);
     }
 

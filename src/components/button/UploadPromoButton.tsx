@@ -1,6 +1,6 @@
+import { Button } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button } from 'antd';
 
 const styles: { [identifier: string]: CSSProperties } = {
   button: {
@@ -21,12 +21,7 @@ export default function UploadPromoButton(): ReactElement {
   }
 
   return (
-    <Button
-      size="large"
-      shape="round"
-      onClick={handleClick}
-      style={styles.button}
-    >
+    <Button size="large" shape="round" onClick={handleClick} style={styles.button}>
       <div style={styles.text}> Upload Promo </div>
     </Button>
   );
