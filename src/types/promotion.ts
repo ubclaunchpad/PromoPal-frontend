@@ -32,6 +32,7 @@ export interface PromotionDTO {
   discountValue?: Discount['discountValue'];
   expirationDate?: Promotion['expirationDate'];
   promotionType?: Promotion['promotionType'];
+  searchQuery?: string;
 }
 
 export interface User {
