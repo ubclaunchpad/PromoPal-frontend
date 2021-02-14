@@ -1,3 +1,10 @@
+export enum Sort {
+  Default = 'DEFAULT',
+  Distance = 'DISTANCE',
+  MostPopular = 'MOST_POPULAR',
+  Rating = 'RATING',
+}
+
 export interface Promotion {
   id: string;
   category: string;
@@ -13,6 +20,15 @@ export interface Promotion {
   restaurantName: string;
   schedules: Schedule[];
   user: User;
+}
+
+export interface PromotionDTO {
+  cuisine?: Promotion['cuisine'] | Array<Promotion['cuisine']>;
+  dayOfWeek?: Schedule['dayOfWeek'];
+  discountType?: Discount['discountType'];
+  discountValue?: Discount['discountValue'];
+  expirationDate?: Promotion['expirationDate'];
+  promotionType?: Promotion['promotionType'];
 }
 
 export interface User {
@@ -36,22 +52,17 @@ export interface PromotionImage {
 
 export interface Schedule {
   id: string;
-  dayOfWeek: string;
+  dayOfWeek: Day;
   endTime: string;
   startTime: string;
   isRecurring: boolean;
 }
 
-export enum Sort {
-  Default = 'DEFAULT',
-  Distance = 'DISTANCE',
-  MostPopular = 'MOST_POPULAR',
-  Rating = 'RATING',
+export interface FilterOptions {
+  cuisine: Array<Promotion['cuisine']>;
+  dayOfWeek: Array<Schedule['dayOfWeek']>;
+  discountType: Discount['discountType'];
+  promotionType: Array<Promotion['promotionType']>;
 }
 
-export interface FilterOptions {
-  cuisine: string[];
-  dayOfWeek: string[];
-  discountType: string;
-  promotionType: string[];
-}
+type Day = 'Sunday' | 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday';
