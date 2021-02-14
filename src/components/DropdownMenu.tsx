@@ -1,7 +1,7 @@
 import { Col, Row, Typography } from 'antd';
 import React, { CSSProperties, ReactElement, useCallback } from 'react';
 
-import { DropdownProvider, useDropdown } from '../contexts/DropdownContext';
+import { useDropdown } from '../contexts/DropdownContext';
 import { DispatchAction, usePromotionsList } from '../contexts/PromotionsListContext';
 import { Dropdown as DropdownType } from '../types/dropdown';
 import Dropdown from './dropdown/Dropdown';
@@ -68,15 +68,13 @@ export default function DropdownMenu({
   };
 
   return (
-    <DropdownProvider>
-      <Row id="dropdown-menu" style={dropdownStyle}>
-        {dropdowns.map((dropdown, index) => (
-          <Col key={index}>
-            <Dropdown {...dropdown} />
-          </Col>
-        ))}
-        <ClearAllButton />
-      </Row>
-    </DropdownProvider>
+    <Row id="dropdown-menu" style={dropdownStyle}>
+      {dropdowns.map((dropdown, index) => (
+        <Col key={index}>
+          <Dropdown {...dropdown} />
+        </Col>
+      ))}
+      <ClearAllButton />
+    </Row>
   );
 }

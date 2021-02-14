@@ -2,7 +2,7 @@ import React, { CSSProperties, ReactElement, useEffect, useState } from 'react';
 
 import PromotionCard from '../components/promotion/PromotionCard';
 import { DispatchAction, usePromotionsList } from '../contexts/PromotionsListContext';
-import { filterPromotions, sortPromotions } from '../services/PromotionService';
+import { filterPromotions, getPromotions, sortPromotions } from '../services/PromotionService';
 import { Promotion } from '../types/promotion';
 
 const styles: { [identifier: string]: CSSProperties } = {
@@ -36,12 +36,17 @@ export default function PromotionList({
    */
   useEffect(() => {
     dispatch({ type: DispatchAction.DATA_LOADING });
+
     filterPromotions(promotionListState.filter)
       .then((filteredPromotions: Promotion[]) =>
         sortPromotions(filteredPromotions, promotionListState.sort)
       )
       .then((sortedPromotions: Promotion[]) => {
         dispatch({ type: DispatchAction.DATA_SUCCESS });
+
+        // If search bar contains keyword, reset it. This is only minimal behaviour and a temporary workaround, needs work with PP-68
+        dispatch({ type: DispatchAction.RESET_SEARCH_QUERY });
+
         setPromotions(sortedPromotions);
       })
       .catch(() => {
@@ -49,6 +54,19 @@ export default function PromotionList({
         setPromotions([]);
       });
   }, [promotionListState.filter, promotionListState.sort, dispatch]);
+
+  /**
+   * When a search query is set, fetches promotions that satisfy the query.
+   */
+  useEffect(() => {
+    if (promotionListState.searchQuery) {
+      dispatch({ type: DispatchAction.DATA_LOADING });
+      getPromotions([{ searchQuery: promotionListState.searchQuery }]).then((promotions) => {
+        dispatch({ type: DispatchAction.DATA_SUCCESS });
+        setPromotions(promotions);
+      });
+    }
+  }, [dispatch, promotionListState.searchQuery]);
 
   return (
     <div style={containerStyles}>
