@@ -60,6 +60,7 @@ export default function PromotionList({
    */
   useEffect(() => {
     if (promotionListState.searchQuery) {
+      dispatch({ type: DispatchAction.DATA_LOADING });
       getPromotions([{ searchQuery: promotionListState.searchQuery }]).then((promotions) => {
         dispatch({ type: DispatchAction.DATA_SUCCESS });
         setPromotions(promotions);
