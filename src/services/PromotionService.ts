@@ -1,3 +1,6 @@
+import { isAfter, isBefore } from 'date-fns';
+
+import GoogleGeometryService from '../services/GoogleGeometryService';
 import { FilterOptions, Promotion, PromotionDTO, Sort } from '../types/promotion';
 import { Restaurant } from '../types/restaurant';
 import Routes from '../utils/routes';
@@ -108,33 +111,56 @@ export function filterPromotions(filters: FilterOptions): Promise<Promotion[]> {
  * @param arr - The list of promotions to sort
  * @param key - The key which to sort the promotions by
  */
-export function sortPromotions(arr: Promotion[], key: Sort): Promotion[] {
-  let promotions = [...arr];
+export async function sortPromotions(arr: Promotion[], key: Sort): Promise<Promotion[]> {
+  const promotions = [...arr];
   switch (key) {
     case Sort.Distance:
-      promotions = sortByDistance(promotions);
-      break;
+      return sortByDistance(promotions);
     case Sort.MostPopular:
-      promotions = sortByPopularity(promotions);
-      break;
-    case Sort.Rating:
-      promotions = sortByRating(promotions);
-      break;
+      return sortByPopularity(promotions);
+    case Sort.MostRecent:
+      return sortByRecency(promotions);
+    default:
+      return promotions;
   }
-  return promotions;
 }
 
-// TODO: see https://github.com/ubclaunchpad/foodies/issues/99
-function sortByDistance(promotions: Promotion[]) {
-  return promotions;
+async function sortByDistance(promotions: Promotion[]): Promise<Promotion[]> {
+  return new Promise((resolve, reject) => {
+    if (navigator.geolocation) {
+      const success = (position: { coords: { latitude: number; longitude: number } }) => {
+        const { latitude: currLat, longitude: currLon } = position.coords;
+
+        const promos = promotions.map((promotion) => {
+          const { lat, lon } = promotion;
+          promotion.distance = GoogleGeometryService.computeDistance(currLat, currLon, lat, lon);
+          return promotion;
+        });
+
+        const sortedPromotions = promos.sort((a, b) => b.distance - a.distance);
+        resolve(sortedPromotions);
+      };
+
+      const error = () => reject(promotions);
+
+      navigator.geolocation.getCurrentPosition(success, error, { timeout: 10000 });
+    } else {
+      reject(promotions);
+    }
+  });
 }
 
-// TODO: see https://github.com/ubclaunchpad/foodies/issues/99
 function sortByPopularity(promotions: Promotion[]) {
-  return promotions;
+  return promotions.sort((a, b) => b.votes - a.votes);
 }
 
-// TODO: see https://github.com/ubclaunchpad/foodies/issues/99
-function sortByRating(promotions: Promotion[]) {
-  return promotions;
+function sortByRecency(promotions: Promotion[]) {
+  return promotions.sort((a, b) => {
+    if (isBefore(new Date(a.dateAdded), new Date(b.dateAdded))) {
+      return -1;
+    } else if (isAfter(new Date(a.dateAdded), new Date(b.dateAdded))) {
+      return 1;
+    }
+    return 0;
+  });
 }

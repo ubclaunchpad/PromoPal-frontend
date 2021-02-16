@@ -107,9 +107,9 @@ export default function Home(): ReactElement {
           action: () =>
             dispatch({
               type: DispatchAction.SORT,
-              payload: { sort: Sort.Rating },
+              payload: { sort: Sort.MostRecent },
             }),
-          text: 'Rating',
+          text: 'Most Recent',
           description: 'Newest uploaded deals will be shown first.',
         },
       ],

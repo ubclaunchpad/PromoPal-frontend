@@ -2,7 +2,7 @@ export enum Sort {
   Default = 'DEFAULT',
   Distance = 'DISTANCE',
   MostPopular = 'MOST_POPULAR',
-  Rating = 'RATING',
+  MostRecent = 'MOST_RECENT',
 }
 
 export interface Promotion {
@@ -12,14 +12,18 @@ export interface Promotion {
   dateAdded: string;
   description: string;
   discount: Discount;
+  distance: number;
   expirationDate: string;
   image: PromotionImage;
+  lat: number;
+  lon: number;
   liked: boolean;
   name: string;
   promotionType: string;
   restaurantName: string;
   schedules: Schedule[];
   user: User;
+  votes: number;
 }
 
 export interface PromotionDTO {

@@ -27,7 +27,7 @@ function App(): ReactElement {
 
   /**
    * Loads dependencies on initial render.
-   * Displays a spinner for the minimum of either: (a) the duration of the loading period or (b) 2 seconds.
+   * Displays a spinner for the maximum of either: (a) the duration of the loading period or (b) ~2 seconds.
    */
   useEffect(() => {
     const start = Date.now();
