@@ -1,21 +1,19 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import * as dotenv from 'dotenv';
 import { RestaurantDetails } from '../types/RestaurantDetails';
 import { RestaurantInfo } from '../types/RestaurantInfo';
 
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 class GooglePlacesService {
   // maintains a mapping of restaurant placeIDs with associated restaurant details (see types)
-  public currRestaurants: Map<string, RestaurantDetails>;
+  private currRestaurants: Map<string, RestaurantDetails>;
 
   constructor() {
-    dotenv.config();
     this.currRestaurants = new Map();
   }
 
   // gets the placeID, lat and lon associated with restaurant
   // for restaurants with multiple locations, verified with string "includes" with user-inputted location
-  getRestaurantInfo(
+  public getRestaurantInfo(
     restaurantName: string,
     restaurantLocation: string
   ): Promise<RestaurantInfo> {
@@ -67,7 +65,10 @@ class GooglePlacesService {
   }
 
   // gets all restaurant details for certain placeID
-  getRestaurantDetails(placeID: string): Promise<RestaurantDetails> {
+  public getRestaurantDetails(
+    placeID: string,
+    handleNotFoundError?: (invalidPlaceID: string) => Promise<RestaurantDetails>
+  ): Promise<RestaurantDetails> {
     // if mapping already contains this placeID, return value
     if (this.currRestaurants.has(placeID)) {
       const restaurantDetails = this.currRestaurants.get(
@@ -92,7 +93,9 @@ class GooglePlacesService {
 
         // check if placeID is valid
         if (restaurantData.status && restaurantData.status === 'NOT_FOUND') {
-          return this.refreshPlaceIDAndGetDetails(placeID);
+          return handleNotFoundError
+            ? handleNotFoundError(placeID)
+            : this.refreshPlaceIDAndGetDetails(placeID);
         }
 
         const restaurant = {
@@ -121,7 +124,7 @@ class GooglePlacesService {
   }
 
   // refreshes the invalid placeID, may also result in NOT_FOUND error
-  refreshPlaceID(placeID: string): Promise<string> {
+  private refreshPlaceID(placeID: string): Promise<string> {
     return axios
       .get('https://maps.googleapis.com/maps/api/place/details/json?', {
         params: {
@@ -134,11 +137,11 @@ class GooglePlacesService {
         const data = response?.data;
 
         if (data.status && data.status === 'NOT_FOUND') {
-          return Promise.reject(new Error('NOT_FOUND'));
+          return Promise.reject(new Error('NOT_FOUND ERROR FOR ' + placeID));
         }
 
-        const placeID = data.result?.place_id;
-        return Promise.resolve(placeID);
+        const newPlaceID = data.result?.place_id;
+        return Promise.resolve(newPlaceID);
       })
       .catch((err: AxiosError) => {
         return Promise.reject(err);
@@ -146,7 +149,7 @@ class GooglePlacesService {
   }
 
   // gets photos for certain placeID
-  getRestaurantPhoto(photoReference: string): Promise<HTMLImageElement> {
+  public getRestaurantPhoto(photoReference: string): Promise<HTMLImageElement> {
     return axios
       .get('https://maps.googleapis.com/maps/api/place/photo?', {
         params: {
@@ -164,11 +167,18 @@ class GooglePlacesService {
       });
   }
 
-  // helper function used to refresh place ID and call getRestaurantDetails again for NOT_FOUND error
-  refreshPlaceIDAndGetDetails(placeID: string): Promise<RestaurantDetails> {
+  // helper function used to refresh placeID and call getRestaurantDetails again for NOT_FOUND error
+  private refreshPlaceIDAndGetDetails(
+    placeID: string
+  ): Promise<RestaurantDetails> {
     return this.refreshPlaceID(placeID)
       .then((newPlaceID: string) => {
-        return this.getRestaurantDetails(newPlaceID);
+        const handleNotFoundError = (invalidPlaceID: string) => {
+          return Promise.reject(
+            new Error('NOT_FOUND ERROR FOR ' + invalidPlaceID)
+          );
+        };
+        return this.getRestaurantDetails(newPlaceID, handleNotFoundError);
       })
       .catch((err: AxiosError) => {
         return Promise.reject(err);
