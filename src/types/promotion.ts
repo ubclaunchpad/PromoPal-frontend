@@ -1,3 +1,10 @@
+export enum Sort {
+  Default = 'DEFAULT',
+  Distance = 'DISTANCE',
+  MostPopular = 'MOST_POPULAR',
+  Rating = 'RATING',
+}
+
 export interface Promotion {
   id: string;
   category: string;
@@ -9,8 +16,23 @@ export interface Promotion {
   image: PromotionImage;
   liked: boolean;
   name: string;
+  promotionType: string;
   restaurantName: string;
+  schedules: Schedule[];
   user: User;
+  boldDescription?: string;
+  boldName?: string;
+  rank?: number;
+}
+
+export interface PromotionDTO {
+  cuisine?: Promotion['cuisine'] | Array<Promotion['cuisine']>;
+  dayOfWeek?: Schedule['dayOfWeek'];
+  discountType?: Discount['discountType'];
+  discountValue?: Discount['discountValue'];
+  expirationDate?: Promotion['expirationDate'];
+  promotionType?: Promotion['promotionType'];
+  searchQuery?: string;
 }
 
 export interface User {
@@ -25,64 +47,26 @@ export interface User {
 export interface Discount {
   id: string;
   discountValue: number;
-  type: string;
+  discountType: string;
 }
 
 export interface PromotionImage {
   src: string;
 }
 
-export enum Category {
-  Bakery = 'BAKERY',
-  BubbleTea = 'BUBBLE_TEA',
-  Coffee = 'COFFEE',
-  Dessert = 'DESSERT',
-  FastFood = 'FAST_FOOD',
+export interface Schedule {
+  id: string;
+  dayOfWeek: Day;
+  endTime: string;
+  startTime: string;
+  isRecurring: boolean;
 }
 
-export enum CuisineType {
-  American = 'AMERICAN',
-  Chinese = 'CHINESE',
-  French = 'FRENCH',
-  Indian = 'INDIAN',
-  Italian = 'ITALIAN',
-  Japanese = 'JAPANESE',
-  Korean = 'KOREAN',
-  Mexican = 'MEXICAN',
-  Vietnamese = 'VIETNAMESE',
+export interface FilterOptions {
+  cuisine: Array<Promotion['cuisine']>;
+  dayOfWeek: Array<Schedule['dayOfWeek']>;
+  discountType: Discount['discountType'];
+  promotionType: Array<Promotion['promotionType']>;
 }
 
-export enum DaysOfWeek {
-  Sunday = 'SUNDAY',
-  Monday = 'MONDAY',
-  Tuesday = 'TUESDAY',
-  Wednesday = 'WEDNESDAY',
-  Thursday = 'THURSDAY',
-  Friday = 'FRIDAY',
-  Saturday = 'SATURDAY',
-}
-
-export enum DiscountType {
-  DollarsOff = 'DOLLARS_OFF',
-  PercentOff = 'PERCENT_OFF',
-}
-
-export enum ServiceOptions {
-  DineIn = 'DINE_IN',
-  TakeOut = 'TAKE_OUT',
-}
-
-export enum Sort {
-  Distance = 'DISTANCE',
-  MostPopular = 'MOST_POPULAR',
-  Rating = 'RATING',
-}
-
-export type FilterBy =
-  | 'DEFAULT'
-  | Category
-  | CuisineType
-  | DaysOfWeek
-  | DiscountType
-  | ServiceOptions;
-export type SortBy = 'DEFAULT' | Sort;
+type Day = 'Sunday' | 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday';

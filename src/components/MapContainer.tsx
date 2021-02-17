@@ -1,5 +1,5 @@
+import { GoogleApiWrapper, Map, Marker } from 'google-maps-react';
 import React, { ReactElement, useEffect, useState } from 'react';
-import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
 
 const locations: google.maps.LatLngLiteral[] = [
   { lat: 49.246213, lng: -123.1691 },
@@ -10,8 +10,7 @@ const locations: google.maps.LatLngLiteral[] = [
 ];
 
 function mapCenter(locations: google.maps.LatLngLiteral[]) {
-  const avg = (arr: number[]) =>
-    arr.reduce((acc, num) => acc + num, 0) / arr.length;
+  const avg = (arr: number[]) => arr.reduce((acc, num) => acc + num, 0) / arr.length;
   return {
     lat: avg(locations.map(({ lat }) => lat)),
     lng: avg(locations.map(({ lng }) => lng)),
@@ -37,21 +36,10 @@ function MapContainer({
   }, []);
 
   return (
-    <Map
-      google={google}
-      zoom={15}
-      style={dimensions}
-      initialCenter={mapCenter(locations)}
-    >
-      {restaurants.map(
-        (coordinates: google.maps.LatLngLiteral, index: number) => (
-          <Marker
-            key={index}
-            position={coordinates}
-            onClick={() => alert('Click')}
-          />
-        )
-      )}
+    <Map google={google} zoom={15} style={dimensions} initialCenter={mapCenter(locations)}>
+      {restaurants.map((coordinates: google.maps.LatLngLiteral, index: number) => (
+        <Marker key={index} position={coordinates} onClick={() => alert('Click')} />
+      ))}
     </Map>
   );
 }

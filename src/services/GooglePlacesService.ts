@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
+
 import { RestaurantDetails } from '../types/RestaurantDetails';
 import { RestaurantInfo } from '../types/RestaurantInfo';
 
@@ -21,17 +22,14 @@ class GooglePlacesService {
     let responseData: any[];
 
     return axios
-      .get(
-        'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?',
-        {
-          params: {
-            input: dataURI,
-            inputtype: 'textquery',
-            fields: 'place_id,formatted_address,geometry',
-            key: process.env.REACT_APP_GOOGLE_PLACES_API_KEY,
-          },
-        }
-      )
+      .get('https://maps.googleapis.com/maps/api/place/findplacefromtext/json?', {
+        params: {
+          input: dataURI,
+          inputtype: 'textquery',
+          fields: 'place_id,formatted_address,geometry',
+          key: process.env.REACT_APP_GOOGLE_PLACES_API_KEY,
+        },
+      })
       .then((response: AxiosResponse) => {
         responseData = response.data?.candidates;
         let matchingRestaurant;
@@ -71,9 +69,7 @@ class GooglePlacesService {
   ): Promise<RestaurantDetails> {
     // if mapping already contains this placeID, return value
     if (this.currRestaurants.has(placeID)) {
-      const restaurantDetails = this.currRestaurants.get(
-        placeID
-      ) as RestaurantDetails;
+      const restaurantDetails = this.currRestaurants.get(placeID) as RestaurantDetails;
       return Promise.resolve(restaurantDetails);
     }
 
@@ -168,15 +164,11 @@ class GooglePlacesService {
   }
 
   // helper function used to refresh placeID and call getRestaurantDetails again for NOT_FOUND error
-  private refreshPlaceIDAndGetDetails(
-    placeID: string
-  ): Promise<RestaurantDetails> {
+  private refreshPlaceIDAndGetDetails(placeID: string): Promise<RestaurantDetails> {
     return this.refreshPlaceID(placeID)
       .then((newPlaceID: string) => {
         const handleNotFoundError = (invalidPlaceID: string) => {
-          return Promise.reject(
-            new Error('NOT_FOUND ERROR FOR ' + invalidPlaceID)
-          );
+          return Promise.reject(new Error('NOT_FOUND ERROR FOR ' + invalidPlaceID));
         };
         return this.getRestaurantDetails(newPlaceID, handleNotFoundError);
       })

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button, Col, Input, Row } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
 
@@ -66,12 +67,7 @@ export default function AccountDetails({
       </Row>
       <InputWrapper label="Username" defaultValue={username} />
       <InputWrapper label="Email" defaultValue={email} />
-      <Button
-        size="large"
-        shape="round"
-        onClick={handleClick}
-        style={styles.button}
-      >
+      <Button size="large" shape="round" onClick={handleClick} style={styles.button}>
         Save
       </Button>
     </div>
