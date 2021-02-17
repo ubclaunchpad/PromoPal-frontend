@@ -42,6 +42,7 @@ class GooglePlacesService {
           for (const currPlace of responseData) {
             if (currPlace.formatted_address.includes(restaurantLocation)) {
               matchingRestaurant = currPlace;
+              break;
             }
           }
         }

@@ -43,7 +43,7 @@ describe('Unit tests for GooglePlacesService', function () {
       });
   });
 
-  test('Get details for a place using placeID, should be successful', () => {
+  test('Get details for a place using valid placeID, should be successful', () => {
     // placeID can only be retrieved from getRestaurantInfo
     return googlePlacesAPI
       .getRestaurantDetails(validPlaceID)
@@ -66,7 +66,7 @@ describe('Unit tests for GooglePlacesService', function () {
       });
   });
 
-  test('Get details for a place using invalid placeID, should be unsuccessful due to invalid placeID', () => {
+  test('Get details for a place using invalid placeID, should be unsuccessful', () => {
     return googlePlacesAPI
       .getRestaurantDetails(invalidPlaceID)
       .then((result: RestaurantDetails) => {
