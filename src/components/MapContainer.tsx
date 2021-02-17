@@ -1,5 +1,6 @@
-import { GoogleApiWrapper, Map, Marker } from 'google-maps-react';
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect } from 'react';
+
+import GooglePlacesApiLoaderService from '../services/GoogleMapsApiLoaderService';
 
 const locations: google.maps.LatLngLiteral[] = [
   { lat: 49.246213, lng: -123.1691 },
@@ -19,30 +20,22 @@ function mapCenter(locations: google.maps.LatLngLiteral[]) {
 
 function MapContainer({
   dimensions,
-  google,
 }: {
   dimensions: { width: string; height: string };
-  google: typeof globalThis.google;
 }): ReactElement {
-  const [restaurants] = useState<google.maps.LatLngLiteral[]>(locations);
-
+  /**
+   * Loads the map and markers on initial render.
+   */
   useEffect(() => {
-    // Note: the following is not considered best practice, but is a hacky way to access the DOM Element
-    // within the Map component that has the width and height pre-set to 100%
-    const container = document.getElementById('content-container');
-    const target = container?.firstChild?.firstChild as HTMLElement;
-    target.style.removeProperty('height');
-    target.style.removeProperty('width');
+    const options = {
+      center: mapCenter(locations),
+      zoom: 15,
+    };
+    const map = GooglePlacesApiLoaderService.initializeMap(options);
+    locations.map((position) => new google.maps.Marker({ position, map }));
   }, []);
 
-  return (
-    <Map google={google} zoom={15} style={dimensions} initialCenter={mapCenter(locations)}>
-      {restaurants.map((coordinates: google.maps.LatLngLiteral, index: number) => (
-        <Marker key={index} position={coordinates} onClick={() => alert('Click')} />
-      ))}
-    </Map>
-  );
+  return <div id="map-container" style={dimensions}></div>;
 }
 
-const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string;
-export default GoogleApiWrapper({ apiKey })(MapContainer);
+export default MapContainer;
