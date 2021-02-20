@@ -1,3 +1,5 @@
+import { RestaurantDetails } from './RestaurantDetails';
+
 export enum Sort {
   Default = 'DEFAULT',
   Distance = 'DISTANCE',
@@ -16,7 +18,9 @@ export interface Promotion {
   image: PromotionImage;
   liked: boolean;
   name: string;
+  placeId: string;
   promotionType: string;
+  restaurant: RestaurantDetails;
   restaurantName: string;
   schedules: Schedule[];
   user: User;

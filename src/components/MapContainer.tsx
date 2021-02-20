@@ -1,41 +1,45 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement, useEffect, useRef } from 'react';
 
+import { usePromotionsList } from '../contexts/PromotionsListContext';
 import GooglePlacesApiLoaderService from '../services/GoogleMapsApiLoaderService';
-
-const locations: google.maps.LatLngLiteral[] = [
-  { lat: 49.246213, lng: -123.1691 },
-  { lat: 49.25114, lng: -123.17152 },
-  { lat: 49.263234, lng: -123.1619 },
-  { lat: 49.25813, lng: -123.17712 },
-  { lat: 49.255212, lng: -123.18212 },
-];
-
-function mapCenter(locations: google.maps.LatLngLiteral[]) {
-  const avg = (arr: number[]) => arr.reduce((acc, num) => acc + num, 0) / arr.length;
-  return {
-    lat: avg(locations.map(({ lat }) => lat)),
-    lng: avg(locations.map(({ lng }) => lng)),
-  };
-}
+import LocationService, { GeolocationPosition } from '../services/LocationService';
 
 function MapContainer({
   dimensions,
 }: {
   dimensions: { width: string; height: string };
 }): ReactElement {
+  const mapElement = useRef<HTMLDivElement | null>(null);
+
+  const { state } = usePromotionsList();
+
   /**
-   * Loads the map and markers on initial render.
+   * On initial render:
+   * - Creates the map instance centered at the user's location or downtown Vancouver (49.282, -123.1171)
+   *   if the user's location cannot be found by the browser
+   * - Creates and displays the markers for all promotions listed
    */
   useEffect(() => {
-    const options = {
-      center: mapCenter(locations),
-      zoom: 15,
-    };
-    const map = GooglePlacesApiLoaderService.initializeMap(options);
-    locations.map((position) => new google.maps.Marker({ position, map }));
-  }, []);
+    function createMap(userLocation: google.maps.LatLngLiteral) {
+      const options = { center: userLocation, zoom: 15 };
+      const map = GooglePlacesApiLoaderService.initializeMap(mapElement.current, options);
+      if (map) {
+        const markerPositions = state.data.map(({ lat, lon: lng }) => ({ lat, lng }));
+        markerPositions.map((position) => new google.maps.Marker({ position, map }));
+      }
+    }
 
-  return <div id="map-container" style={dimensions}></div>;
+    LocationService.getCurrentLocation()
+      .then(({ coords: { latitude, longitude } }: GeolocationPosition) => {
+        createMap({ lat: latitude, lng: longitude });
+      })
+      .catch(() => {
+        const defaultCenter = { lat: 49.282, lng: -123.1171 };
+        createMap(defaultCenter);
+      });
+  }, [state.data]);
+
+  return <div id="map-container" style={dimensions} ref={mapElement}></div>;
 }
 
 export default MapContainer;

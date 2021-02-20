@@ -4,6 +4,7 @@ import React, { CSSProperties, ReactElement, useEffect, useState } from 'react';
 
 import { DropdownProvider } from './contexts/DropdownContext';
 import { PromotionsListProvider } from './contexts/PromotionsListContext';
+import { RestaurantCardProvider } from './contexts/RestaurantCardContext';
 import Router from './Router';
 import GoogleMapsApiLoaderService from './services/GoogleMapsApiLoaderService';
 
@@ -45,9 +46,11 @@ function App(): ReactElement {
   return (
     <div className="App" style={styles.container}>
       <PromotionsListProvider>
-        <DropdownProvider>
-          {isLoading ? <Spin indicator={indicator} style={styles.spinner} /> : <Router />}
-        </DropdownProvider>
+        <RestaurantCardProvider>
+          <DropdownProvider>
+            {isLoading ? <Spin indicator={indicator} style={styles.spinner} /> : <Router />}
+          </DropdownProvider>
+        </RestaurantCardProvider>
       </PromotionsListProvider>
     </div>
   );
