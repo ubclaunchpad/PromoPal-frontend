@@ -85,11 +85,11 @@ class GooglePlacesService {
         },
       })
       .then((response: AxiosResponse) => {
-        const restaurantData = response?.data;
+        const restaurantData = response.data;
         const restaurantResults = restaurantData?.result;
 
         // check if placeID is valid
-        if (restaurantData.status && restaurantData.status === 'NOT_FOUND') {
+        if (restaurantData?.status === 'NOT_FOUND') {
           return handleNotFoundError
             ? handleNotFoundError(placeID)
             : this.refreshPlaceIDAndGetDetails(placeID);
@@ -121,6 +121,7 @@ class GooglePlacesService {
   }
 
   // refreshes the invalid placeID, may also result in NOT_FOUND error
+  // refreshing occurs by specifying only the place_id as a field (no other fields allowed)
   private refreshPlaceID(placeID: string): Promise<string> {
     return axios
       .get('https://maps.googleapis.com/maps/api/place/details/json?', {
@@ -131,9 +132,9 @@ class GooglePlacesService {
         },
       })
       .then((response: AxiosResponse) => {
-        const data = response?.data;
+        const data = response.data;
 
-        if (data.status && data.status === 'NOT_FOUND') {
+        if (data?.status === 'NOT_FOUND') {
           return Promise.reject(new Error('NOT_FOUND ERROR FOR ' + placeID));
         }
 
