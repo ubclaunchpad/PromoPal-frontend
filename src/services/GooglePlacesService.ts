@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import * as dotenv from 'dotenv';
 
 import { RestaurantDetails } from '../types/RestaurantDetails';
 import { RestaurantInfo } from '../types/RestaurantInfo';
@@ -8,16 +6,18 @@ import { RestaurantInfo } from '../types/RestaurantInfo';
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 class GooglePlacesService {
   // maintains a mapping of restaurant placeIDs with associated restaurant details (see types)
-  public currRestaurants: Map<string, RestaurantDetails>;
+  private currRestaurants: Map<string, RestaurantDetails>;
 
   constructor() {
-    dotenv.config();
     this.currRestaurants = new Map();
   }
 
   // gets the placeID, lat and lon associated with restaurant
   // for restaurants with multiple locations, verified with string "includes" with user-inputted location
-  getRestaurantInfo(restaurantName: string, restaurantLocation: string): Promise<RestaurantInfo> {
+  public getRestaurantInfo(
+    restaurantName: string,
+    restaurantLocation: string
+  ): Promise<RestaurantInfo> {
     const dataURI: string = encodeURIComponent(restaurantName);
     let responseData: any[];
 
@@ -42,6 +42,7 @@ class GooglePlacesService {
           for (const currPlace of responseData) {
             if (currPlace.formatted_address.includes(restaurantLocation)) {
               matchingRestaurant = currPlace;
+              break;
             }
           }
         }
@@ -63,7 +64,10 @@ class GooglePlacesService {
   }
 
   // gets all restaurant details for certain placeID
-  getRestaurantDetails(placeID: string): Promise<RestaurantDetails> {
+  public getRestaurantDetails(
+    placeID: string,
+    handleNotFoundError?: (invalidPlaceID: string) => Promise<RestaurantDetails>
+  ): Promise<RestaurantDetails> {
     // if mapping already contains this placeID, return value
     if (this.currRestaurants.has(placeID)) {
       const restaurantDetails = this.currRestaurants.get(placeID) as RestaurantDetails;
@@ -81,7 +85,16 @@ class GooglePlacesService {
         },
       })
       .then((response: AxiosResponse) => {
-        const restaurantResults = response?.data?.result;
+        const restaurantData = response.data;
+        const restaurantResults = restaurantData?.result;
+
+        // check if placeID is valid
+        if (restaurantData?.status === 'NOT_FOUND') {
+          return handleNotFoundError
+            ? handleNotFoundError(placeID)
+            : this.refreshPlaceIDAndGetDetails(placeID);
+        }
+
         const restaurant = {
           name: restaurantResults.name,
           price_level: restaurantResults.price_level,
@@ -107,8 +120,34 @@ class GooglePlacesService {
       });
   }
 
+  // refreshes the invalid placeID, may also result in NOT_FOUND error
+  // refreshing occurs by specifying only the place_id as a field (no other fields allowed)
+  private refreshPlaceID(placeID: string): Promise<string> {
+    return axios
+      .get('https://maps.googleapis.com/maps/api/place/details/json?', {
+        params: {
+          place_id: placeID,
+          fields: 'place_id',
+          key: process.env.REACT_APP_GOOGLE_PLACES_API_KEY,
+        },
+      })
+      .then((response: AxiosResponse) => {
+        const data = response.data;
+
+        if (data?.status === 'NOT_FOUND') {
+          return Promise.reject(new Error('NOT_FOUND ERROR FOR ' + placeID));
+        }
+
+        const newPlaceID = data.result?.place_id;
+        return Promise.resolve(newPlaceID);
+      })
+      .catch((err: AxiosError) => {
+        return Promise.reject(err);
+      });
+  }
+
   // gets photos for certain placeID
-  getRestaurantPhoto(photoReference: string): Promise<HTMLImageElement> {
+  public getRestaurantPhoto(photoReference: string): Promise<HTMLImageElement> {
     return axios
       .get('https://maps.googleapis.com/maps/api/place/photo?', {
         params: {
@@ -120,6 +159,20 @@ class GooglePlacesService {
       .then((response: AxiosResponse) => {
         const result: HTMLImageElement = response.data;
         return Promise.resolve(result);
+      })
+      .catch((err: AxiosError) => {
+        return Promise.reject(err);
+      });
+  }
+
+  // helper function used to refresh placeID and call getRestaurantDetails again for NOT_FOUND error
+  private refreshPlaceIDAndGetDetails(placeID: string): Promise<RestaurantDetails> {
+    return this.refreshPlaceID(placeID)
+      .then((newPlaceID: string) => {
+        const handleNotFoundError = (invalidPlaceID: string) => {
+          return Promise.reject(new Error('NOT_FOUND ERROR FOR ' + invalidPlaceID));
+        };
+        return this.getRestaurantDetails(newPlaceID, handleNotFoundError);
       })
       .catch((err: AxiosError) => {
         return Promise.reject(err);
