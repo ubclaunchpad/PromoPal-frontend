@@ -79,7 +79,7 @@ export default function PromotionDetails({
       return formattedTime;
     };
 
-    return schedules.map(({ dayOfWeek, startTime, endTime }) => (
+    return schedules?.map(({ dayOfWeek, startTime, endTime }) => (
       <Row>
         <Text style={styles.schedule}>
           {dayOfWeek}: {formatTime(startTime) + ' - ' + formatTime(endTime)}

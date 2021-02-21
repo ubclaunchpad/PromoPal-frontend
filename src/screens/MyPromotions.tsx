@@ -1,11 +1,12 @@
 import { Checkbox, Col, Row } from 'antd';
-import React, { CSSProperties, ReactElement } from 'react';
+import React, { CSSProperties, ReactElement, useEffect, useState } from 'react';
 
 import UploadPromoButton from '../components/button/UploadPromoButton';
 import DropdownMenu from '../components/DropdownMenu';
 import PromotionCard from '../components/promotion/PromotionCard';
+import UserService from '../services/UserService';
 import { Dropdown, DropdownType } from '../types/dropdown';
-import { Promotion, Schedule, User } from '../types/promotion';
+import { Promotion, User } from '../types/promotion';
 
 const dropdowns: Dropdown[] = [
   {
@@ -62,93 +63,13 @@ const dropdowns: Dropdown[] = [
 ];
 
 const user: User = {
-  id: 'u1',
+  id: '8f8fc016-5bb2-4906-ad88-68932c438665',
   email: 'example@abc.com',
   firstName: 'John',
   lastName: 'Lee',
   password: '123',
   username: 'user',
 };
-
-const schedules: Schedule[] = [
-  {
-    id: 's1',
-    dayOfWeek: 'Monday',
-    endTime: '11:00:00',
-    startTime: '08:00:00',
-    isRecurring: false,
-  },
-  {
-    id: 's2',
-    dayOfWeek: 'Friday',
-    endTime: '20:00:00',
-    startTime: '17:00:00',
-    isRecurring: true,
-  },
-];
-
-const promotions: Promotion[] = [
-  {
-    id: '1',
-    category: 'Drinks',
-    cuisine: 'American',
-    dateAdded: 'Nov 10, 2020',
-    description: 'Buy one, get one free on all Grande sized drinks!',
-    discount: {
-      id: 'd1',
-      discountValue: 5,
-      discountType: '$',
-    },
-    expirationDate: 'Nov 11, 2020',
-    liked: false,
-    image: { src: '' },
-    name: 'Happy Hour 2pm-4pm',
-    promotionType: 'Happy Hour',
-    restaurantName: 'Starbucks',
-    schedules,
-    user,
-  },
-  {
-    id: '2',
-    category: 'Lunch',
-    cuisine: 'American',
-    dateAdded: 'Nov 10, 2020',
-    description: 'Get $2 off any sandwich of your choice.',
-    discount: {
-      id: 'd2',
-      discountValue: 2,
-      discountType: '$',
-    },
-    expirationDate: 'Nov 20, 2020',
-    liked: false,
-    image: { src: '' },
-    name: '$2 off Sandwiches',
-    promotionType: 'Lunch Special',
-    restaurantName: 'Grandma Loves You',
-    schedules,
-    user,
-  },
-  {
-    id: '3',
-    category: 'Lunch',
-    cuisine: 'American',
-    dateAdded: 'Nov 15, 2020',
-    description: 'Get 10% off of your order (pre-tax) when you spend over $15 on breakfast.',
-    discount: {
-      id: 'd2',
-      discountValue: 2,
-      discountType: '$',
-    },
-    expirationDate: 'Jan 1, 2020',
-    liked: false,
-    image: { src: '' },
-    name: '10% off Breakfast',
-    promotionType: 'Coupon',
-    restaurantName: 'Elephant Grind Coffee House',
-    schedules,
-    user,
-  },
-];
 
 const dropdownMenuWidth = 30;
 const styles: { [identifier: string]: CSSProperties } = {
@@ -185,6 +106,17 @@ const onChange = () => {
 };
 
 export default function MyPromotions(): ReactElement {
+  const [uploadedPromotions, setUploadedPromotions] = useState<Promotion[]>([]);
+
+  /**
+   * On initial render, retrieves the user's currently uploaded promotions.
+   */
+  useEffect(() => {
+    UserService.getUploadedPromotions(user.id)
+      .then((promotions: Promotion[]) => setUploadedPromotions(promotions))
+      .catch(() => setUploadedPromotions([]));
+  }, []);
+
   return (
     <>
       <div style={styles.body}>
@@ -201,7 +133,7 @@ export default function MyPromotions(): ReactElement {
         </div>
         <div style={styles.promotions}>
           <Row gutter={16}>
-            {promotions.map((promotion: Promotion) => (
+            {uploadedPromotions.map((promotion: Promotion) => (
               <Col span={12}>
                 <PromotionCard {...promotion} />
               </Col>
