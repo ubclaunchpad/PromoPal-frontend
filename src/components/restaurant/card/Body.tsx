@@ -36,8 +36,12 @@ function Section({ title, details }: { title: string; details: string }): ReactE
   );
 }
 
-export default function Body({ address, hours, phoneNumber }: Restaurant): ReactElement {
-  function formatHours(hours: Restaurant['hours']): string {
+export default function Body({
+  address,
+  openingHours,
+  phoneNumber,
+}: Pick<Restaurant, 'address' | 'openingHours' | 'phoneNumber'>): ReactElement {
+  function formatHours(hours: Restaurant['openingHours']): string {
     return `Sun: ${hours.sunday}
       Mon: ${hours.monday}
       Tue: ${hours.tuesday}
@@ -63,7 +67,7 @@ export default function Body({ address, hours, phoneNumber }: Restaurant): React
       <Tabs style={styles.tabs} defaultActiveKey="1" size="small">
         <TabPane tab="Info" key="1" style={styles.tabContent}>
           <Section title="Address" details={address} />
-          <Section title="Hours" details={formatHours(hours)} />
+          <Section title="Hours" details={formatHours(openingHours)} />
           <Section title="Phone" details={formatPhoneNumber(phoneNumber)} />
         </TabPane>
         <TabPane tab="Promotions" key="2" style={styles.tabContent}>

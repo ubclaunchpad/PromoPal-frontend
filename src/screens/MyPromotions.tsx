@@ -101,6 +101,10 @@ export default function MyPromotions(): ReactElement {
 
   const { state } = usePromotionsList();
 
+  const onClick = () => {
+    /* stub */
+  };
+
   /**
    * TODO: https://promopal.atlassian.net/browse/PP-51
    * randomly choose 3 promotions for now
@@ -134,7 +138,7 @@ export default function MyPromotions(): ReactElement {
           <Row gutter={16}>
             {promotions.map((promotion: Promotion) => (
               <Col span={12}>
-                <PromotionCard {...promotion} />
+                <PromotionCard promotion={promotion} onClick={onClick} />
               </Col>
             ))}
           </Row>

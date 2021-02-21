@@ -1,4 +1,4 @@
-import { RestaurantDetails } from './RestaurantDetails';
+import { RestaurantDetails } from './restaurant';
 
 export enum Sort {
   Default = 'DEFAULT',
