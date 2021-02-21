@@ -34,8 +34,12 @@ function MapContainer({
         createMap({ lat: latitude, lng: longitude });
       })
       .catch(() => {
-        const defaultCenter = { lat: 49.282, lng: -123.1171 };
-        createMap(defaultCenter);
+        const {
+          defaultLocation: {
+            coords: { latitude, longitude },
+          },
+        } = LocationService;
+        createMap({ lat: latitude, lng: longitude });
       });
   }, [state.data]);
 

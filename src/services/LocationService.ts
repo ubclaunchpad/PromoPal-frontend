@@ -1,13 +1,13 @@
 // Types taken from the w3c Geolocation API: https://w3c.github.io/geolocation-api/#geolocation_interface
 
 export interface GeolocationCoordinates {
-  accuracy: number;
-  altitude: number | null;
-  altitudeAccuracy: number | null;
-  heading: number | null;
+  accuracy?: number;
+  altitude?: number | null;
+  altitudeAccuracy?: number | null;
+  heading?: number | null;
   latitude: number;
   longitude: number;
-  speed: number | null;
+  speed?: number | null;
 }
 
 export interface GeolocationPosition {
@@ -23,6 +23,16 @@ export interface GeolocationPositionError {
 
 class LocationService {
   /**
+   * Default location is downtown Vancouver
+   */
+  public get defaultLocation(): GeolocationPosition {
+    return {
+      coords: { latitude: 49.282, longitude: -123.1171 },
+      timestamp: Date.now(),
+    };
+  }
+
+  /**
    * Retrieves the user's current location using navigator.geolocation.
    * Times out and calls the error callback after 3s.
    */
@@ -34,8 +44,7 @@ class LocationService {
         const options = { timeout: 3000 };
         navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
       } else {
-        const error = new Error('navigator.geolocation is not defined');
-        reject(error);
+        resolve(this.defaultLocation);
       }
     });
   }
