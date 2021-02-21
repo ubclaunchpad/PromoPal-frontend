@@ -1,8 +1,11 @@
 import { Loader } from '@googlemaps/js-api-loader';
 
+type GoogleMap = google.maps.Map;
+type MapOptions = google.maps.MapOptions;
+
 class GoogleMapsApiLoaderService {
   private loader: Loader;
-  private map: google.maps.Map | null = null;
+  private map: GoogleMap | null = null;
 
   public constructor() {
     this.loader = new Loader({
@@ -16,9 +19,12 @@ class GoogleMapsApiLoaderService {
     return this.loader.load();
   }
 
-  public initializeMap(options?: google.maps.MapOptions) {
-    const mapContainerEl = document.getElementById('map-container') as HTMLElement;
-    return (this.map = new google.maps.Map(mapContainerEl, options));
+  public initializeMap(element: HTMLElement | null, options?: MapOptions): GoogleMap | null {
+    let map: GoogleMap | null = null;
+    if (element) {
+      map = new google.maps.Map(element, options);
+    }
+    return (this.map = map);
   }
 }
 
