@@ -4,6 +4,7 @@ import './PromotionDetails.css';
 import { ClockCircleOutlined, HeartOutlined } from '@ant-design/icons';
 import { Col, Row, Typography } from 'antd';
 import { formatDistanceToNow } from 'date-fns';
+import parse from 'html-react-parser';
 import React, { CSSProperties, ReactElement } from 'react';
 
 import { Promotion, Schedule } from '../../types/promotion';
@@ -21,10 +22,7 @@ const styles: { [identifier: string]: CSSProperties } = {
     fontSize: '0.8em',
   },
   header: {
-    fontFamily: 'ABeeZee',
-    fontSize: '1em',
-    lineHeight: '1em',
-    paddingBottom: 5,
+    justifyContent: 'space-between',
   },
   heart: {
     fontSize: '1.5em',
@@ -56,6 +54,8 @@ export default function PromotionDetails({
   expirationDate,
   restaurantName,
   schedules,
+  boldName,
+  boldDescription,
 }: Promotion): ReactElement {
   /**
    * Returns display text for age of promotion.
@@ -92,7 +92,7 @@ export default function PromotionDetails({
     <>
       <Row style={styles.header}>
         <Col span={22}>
-          <Title style={styles.promotionName}>{name}</Title>
+          <Title style={styles.promotionName}>{boldName ? parse(boldName) : name}</Title>
         </Col>
         <Col span={2}>
           <HeartOutlined style={styles.heart} />
@@ -102,7 +102,9 @@ export default function PromotionDetails({
         <Title style={styles.restaurantName}>{restaurantName}</Title>
       </Row>
       <Row>
-        <Text className="promotion-description">{description}</Text>
+        <Text className="promotion-description">
+          {boldDescription ? parse(boldDescription) : <p>{description}</p>}
+        </Text>
       </Row>
     </>
   );

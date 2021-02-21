@@ -2,6 +2,8 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import React, { CSSProperties, ReactElement, useEffect, useState } from 'react';
 
+import { DropdownProvider } from './contexts/DropdownContext';
+import { PromotionsListProvider } from './contexts/PromotionsListContext';
 import Router from './Router';
 import GoogleMapsApiLoaderService from './services/GoogleMapsApiLoaderService';
 
@@ -42,7 +44,11 @@ function App(): ReactElement {
 
   return (
     <div className="App" style={styles.container}>
-      {isLoading ? <Spin indicator={indicator} style={styles.spinner} /> : <Router />}
+      <PromotionsListProvider>
+        <DropdownProvider>
+          {isLoading ? <Spin indicator={indicator} style={styles.spinner} /> : <Router />}
+        </DropdownProvider>
+      </PromotionsListProvider>
     </div>
   );
 }
