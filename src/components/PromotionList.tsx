@@ -26,7 +26,6 @@ export default function PromotionList({
   const containerStyles = {
     height,
     width,
-    marginLeft: `calc(100vw - ${width})`,
     ...styles.container,
   };
 

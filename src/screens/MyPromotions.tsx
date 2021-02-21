@@ -109,7 +109,7 @@ export default function MyPromotions(): ReactElement {
   const [uploadedPromotions, setUploadedPromotions] = useState<Promotion[]>([]);
 
   /**
-   * On initial render, retrieves the user's currently uploaded promotions.
+   * On initial render, retrieves the user's uploaded promotions.
    */
   useEffect(() => {
     UserService.getUploadedPromotions(user.id)
