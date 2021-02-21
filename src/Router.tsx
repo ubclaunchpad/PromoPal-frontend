@@ -2,7 +2,6 @@ import React, { ReactElement } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import NavigationBar from './components/navigation/NavigationBar';
-import { PromotionsListProvider } from './contexts/PromotionsListContext';
 import { RestaurantCardProvider } from './contexts/RestaurantCardContext';
 import Home from './screens/Home';
 import MyAccount from './screens/MyAccount';
@@ -25,11 +24,9 @@ export default function Router(): ReactElement {
           </Route>
           <Route path="/promotion/upload">{/* <UploadPromotion /> */}</Route>
           <Route path="/">
-            <PromotionsListProvider>
-              <RestaurantCardProvider>
-                <Home />
-              </RestaurantCardProvider>
-            </PromotionsListProvider>
+            <RestaurantCardProvider>
+              <Home />
+            </RestaurantCardProvider>
           </Route>
         </Switch>
       </BrowserRouter>

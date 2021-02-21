@@ -20,6 +20,9 @@ export interface Promotion {
   restaurantName: string;
   schedules: Schedule[];
   user: User;
+  boldDescription?: string;
+  boldName?: string;
+  rank?: number;
 }
 
 export interface PromotionDTO {
@@ -29,6 +32,7 @@ export interface PromotionDTO {
   discountValue?: Discount['discountValue'];
   expirationDate?: Promotion['expirationDate'];
   promotionType?: Promotion['promotionType'];
+  searchQuery?: string;
 }
 
 export interface User {
