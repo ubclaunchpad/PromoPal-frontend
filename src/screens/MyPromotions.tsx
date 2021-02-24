@@ -1,12 +1,16 @@
+import '../index.css';
+
 import { Checkbox, Col, Row } from 'antd';
-import React, { CSSProperties, ReactElement, useEffect, useState } from 'react';
+import React, { CSSProperties, ReactElement, useCallback, useEffect, useState } from 'react';
 
 import UploadPromoButton from '../components/button/UploadPromoButton';
 import DropdownMenu from '../components/DropdownMenu';
+import DeleteModal from '../components/my-promotions/DeleteModal';
 import PromotionCard from '../components/promotion/PromotionCard';
+import * as PromotionService from '../services/PromotionService';
 import UserService from '../services/UserService';
 import { Dropdown, DropdownType } from '../types/dropdown';
-import { Promotion, User } from '../types/promotion';
+import { Promotion } from '../types/promotion';
 
 const dropdowns: Dropdown[] = [
   {
@@ -62,15 +66,6 @@ const dropdowns: Dropdown[] = [
   },
 ];
 
-const user: User = {
-  id: '8f8fc016-5bb2-4906-ad88-68932c438665',
-  email: 'example@abc.com',
-  firstName: 'John',
-  lastName: 'Lee',
-  password: '123',
-  username: 'user',
-};
-
 const dropdownMenuWidth = 30;
 const styles: { [identifier: string]: CSSProperties } = {
   body: {
@@ -80,20 +75,16 @@ const styles: { [identifier: string]: CSSProperties } = {
     paddingTop: 20,
     width: '100%',
   },
-
   dropdownMenuContainer: {
     width: `${dropdownMenuWidth}%`,
   },
-
   checkBoxContainer: {
     padding: 20,
     width: `${100 - dropdownMenuWidth}%`,
   },
-
   promotions: {
     marginTop: 15,
   },
-
   uploadPromoButtonContainer: {
     position: 'fixed',
     bottom: 50,
@@ -101,21 +92,111 @@ const styles: { [identifier: string]: CSSProperties } = {
   },
 };
 
-const onChange = () => {
+const onChange = (): void => {
   /* stub */
 };
 
 export default function MyPromotions(): ReactElement {
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [promotionToDelete, setPromotionToDelete] = useState<Promotion | null>(null);
   const [uploadedPromotions, setUploadedPromotions] = useState<Promotion[]>([]);
+
+  /**
+   * Fetches the user's uploaded promotions and sets them on this component.
+   */
+  const getUploadedPromotions = async (): Promise<void> => {
+    return UserService.getUploadedPromotions()
+      .then((promotions: Promotion[]) => setUploadedPromotions(promotions))
+      .catch(() => setUploadedPromotions([]));
+  };
+
+  /**
+   * When a user confirms the deletion, update the list of uploaded promotions.
+   */
+  const onDeleteOk = async (): Promise<void> => {
+    if (promotionToDelete) {
+      return PromotionService.deletePromotion(promotionToDelete.id)
+        .then(() => getUploadedPromotions())
+        .then(() => setIsModalVisible(false))
+        .catch((err: Error) => Promise.reject(err));
+    }
+  };
+
+  /**
+   * When a user cancels the deletion, close the modal.
+   */
+  const onDeleteCancel = (): void => {
+    setIsModalVisible(false);
+  };
+
+  /**
+   * When a user clicks the delete button, open the modal and set the promotion to delete.
+   */
+  const onDeleteButtonClick = useCallback((promotion: Promotion): void => {
+    setIsModalVisible(true);
+    setPromotionToDelete(promotion);
+  }, []);
+
+  /**
+   * If the user has not saved the promotion, save the promotion. Otherwise, delete it from their saved promotions.
+   */
+  const onLikeButtonClick = useCallback(
+    (promotionId: string) => {
+      const promotions = [...uploadedPromotions];
+      const promotion = promotions.find(({ id }) => id === promotionId);
+      if (promotion) {
+        if (promotion.liked) {
+          return UserService.savePromotion(promotionId)
+            .then(() => {
+              promotion.liked = false;
+              setUploadedPromotions(promotions);
+            })
+            .catch(() => null);
+        }
+        return UserService.unsavePromotion(promotionId)
+          .then(() => {
+            promotion.liked = true;
+            setUploadedPromotions(promotions);
+          })
+          .catch(() => null);
+      }
+    },
+    [uploadedPromotions, setUploadedPromotions]
+  );
 
   /**
    * On initial render, retrieves the user's uploaded promotions.
    */
   useEffect(() => {
-    UserService.getUploadedPromotions(user.id)
-      .then((promotions: Promotion[]) => setUploadedPromotions(promotions))
-      .catch(() => setUploadedPromotions([]));
+    getUploadedPromotions();
   }, []);
+
+  const renderUploadedPromotions = (): ReactElement => {
+    return (
+      <Row gutter={16}>
+        {uploadedPromotions.map((promotion: Promotion, index: number) => (
+          <Col span={12} key={index}>
+            <PromotionCard
+              id={promotion.id}
+              boldDescription={promotion.boldDescription}
+              boldName={promotion.boldName}
+              dateAdded={promotion.dateAdded}
+              expirationDate={promotion.expirationDate}
+              description={promotion.description}
+              image={promotion.image}
+              liked={promotion.liked}
+              name={promotion.name}
+              placeId={promotion.placeId}
+              restaurantName={promotion.restaurantName}
+              schedules={promotion.schedules}
+              onDeleteButtonClick={() => onDeleteButtonClick(promotion)}
+              onLikeButtonClick={() => onLikeButtonClick(promotion.id)}
+            />
+          </Col>
+        ))}
+      </Row>
+    );
+  };
 
   return (
     <>
@@ -131,19 +212,26 @@ export default function MyPromotions(): ReactElement {
             </Checkbox>
           </div>
         </div>
-        <div style={styles.promotions}>
-          <Row gutter={16}>
-            {uploadedPromotions.map((promotion: Promotion) => (
-              <Col span={12}>
-                <PromotionCard {...promotion} />
-              </Col>
-            ))}
-          </Row>
-        </div>
+        <div style={styles.promotions}>{renderUploadedPromotions()}</div>
         <div style={styles.uploadPromoButtonContainer}>
           <UploadPromoButton />
         </div>
       </div>
+
+      {promotionToDelete && (
+        <DeleteModal
+          title="Delete Promotion"
+          description={
+            <>
+              Are you sure you want to delete the promotion <b>{promotionToDelete.name}</b>?
+            </>
+          }
+          isVisible={isModalVisible}
+          promotion={promotionToDelete}
+          onOk={onDeleteOk}
+          onCancel={onDeleteCancel}
+        />
+      )}
     </>
   );
 }

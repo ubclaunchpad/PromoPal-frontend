@@ -60,7 +60,7 @@ export default function Header({
 }: Restaurant): ReactElement {
   const { dispatch } = useRestaurantCard();
 
-  const HeaderTitle = () => (
+  const HeaderTitle = (): ReactElement => (
     <Row>
       <Col span={22}>
         <Title level={3} style={styles.restaurantName}>
@@ -76,7 +76,7 @@ export default function Header({
     </Row>
   );
 
-  const Buttons = () => (
+  const Buttons = (): ReactElement => (
     <Row align="middle" justify="space-between" style={styles.buttons}>
       <Button style={styles.button}>
         <a style={styles.link} href={website}>

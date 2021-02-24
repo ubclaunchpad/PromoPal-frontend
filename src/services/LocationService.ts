@@ -39,8 +39,8 @@ class LocationService {
   public getCurrentLocation(): Promise<GeolocationPosition> {
     return new Promise((resolve, reject) => {
       if (navigator.geolocation) {
-        const onSuccess = (position: GeolocationPosition) => resolve(position);
-        const onError = (error: GeolocationPositionError) => reject(error);
+        const onSuccess = (position: GeolocationPosition): void => resolve(position);
+        const onError = (error: GeolocationPositionError): void => reject(error);
         const options = { timeout: 3000 };
         navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
       } else {

@@ -36,7 +36,7 @@ export default function AccountDetails({
   password,
   username,
 }: User): ReactElement {
-  const handleClick = () => {
+  const handleClick = (): void => {
     alert('Click');
   };
 

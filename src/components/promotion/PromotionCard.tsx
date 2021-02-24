@@ -2,8 +2,8 @@ import { Card } from 'antd';
 import React, { CSSProperties, ReactElement, useCallback } from 'react';
 
 import { DispatchAction, useRestaurantCard } from '../../contexts/RestaurantCardContext';
-import { getRestaurant } from '../../services/PromotionService';
-import { Promotion } from '../../types/promotion';
+import * as PromotionService from '../../services/PromotionService';
+import { PromotionImage as PromotionImageType, Schedule } from '../../types/promotion';
 import { Restaurant } from '../../types/restaurant';
 import PromotionDetails from '../promotion/PromotionDetails';
 import PromotionImage from '../promotion/PromotionImage';
@@ -26,7 +26,26 @@ const styles: { [identifier: string]: CSSProperties } = {
   },
 };
 
-export default function PromotionCard(promotion: Promotion): ReactElement {
+interface Props {
+  dateAdded: string;
+  description: string;
+  expirationDate: string;
+  id: string;
+  image: PromotionImageType;
+  liked: boolean;
+  name: string;
+  placeId: string;
+  restaurantName: string;
+  schedules: Schedule[];
+
+  onDeleteButtonClick?: () => void;
+  onLikeButtonClick: () => void;
+
+  boldName?: string;
+  boldDescription?: string;
+}
+
+export default function PromotionCard(props: Props): ReactElement {
   const { state, dispatch } = useRestaurantCard();
 
   /**
@@ -41,7 +60,7 @@ export default function PromotionCard(promotion: Promotion): ReactElement {
    * - matching restaurant results in an error
    */
   const onClickHandler = useCallback(async () => {
-    return getRestaurant(promotion)
+    return PromotionService.getRestaurant(props.placeId)
       .then((restaurant: Restaurant) => {
         const isOpeningRestaurantCard = !state.showCard;
         const isNewRestaurant = state.showCard && state.restaurant.id !== restaurant.id;
@@ -52,12 +71,25 @@ export default function PromotionCard(promotion: Promotion): ReactElement {
         }
       })
       .catch(() => dispatch({ type: DispatchAction.HIDE_CARD }));
-  }, [state, dispatch, promotion]);
+  }, [state, dispatch, props.placeId]);
 
   return (
     <Card style={styles.card} bodyStyle={styles.body} onClick={onClickHandler}>
-      <PromotionImage {...promotion.image} />
-      <PromotionDetails {...promotion} />
+      <PromotionImage src={props.image?.src} />
+      <PromotionDetails
+        boldName={props.boldName}
+        boldDescription={props.boldDescription}
+        dateAdded={props.dateAdded}
+        description={props.description}
+        expirationDate={props.expirationDate}
+        id={props.id}
+        liked={props.liked}
+        name={props.name}
+        restaurantName={props.restaurantName}
+        schedules={props.schedules}
+        onDeleteButtonClick={props.onDeleteButtonClick}
+        onLikeButtonClick={props.onLikeButtonClick}
+      />
     </Card>
   );
 }

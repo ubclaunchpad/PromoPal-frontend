@@ -20,7 +20,7 @@ function MapContainer({
    * - Creates and displays the markers for all promotions listed
    */
   useEffect(() => {
-    function createMap(userLocation: google.maps.LatLngLiteral) {
+    function createMap(userLocation: google.maps.LatLngLiteral): void {
       const options = { center: userLocation, zoom: 15 };
       const map = GooglePlacesApiLoaderService.initializeMap(mapElement.current, options);
       if (map) {

@@ -1,8 +1,9 @@
-import React, { CSSProperties, ReactElement, useEffect, useState } from 'react';
+import React, { CSSProperties, ReactElement, useCallback, useEffect, useState } from 'react';
 
 import PromotionCard from '../components/promotion/PromotionCard';
 import { DispatchAction, usePromotionsList } from '../contexts/PromotionsListContext';
 import { filterPromotions, getPromotions, sortPromotions } from '../services/PromotionService';
+import UserService from '../services/UserService';
 import { Promotion } from '../types/promotion';
 
 const styles: { [identifier: string]: CSSProperties } = {
@@ -28,6 +29,33 @@ export default function PromotionList({
     width,
     ...styles.container,
   };
+
+  /**
+   * If the user has not saved the promotion, save the promotion. Otherwise, delete it from their saved promotions.
+   */
+  const onLikeButtonClick = useCallback(
+    (promotionId: string) => {
+      const promos = [...promotions];
+      const promotion = promos.find(({ id }) => id === promotionId);
+      if (promotion) {
+        if (promotion.liked) {
+          return UserService.savePromotion(promotionId)
+            .then(() => {
+              promotion.liked = false;
+              setPromotions(promos);
+            })
+            .catch(() => null);
+        }
+        return UserService.unsavePromotion(promotionId)
+          .then(() => {
+            promotion.liked = true;
+            setPromotions(promos);
+          })
+          .catch(() => null);
+      }
+    },
+    [promotions, setPromotions]
+  );
 
   /**
    * This hook is run everytime the promotionsListState changes. This function sorts and filters the promotions
@@ -70,7 +98,22 @@ export default function PromotionList({
   return (
     <div style={containerStyles}>
       {promotions.map((promotion: Promotion) => (
-        <PromotionCard key={promotion.id} {...promotion} />
+        <PromotionCard
+          key={promotion.id}
+          id={promotion.id}
+          boldDescription={promotion.boldDescription}
+          boldName={promotion.boldName}
+          dateAdded={promotion.dateAdded}
+          expirationDate={promotion.expirationDate}
+          description={promotion.description}
+          image={promotion.image}
+          liked={promotion.liked}
+          name={promotion.name}
+          placeId={promotion.placeId}
+          restaurantName={promotion.restaurantName}
+          schedules={promotion.schedules}
+          onLikeButtonClick={() => onLikeButtonClick(promotion.id)}
+        />
       ))}
     </div>
   );

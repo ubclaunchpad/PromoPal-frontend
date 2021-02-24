@@ -169,7 +169,7 @@ class GooglePlacesService {
   private refreshPlaceIDAndGetDetails(placeID: string): Promise<RestaurantDetails> {
     return this.refreshPlaceID(placeID)
       .then((newPlaceID: string) => {
-        const handleNotFoundError = (invalidPlaceID: string) => {
+        const handleNotFoundError = (invalidPlaceID: string): Promise<RestaurantDetails> => {
           return Promise.reject(new Error('NOT_FOUND ERROR FOR ' + invalidPlaceID));
         };
         return this.getRestaurantDetails(newPlaceID, handleNotFoundError);

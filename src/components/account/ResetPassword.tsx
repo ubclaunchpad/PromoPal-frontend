@@ -26,7 +26,7 @@ const styles: { [identifier: string]: CSSProperties } = {
 };
 
 export default function ResetPassword(): ReactElement {
-  const handleClick = () => {
+  const handleClick = (): void => {
     alert('Click');
   };
 
