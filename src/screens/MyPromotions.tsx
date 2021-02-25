@@ -6,7 +6,7 @@ import DropdownMenu from '../components/DropdownMenu';
 import PromotionCard from '../components/promotion/PromotionCard';
 import UserService from '../services/UserService';
 import { Dropdown, DropdownType } from '../types/dropdown';
-import { Promotion, User } from '../types/promotion';
+import { Promotion } from '../types/promotion';
 
 const dropdowns: Dropdown[] = [
   {
@@ -62,15 +62,6 @@ const dropdowns: Dropdown[] = [
   },
 ];
 
-const user: User = {
-  id: '8f8fc016-5bb2-4906-ad88-68932c438665',
-  email: 'example@abc.com',
-  firstName: 'John',
-  lastName: 'Lee',
-  password: '123',
-  username: 'user',
-};
-
 const dropdownMenuWidth = 30;
 const styles: { [identifier: string]: CSSProperties } = {
   body: {
@@ -112,7 +103,7 @@ export default function MyPromotions(): ReactElement {
    * On initial render, retrieves the user's uploaded promotions.
    */
   useEffect(() => {
-    UserService.getUploadedPromotions(user.id)
+    UserService.getUploadedPromotions()
       .then((promotions: Promotion[]) => setUploadedPromotions(promotions))
       .catch(() => setUploadedPromotions([]));
   }, []);

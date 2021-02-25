@@ -13,4 +13,6 @@ export interface ApiError {
 export type PromotionsResponse = ApiResponse<Promotion[]>;
 
 // Users
+export type GetUserResponse = ApiResponse<User>;
+export type UpdateUserResponse = ApiResponse<string>;
 export type UploadedPromotionsResponse = ApiResponse<User>;

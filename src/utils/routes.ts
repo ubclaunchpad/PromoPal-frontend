@@ -10,6 +10,8 @@ export default {
   SAVED_PROMOTIONS: 'saved_promotions',
   SCHEDULES: 'schedules',
   USERS: {
-    UPLOADED_PROMOTIONS: (id: string): string => `/users/${id}/uploadedPromotions`,
+    GET: (userId: string): string => `/users/${userId}`,
+    UPDATE: (userId: string): string => `/users/${userId}`,
+    UPLOADED_PROMOTIONS: (userId: string): string => `/users/${userId}/uploadedPromotions`,
   },
 };
