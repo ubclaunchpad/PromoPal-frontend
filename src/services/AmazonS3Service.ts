@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 
 import { Image } from '../types/image';
 
-const maxImageSize = 1000000;
+const maxImageBinaryLength = 1000000;
 
 class AmazonS3Service {
   onFileChange(e: React.ChangeEvent<HTMLInputElement> | DragEvent): Promise<Image> {
@@ -26,7 +26,7 @@ class AmazonS3Service {
           return reject(new Error('Wrong file type. Only images are allowed.'));
         }
         // Restrict the size of the file
-        if (file.length > maxImageSize) {
+        if (file.length > maxImageBinaryLength) {
           return reject(new Error('Image is loo large.'));
         }
         return resolve({
@@ -57,13 +57,11 @@ class AmazonS3Service {
         const blobData = new Blob([new Uint8Array(array)], {
           type: 'image/' + image.imageType,
         });
-        const result = fetch(response.data.uploadURL, {
+        fetch(response.data.uploadURL, {
           method: 'PUT',
           body: blobData,
         });
-        // console.log('Result: ', result)
-        // // Final URL for the user doesn't need the query string params
-        // console.log('Upload URL: ', response.data.uploadURL.split('?')[0])
+        // Uploaded photo URL will be https://promopal.s3-us-west-1.amazonaws.com/`promotionId`.`imageType`
       })
       .catch((err: AxiosError) => {
         return Promise.reject(err);
