@@ -5,7 +5,7 @@ import Routes from '../utils/routes';
 
 class UserService {
   public async getUploadedPromotions(userId: string): Promise<Promotion[]> {
-    const url = `${Routes.USERS}/${userId}/uploadedPromotions/`;
+    const url = Routes.USERS.UPLOADED_PROMOTIONS(userId);
     return fetch(url)
       .then((response: Response) => response.json())
       .then((response: UploadedPromotionsResponse) => {
