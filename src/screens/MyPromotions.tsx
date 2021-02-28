@@ -4,9 +4,9 @@ import React, { CSSProperties, ReactElement, useEffect, useState } from 'react';
 import UploadPromoButton from '../components/button/UploadPromoButton';
 import DropdownMenu from '../components/DropdownMenu';
 import PromotionCard from '../components/promotion/PromotionCard';
-import { usePromotionsList } from '../contexts/PromotionsListContext';
+import UserService from '../services/UserService';
 import { Dropdown, DropdownType } from '../types/dropdown';
-import { Promotion } from '../types/promotion';
+import { Promotion, User } from '../types/promotion';
 
 const dropdowns: Dropdown[] = [
   {
@@ -62,6 +62,15 @@ const dropdowns: Dropdown[] = [
   },
 ];
 
+const user: User = {
+  id: '8f8fc016-5bb2-4906-ad88-68932c438665',
+  email: 'example@abc.com',
+  firstName: 'John',
+  lastName: 'Lee',
+  password: '123',
+  username: 'user',
+};
+
 const dropdownMenuWidth = 30;
 const styles: { [identifier: string]: CSSProperties } = {
   body: {
@@ -97,24 +106,16 @@ const onChange = () => {
 };
 
 export default function MyPromotions(): ReactElement {
-  const [promotions, setPromotions] = useState<Promotion[]>([]);
-
-  const { state } = usePromotionsList();
+  const [uploadedPromotions, setUploadedPromotions] = useState<Promotion[]>([]);
 
   /**
-   * TODO: https://promopal.atlassian.net/browse/PP-51
-   * randomly choose 3 promotions for now
+   * On initial render, retrieves the user's uploaded promotions.
    */
   useEffect(() => {
-    const promotions: Promotion[] = [];
-    if (state.data.length > 0) {
-      for (let i = 0; i < 3; i++) {
-        const rand = Math.floor(Math.random() * state.data.length);
-        promotions.push(state.data[rand]);
-      }
-    }
-    setPromotions(promotions);
-  }, [state.data]);
+    UserService.getUploadedPromotions(user.id)
+      .then((promotions: Promotion[]) => setUploadedPromotions(promotions))
+      .catch(() => setUploadedPromotions([]));
+  }, []);
 
   return (
     <>
@@ -132,7 +133,7 @@ export default function MyPromotions(): ReactElement {
         </div>
         <div style={styles.promotions}>
           <Row gutter={16}>
-            {promotions.map((promotion: Promotion) => (
+            {uploadedPromotions.map((promotion: Promotion) => (
               <Col span={12}>
                 <PromotionCard {...promotion} />
               </Col>
