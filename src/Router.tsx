@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import NavigationBar from './components/navigation/NavigationBar';
 import Home from './screens/Home';
+import { LocationSearchInput } from './screens/LocationSearchInput';
 import MyAccount from './screens/MyAccount';
 import MyPromotions from './screens/MyPromotions';
 
@@ -21,7 +22,9 @@ export default function Router(): ReactElement {
           <Route path="/myaccount">
             <MyAccount />
           </Route>
-          <Route path="/promotion/upload">{/* <UploadPromotion /> */}</Route>
+          <Route path="/promotion/upload">
+            <LocationSearchInput />
+          </Route>
           <Route path="/">
             <Home />
           </Route>
