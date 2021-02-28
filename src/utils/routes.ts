@@ -9,5 +9,7 @@ export default {
   PROMOTIONS: '/promotions',
   SAVED_PROMOTIONS: 'saved_promotions',
   SCHEDULES: 'schedules',
-  USERS: '/users',
+  USERS: {
+    UPLOADED_PROMOTIONS: (id: string): string => `/users/${id}/uploadedPromotions`,
+  },
 };
