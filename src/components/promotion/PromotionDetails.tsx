@@ -8,6 +8,7 @@ import parse from 'html-react-parser';
 import React, { CSSProperties, ReactElement } from 'react';
 
 import { Promotion, Schedule } from '../../types/promotion';
+import { formatTime } from '../../utils/time';
 
 const { Title, Text } = Typography;
 
@@ -65,24 +66,10 @@ export default function PromotionDetails({
   };
 
   const displaySchedules = (schedules: Schedule[]) => {
-    const formatTime = (startTime: string): string => {
-      const [hour, minute] = startTime.split(':');
-
-      const hourNum = parseInt(hour);
-      const minuteNum = parseInt(minute);
-
-      let formattedTime = `${hourNum === 12 ? hourNum : hourNum % 12}`;
-      if (minuteNum !== 0) {
-        formattedTime += `:${minuteNum}`;
-      }
-      formattedTime += hourNum < 12 ? ' AM' : ' PM';
-      return formattedTime;
-    };
-
     return schedules.map(({ dayOfWeek, startTime, endTime }) => (
       <Row>
         <Text style={styles.schedule}>
-          {dayOfWeek}: {formatTime(startTime) + ' - ' + formatTime(endTime)}
+          {dayOfWeek}: {formatTime(startTime, endTime)}
         </Text>
       </Row>
     ));
