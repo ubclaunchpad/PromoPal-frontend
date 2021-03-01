@@ -6,7 +6,7 @@ import SearchBar from '../navigation/SearchBar';
 
 enum Pages {
   Home = 'Home',
-  Login = 'Login',
+  Account = 'Account',
   UploadPromotion = 'UploadPromotion',
 }
 
@@ -46,6 +46,8 @@ export default function NavigationBar(): ReactElement {
     fontWeight: current === key ? 'bold' : 'normal',
   });
 
+  const loggedIn = false;
+
   return (
     <header id="navigation-header" style={styles.header}>
       <div style={styles.navigation}>
@@ -59,8 +61,8 @@ export default function NavigationBar(): ReactElement {
           <Menu.Item key={Pages.Home} style={isActive(Pages.Home)}>
             <Link to="/">Home</Link>
           </Menu.Item>
-          <Menu.Item key={Pages.Login} style={isActive(Pages.Login)}>
-            <Link to="/login">Login</Link>
+          <Menu.Item key={Pages.Account} style={isActive(Pages.Account)}>
+            <Link to="/account">{loggedIn ? 'My Account' : 'Login'}</Link>
           </Menu.Item>
           <Menu.Item key={Pages.UploadPromotion} style={isActive(Pages.UploadPromotion)}>
             <Link to="/promotion/upload">Upload Promotion</Link>
