@@ -14,12 +14,6 @@ const styles: { [identifier: string]: CSSProperties } = {
     overflow: 'auto',
     padding: 30,
   },
-  button: {
-    marginTop: 10,
-    backgroundColor: '#FFC529',
-    float: 'right',
-    fontWeight: 'bold',
-  },
   inputLabel: {
     margin: '5px 0',
   },
@@ -48,7 +42,7 @@ export default function AccountDetails({
     defaultValue: string;
   }): ReactElement => (
     <div style={styles.inputWrapper}>
-      <p style={styles.inputLabel}>{label}</p>
+      <p className="inputLabel">{label}</p>
       <Input defaultValue={defaultValue} />
     </div>
   );
@@ -67,7 +61,7 @@ export default function AccountDetails({
       </Row>
       <InputWrapper label="Username" defaultValue={username} />
       <InputWrapper label="Email" defaultValue={email} />
-      <Button size="large" shape="round" onClick={handleClick} style={styles.button}>
+      <Button size="large" shape="round" onClick={handleClick} className="button">
         Save
       </Button>
     </div>
