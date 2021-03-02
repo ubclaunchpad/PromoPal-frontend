@@ -1,15 +1,8 @@
+import { PromotionsResponse } from '../types/api';
 import { FilterOptions, Promotion, PromotionDTO, Sort } from '../types/promotion';
 import { Restaurant } from '../types/restaurant';
+import { isError } from '../utils/api';
 import Routes from '../utils/routes';
-
-type PromotionsSuccess = Promotion[];
-
-type PromotionsError = {
-  errorCode: string;
-  message: string[];
-};
-
-type PromotionsResponse = PromotionsSuccess | PromotionsError;
 
 /**
  * Fetches entire list of promotions. If a query object is given, filters the promotions according to the given query.
@@ -31,19 +24,14 @@ export async function getPromotions(query?: PromotionDTO[]): Promise<Promotion[]
   }
 
   return fetch(endpoint)
-    .then((res: Response) => res.json())
-    .then((promotions: PromotionsResponse) => {
-      // Promotions are returned in arrays
-      if (Array.isArray(promotions)) {
-        return promotions as PromotionsSuccess;
+    .then((response: Response) => response.json())
+    .then((response: PromotionsResponse) => {
+      if (isError<PromotionsResponse>(response)) {
+        return Promise.reject(response);
       }
-      // If it isn't an array, it's probably an object that indicates an error
-      return Promise.reject(promotions as PromotionsError);
+      return Promise.resolve(response);
     })
-    .catch((err: Error) => {
-      // Allow caller to handle error
-      throw err;
-    });
+    .catch((err: Error) => Promise.reject(err));
 }
 
 export async function getRestaurant(id: string): Promise<Restaurant> {
