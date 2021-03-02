@@ -11,15 +11,22 @@ export function restaurantCardReducer(state: State, { type, payload }: DispatchP
   let nextState = state;
 
   switch (type) {
+    /**
+     * Shows the restaurant card.
+     */
     case DispatchAction.SHOW_CARD: {
-      const { restaurant } = payload as { restaurant: Restaurant };
+      const { placeId, restaurant } = payload as { placeId: string; restaurant: Restaurant };
       nextState = {
         ...nextState,
+        placeId,
         restaurant: restaurant ?? state.restaurant,
         showCard: true,
       };
       break;
     }
+    /**
+     * Hides the restaurant card.
+     */
     case DispatchAction.HIDE_CARD:
       nextState = {
         ...nextState,
@@ -27,6 +34,31 @@ export function restaurantCardReducer(state: State, { type, payload }: DispatchP
         showCard: false,
       };
       break;
+    /**
+     * Updates whether the restaurant card should be visible or not.
+     *
+     * Shows the restaurant card if:
+     * - card was previously closed
+     * - clicked restaurant differs from restaurant currently being shown
+     *
+     * Hides the restaurant card if:
+     * - card is currently open and we click the associated promotion
+     * - matching restaurant results in an error
+     */
+    case DispatchAction.TOGGLE_CARD: {
+      const { placeId } = payload as { placeId: string; restaurant: Restaurant };
+      const isOpeningRestaurantCard = !state.showCard;
+      const isNewRestaurant = state.showCard && state.placeId !== placeId;
+
+      let dispatchParams: DispatchParams;
+      if (isNewRestaurant || isOpeningRestaurantCard) {
+        dispatchParams = { type: DispatchAction.SHOW_CARD, payload };
+      } else {
+        dispatchParams = { type: DispatchAction.HIDE_CARD };
+      }
+      nextState = restaurantCardReducer(state, dispatchParams);
+      break;
+    }
     default:
       break;
   }

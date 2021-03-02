@@ -34,8 +34,19 @@ export default function RestaurantCard(restaurant: Restaurant): ReactElement {
           left: `calc(65% - ${containerPadding} - ${styles.card.width}px)`,
         }}
       >
-        <Header {...restaurant} />
-        <Body {...restaurant} />
+        <Header
+          cuisine={restaurant.cuisine}
+          distance={restaurant.distance}
+          priceLevel={restaurant.priceLevel}
+          name={restaurant.name}
+          rating={restaurant.rating}
+          website={restaurant.website}
+        />
+        <Body
+          address={restaurant.address}
+          openingHours={restaurant.openingHours}
+          phoneNumber={restaurant.phoneNumber}
+        />
       </Col>
     </div>
   );
