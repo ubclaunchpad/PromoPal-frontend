@@ -25,9 +25,12 @@ export default function LoginCard(props: Props): ReactElement {
   const onFinish = () => {
     alert('Finish');
     //console.log('Success:', values);
+    // TODO https://promopal.atlassian.net/jira/software/projects/PP/boards/1?selectedIssue=PP-42
+    // TODO https://promopal.atlassian.net/jira/software/projects/PP/boards/1?selectedIssue=PP-43
   };
 
   const onFinishFailed = () => {
+    // TODO https://promopal.atlassian.net/jira/software/projects/PP/boards/1?selectedIssue=PP-44
     //console.log('Failed:', errorInfo);
   };
 
