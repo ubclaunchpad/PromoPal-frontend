@@ -19,10 +19,13 @@ export default function RegisterCard(props: Props): ReactElement {
   const onFinish = () => {
     alert('Finish');
     //console.log('Success:', values);
+    // TODO https://promopal.atlassian.net/jira/software/projects/PP/boards/1?selectedIssue=PP-35
+    // TODO https://promopal.atlassian.net/jira/software/projects/PP/boards/1?selectedIssue=PP-37
   };
 
   const onFinishFailed = () => {
     //console.log('Failed:', errorInfo);
+    // TODO https://promopal.atlassian.net/jira/software/projects/PP/boards/1?selectedIssue=PP-38
   };
 
   return (
