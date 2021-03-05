@@ -1,17 +1,9 @@
+import { Button, Checkbox, Col, DatePicker, Form, Input, Radio, Row, TimePicker } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
-import {
-  Form,
-  Input,
-  Button,
-  Checkbox,
-  Radio,
-  Row,
-  Col,
-  DatePicker,
-  TimePicker,
-} from 'antd';
 
 import MultipleSelect from '../components/input/MultipleSelect';
+import LocationSearchInput from '../components/restaurant/LocationSearchInput';
+import EnumService from '../services/EnumService';
 
 const styles: { [identifier: string]: CSSProperties } = {
   container: {
@@ -37,7 +29,7 @@ const styles: { [identifier: string]: CSSProperties } = {
 };
 
 export default function UploadPromotion(): ReactElement {
-  const title = 'I want to share a deal!';
+  const [form] = Form.useForm();
 
   const onFinish = () => {
     /* stub */
@@ -50,48 +42,36 @@ export default function UploadPromotion(): ReactElement {
     labelCol: { span: 4 },
     wrapperCol: { flex: 1 },
   };
+
   const centerLayout = {
     wrapperCol: { span: 16 },
   };
 
-  const cuisineTypeOptions = [
-    'American',
-    'Canadian',
-    'Chinese',
-    'French',
-    'Greek',
-    'Indian',
-    'Indonesian',
-    'Lebanese',
-    'Russian',
-    'Vietnamese',
-  ];
+  /**
+   * Handler to be called when a restaurant has been selected from the autocomplete options.
+   *
+   * @param placeId - The placeId of the chosen restaurant
+   */
+  const onSelectRestaurant = (placeId: string) => {
+    form.setFieldsValue({ restaurant: placeId });
+  };
 
-  const categoryTypeOptions = [
-    'Happy Hour',
-    '10% off',
-    '25% off',
-    '50% off',
-    'BOGO',
-  ];
-
-  const daysOfWeek = [
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-  ];
+  /**
+   * Handler to be called when the user types in the text input. The restaurant is set to an empty string,
+   * which fails form validation and forces the user to select a restaurant from one of the autocomplete options.
+   */
+  const onChangeRestaurant = () => {
+    form.setFieldsValue({ restaurant: '' });
+  };
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.header}>{title}</h1>
+      <h1 style={styles.header}>I want to share a deal!</h1>
       <Form
         {...layout}
         name="basic"
         initialValues={{ remember: true }}
+        form={form}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
       >
@@ -107,37 +87,22 @@ export default function UploadPromotion(): ReactElement {
           ]}
           style={styles.formItem}
         >
-          <Input
-            placeholder="e.g. 10% off Happy Hour Menu"
-            autoComplete="off"
-          />
+          <Input placeholder="e.g. 10% off Happy Hour Menu" autoComplete="off" allowClear={true} />
         </Form.Item>
 
         <Form.Item
-          label="Restaurant Name"
-          name="restaurantName"
-          labelAlign="left"
-          rules={[
-            { required: true, message: "Please input the restaurant's name!" },
-          ]}
-          style={styles.formItem}
-        >
-          <Input placeholder="e.g. Au Comptoir" autoComplete="off" />
-        </Form.Item>
-
-        <Form.Item
-          label="Restaurant Address"
-          name="restaurantAddress"
+          label="Restaurant"
+          name="restaurant"
           labelAlign="left"
           rules={[
             {
               required: true,
-              message: "Please input the restaurant's address!",
+              message: 'Please select a restaurant! Search for one by name or address.',
             },
           ]}
           style={styles.formItem}
         >
-          <Input placeholder="e.g. 2278 W 4th Ave, Vancouver, BC V6K 1N8" />
+          <LocationSearchInput onSelect={onSelectRestaurant} onChange={onChangeRestaurant} />
         </Form.Item>
 
         <Form.Item
@@ -164,7 +129,7 @@ export default function UploadPromotion(): ReactElement {
         >
           <MultipleSelect
             placeholder="Select a cuisine type"
-            options={cuisineTypeOptions.map((type) => ({ value: type }))}
+            options={EnumService.cuisineTypes.map((type) => ({ value: type }))}
           />
         </Form.Item>
 
@@ -176,7 +141,7 @@ export default function UploadPromotion(): ReactElement {
         >
           <MultipleSelect
             placeholder="Select a category type"
-            options={categoryTypeOptions.map((type) => ({ value: type }))}
+            options={EnumService.promotionTypes.map((type) => ({ value: type }))}
           />
         </Form.Item>
 
@@ -189,24 +154,15 @@ export default function UploadPromotion(): ReactElement {
           <Input.TextArea autoSize={{ minRows: 3, maxRows: 5 }} />
         </Form.Item>
 
-        <Form.Item
-          label="Times"
-          name="promotionTimes"
-          labelAlign="left"
-          style={styles.formItem}
-        >
+        <Form.Item label="Times" name="promotionTimes" labelAlign="left" style={styles.formItem}>
           <Checkbox.Group style={{ width: '100%' }}>
-            {daysOfWeek.map((day, index) => (
+            {EnumService.daysOfWeek.map((day, index) => (
               <Row key={index} style={{ paddingTop: 10, paddingBottom: 10 }}>
                 <Col span={4}>
                   <Checkbox value={day}>{day}</Checkbox>
                 </Col>
                 <Col>
-                  <TimePicker.RangePicker
-                    use12Hours
-                    minuteStep={15}
-                    format="h:mm a"
-                  />
+                  <TimePicker.RangePicker use12Hours minuteStep={15} format="h:mm a" />
                 </Col>
               </Row>
             ))}

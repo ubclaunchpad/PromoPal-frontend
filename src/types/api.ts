@@ -9,6 +9,9 @@ export interface ApiError {
   message: string[];
 }
 
+// Enums
+export type EnumResponse = ApiResponse<string[]>;
+
 // Promotions
 export type PromotionsResponse = ApiResponse<Promotion[]>;
 

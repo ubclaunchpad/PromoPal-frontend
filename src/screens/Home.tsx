@@ -6,53 +6,17 @@ import PromotionList from '../components/PromotionList';
 import RestaurantCard from '../components/restaurant/RestaurantCard';
 import { DispatchAction, usePromotionsList } from '../contexts/PromotionsListContext';
 import { useRestaurantCard } from '../contexts/RestaurantCardContext';
-import { getEnum } from '../services/EnumService';
+import EnumService from '../services/EnumService';
 import { Dropdown, DropdownType } from '../types/dropdown';
 import { Sort } from '../types/promotion';
-import Routes from '../utils/routes';
 
 const mapWidth = 65;
 
 export default function Home(): ReactElement {
   const [height, setHeight] = useState<string>('');
 
-  /* Options for each dropdown */
-  const [cuisineTypes, setCuisineTypes] = useState<string[]>([]);
-  const [daysOfWeek, setDaysOfWeek] = useState<string[]>([]);
-  const [discountTypes, setDiscountTypes] = useState<string[]>([]);
-  const [promotionTypes, setPromotionTypes] = useState<string[]>([]);
-
   const { dispatch } = usePromotionsList();
   const { state: restaurantCardState } = useRestaurantCard();
-
-  /**
-   * On component mount, load dropdown options
-   */
-  useEffect(() => {
-    const endpoints = [
-      {
-        endpoint: Routes.ENUMS.CUISINE_TYPES,
-        setOptions: setCuisineTypes,
-      },
-      {
-        endpoint: Routes.ENUMS.DAYS_OF_WEEK,
-        setOptions: setDaysOfWeek,
-      },
-      {
-        endpoint: Routes.ENUMS.DISCOUNT_TYPES,
-        setOptions: setDiscountTypes,
-      },
-      {
-        endpoint: Routes.ENUMS.PROMOTION_TYPES,
-        setOptions: setPromotionTypes,
-      },
-    ];
-    endpoints.forEach(({ endpoint, setOptions }) => {
-      getEnum(endpoint)
-        .then((options) => setOptions(options))
-        .catch(() => setOptions([]));
-    });
-  }, []);
 
   /**
    * Callback functions when dropdown option is selected
@@ -117,7 +81,7 @@ export default function Home(): ReactElement {
     {
       text: 'Discount Type',
       type: DropdownType.Radio,
-      options: discountTypes.map((discountType) => ({
+      options: EnumService.discountTypes.map((discountType) => ({
         action: actions.discountType,
         text: discountType === 'Other' ? 'Other' : `${discountType} Off`,
       })),
@@ -125,7 +89,7 @@ export default function Home(): ReactElement {
     {
       text: 'Cuisine',
       type: DropdownType.MultiSelect,
-      options: cuisineTypes.map((cuisine) => ({
+      options: EnumService.cuisineTypes.map((cuisine) => ({
         action: actions.cuisine,
         text: cuisine,
       })),
@@ -133,7 +97,7 @@ export default function Home(): ReactElement {
     {
       text: 'Day of Week',
       type: DropdownType.MultiSelect,
-      options: daysOfWeek.map((dayOfWeek) => ({
+      options: EnumService.daysOfWeek.map((dayOfWeek) => ({
         action: actions.dayOfWeek,
         text: dayOfWeek,
       })),
@@ -141,7 +105,7 @@ export default function Home(): ReactElement {
     {
       text: 'Promotion Type',
       type: DropdownType.MultiSelect,
-      options: promotionTypes.map((promotionType) => ({
+      options: EnumService.promotionTypes.map((promotionType) => ({
         action: actions.promotionType,
         text: promotionType,
       })),

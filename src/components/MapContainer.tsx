@@ -66,7 +66,7 @@ function MapContainer({
    * - Creates and displays the markers for all promotions listed
    */
   useEffect(() => {
-    LocationService.getCurrentLocation()
+    LocationService.GeolocationPosition.getCurrentLocation()
       .then(({ coords: { latitude, longitude } }: GeolocationPosition) => {
         createMap({ lat: latitude, lng: longitude });
       })
@@ -75,7 +75,7 @@ function MapContainer({
           defaultLocation: {
             coords: { latitude, longitude },
           },
-        } = LocationService;
+        } = LocationService.GeolocationPosition;
         createMap({ lat: latitude, lng: longitude });
       });
   }, [createMap]);

@@ -1,5 +1,5 @@
-import React, { ReactElement } from 'react';
 import { Select } from 'antd';
+import React, { ReactElement } from 'react';
 
 type OptionType = {
   value: string;

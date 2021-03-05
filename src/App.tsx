@@ -6,6 +6,7 @@ import { DropdownProvider } from './contexts/DropdownContext';
 import { PromotionsListProvider } from './contexts/PromotionsListContext';
 import { RestaurantCardProvider } from './contexts/RestaurantCardContext';
 import Router from './Router';
+import EnumService from './services/EnumService';
 import GoogleMapsApiLoaderService from './services/GoogleMapsApiLoaderService';
 
 const styles: { [identifier: string]: CSSProperties } = {
@@ -34,12 +35,21 @@ function App(): ReactElement {
    */
   useEffect(() => {
     const start = Date.now();
-    GoogleMapsApiLoaderService.load().finally(() => {
+    loadDependencies().finally(() => {
       const minWaitTime = 2000;
       const msWaited = Date.now() - start;
       setTimeout(() => setIsLoading(false), Math.max(0, minWaitTime - msWaited));
     });
   }, []);
+
+  /**
+   * Loads the following:
+   * - Google Maps API
+   * - Enums from BE
+   */
+  const loadDependencies = (): Promise<void[]> => {
+    return Promise.all([GoogleMapsApiLoaderService.load(), EnumService.load()]);
+  };
 
   const indicator = <LoadingOutlined style={styles.spinnerIcon} spin />;
 
