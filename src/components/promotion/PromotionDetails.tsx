@@ -52,7 +52,6 @@ export default function PromotionDetails({
   dateAdded,
   description,
   expirationDate,
-  restaurantName,
   schedules,
   boldName,
   boldDescription,
@@ -97,9 +96,6 @@ export default function PromotionDetails({
         <Col span={2}>
           <HeartOutlined style={styles.heart} />
         </Col>
-      </Row>
-      <Row>
-        <Title style={styles.restaurantName}>{restaurantName}</Title>
       </Row>
       <Row>
         <Text className="promotion-description">

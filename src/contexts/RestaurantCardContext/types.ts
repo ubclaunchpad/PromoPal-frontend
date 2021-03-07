@@ -1,6 +1,5 @@
+import { Place } from '@googlemaps/google-maps-services-js';
 import { Dispatch } from 'react';
-
-import { Restaurant } from '../../types/restaurant';
 
 export enum DispatchAction {
   // Hide restaurant card
@@ -41,10 +40,10 @@ export type DispatchParams = {
  *
  * @property showCard - Whether or not the card is currently being shown
  * @property restaurant - The last selected restaurant
- * @property placeId - The placeId of the last selected restaurant
+ * @property restaurantId - The id of the last selected restaurant
  */
 export type State = {
   showCard: boolean;
-  restaurant: Restaurant;
-  placeId: string;
+  restaurant: Place;
+  restaurantId: string;
 };

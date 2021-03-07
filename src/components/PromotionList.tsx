@@ -1,3 +1,4 @@
+import { Place } from '@googlemaps/google-maps-services-js';
 import React, { CSSProperties, ReactElement, useCallback, useEffect, useState } from 'react';
 
 import PromotionCard from '../components/promotion/PromotionCard';
@@ -16,7 +17,6 @@ import {
   sortPromotions,
 } from '../services/PromotionService';
 import { Promotion } from '../types/promotion';
-import { Restaurant } from '../types/restaurant';
 
 const styles: { [identifier: string]: CSSProperties } = {
   container: {
@@ -47,12 +47,12 @@ export default function PromotionList({
    * On click, retrieves the associated restaurant details and shows the restaurant card.
    */
   const onClickHandler = useCallback(
-    (placeId: string) => {
-      getRestaurant(placeId)
-        .then((restaurant: Restaurant) => {
+    (restaurantId: string) => {
+      getRestaurant(restaurantId)
+        .then((restaurant: Place) => {
           restaurantDispatch({
             type: RestaurantDispatch.TOGGLE_CARD,
-            payload: { placeId, restaurant },
+            payload: { restaurantId, restaurant },
           });
         })
         .catch(() => restaurantDispatch({ type: RestaurantDispatch.HIDE_CARD }));
@@ -103,7 +103,7 @@ export default function PromotionList({
         <PromotionCard
           key={promotion.id}
           promotion={promotion}
-          onClick={() => onClickHandler(promotion.placeId)}
+          onClick={() => onClickHandler(promotion.restaurant.id)}
         />
       ))}
     </div>

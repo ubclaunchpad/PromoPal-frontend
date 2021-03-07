@@ -12,4 +12,7 @@ export default {
   USERS: {
     UPLOADED_PROMOTIONS: (id: string): string => `/users/${id}/uploadedPromotions`,
   },
+  RESTAURANTS: {
+    RESTAURANT_DETAILS: (id: string): string => `/restaurants/${id}/restaurantDetails`,
+  },
 };

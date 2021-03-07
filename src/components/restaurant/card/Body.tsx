@@ -1,9 +1,8 @@
 import './Body.css';
 
+import { Place } from '@googlemaps/google-maps-services-js';
 import { Col, Row, Tabs, Typography } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
-
-import { Restaurant } from '../../../types/restaurant';
 
 const { TabPane } = Tabs;
 const { Text } = Typography;
@@ -37,21 +36,10 @@ function Section({ title, details }: { title: string; details: string }): ReactE
 }
 
 export default function Body({
-  address,
-  openingHours,
-  phoneNumber,
-}: Pick<Restaurant, 'address' | 'openingHours' | 'phoneNumber'>): ReactElement {
-  function formatHours(hours: Restaurant['openingHours']): string {
-    return `Sun: ${hours.sunday}
-      Mon: ${hours.monday}
-      Tue: ${hours.tuesday}
-      Wed: ${hours.wednesday}
-      Thu: ${hours.thursday}
-      Fri: ${hours.friday}
-      Sat: ${hours.saturday}
-    `;
-  }
-
+  formatted_address,
+  opening_hours,
+  formatted_phone_number,
+}: Pick<Place, 'formatted_address' | 'opening_hours' | 'formatted_phone_number'>): ReactElement {
   function formatPhoneNumber(phoneNumber: string): string {
     const segments = phoneNumber.split('-');
     if (segments.length > 1) {
@@ -66,9 +54,15 @@ export default function Body({
     <Row>
       <Tabs style={styles.tabs} defaultActiveKey="1" size="small">
         <TabPane tab="Info" key="1" style={styles.tabContent}>
-          <Section title="Address" details={address} />
-          <Section title="Hours" details={formatHours(openingHours)} />
-          <Section title="Phone" details={formatPhoneNumber(phoneNumber)} />
+          <Section title="Address" details={formatted_address ?? 'No address found'} />
+          <Section
+            title="Hours"
+            details={opening_hours?.weekday_text.join('\r\n') ?? 'No available hours found'}
+          />
+          <Section
+            title="Phone"
+            details={formatPhoneNumber(formatted_phone_number ?? 'No phone number found')}
+          />
         </TabPane>
         <TabPane tab="Promotions" key="2" style={styles.tabContent}>
           Promotions

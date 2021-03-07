@@ -1,11 +1,11 @@
 import './Header.css';
 
 import { CloseCircleOutlined } from '@ant-design/icons';
+import { Place } from '@googlemaps/google-maps-services-js';
 import { Button, Col, Rate, Row, Typography } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
 
 import { DispatchAction, useRestaurantCard } from '../../../contexts/RestaurantCardContext';
-import { Restaurant } from '../../../types/restaurant';
 
 const { Text, Title } = Typography;
 
@@ -50,16 +50,13 @@ const styles: { [identifier: string]: CSSProperties } = {
 };
 
 export default function Header({
-  cuisine,
-  distance,
+  // cuisine,
+  // distance,
   name,
-  priceLevel,
+  price_level,
   rating,
   website,
-}: Pick<
-  Restaurant,
-  'cuisine' | 'distance' | 'name' | 'priceLevel' | 'rating' | 'website'
->): ReactElement {
+}: Pick<Place, 'name' | 'price_level' | 'rating' | 'website'>): ReactElement {
   const { dispatch } = useRestaurantCard();
 
   const HeaderTitle = () => (
@@ -107,9 +104,9 @@ export default function Header({
         <Rate allowHalf disabled defaultValue={rating} style={styles.rating} />
       </Row>
       <Row style={styles.details}>
-        <Text style={styles.detailsText}>{cuisine}</Text>
-        <Text style={styles.detailsText}>{priceLevel}</Text>
-        <Text style={styles.detailsText}>{distance}m</Text>
+        {/*<Text style={styles.detailsText}>{cuisine}</Text>*/}
+        <Text style={styles.detailsText}>{price_level}</Text>
+        {/*<Text style={styles.detailsText}>{distance}m</Text>*/}
       </Row>
       <Buttons />
     </Col>

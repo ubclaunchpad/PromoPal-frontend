@@ -1,14 +1,14 @@
+import { Place } from '@googlemaps/google-maps-services-js';
 import React, { createContext, ReactElement, useContext, useEffect, useReducer } from 'react';
 
 import { restaurantCardReducer } from '../../reducers/RestaurantCardReducer';
-import { Restaurant } from '../../types/restaurant';
 import { usePromotionsList } from '../PromotionsListContext';
 import { Context, DispatchAction, DispatchParams, State } from './types';
 
 export const initialState: State = {
   showCard: false,
-  restaurant: {} as Restaurant,
-  placeId: '',
+  restaurant: {} as Place,
+  restaurantId: '',
 };
 
 /**

@@ -1,7 +1,7 @@
+import { Place } from '@googlemaps/google-maps-services-js';
 import { Col } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
 
-import { Restaurant } from '../../types/restaurant';
 import Body from './card/Body';
 import Header from './card/Header';
 
@@ -23,7 +23,7 @@ const styles: { [identifier: string]: CSSProperties } = {
   },
 };
 
-export default function RestaurantCard(restaurant: Restaurant): ReactElement {
+export default function RestaurantCard(restaurant: Place): ReactElement {
   const containerPadding = '15px';
 
   return (
@@ -35,17 +35,25 @@ export default function RestaurantCard(restaurant: Restaurant): ReactElement {
         }}
       >
         <Header
-          cuisine={restaurant.cuisine}
-          distance={restaurant.distance}
-          priceLevel={restaurant.priceLevel}
+          // cuisine={
+          //   'Italian'
+          //   // todo: this should use a promotions cuisine, google place details doesn't have this
+          //   // restaurant.cuisine
+          // }
+          // distance={
+          //   1500
+          //   // // todo: where is this coming from?
+          //   // restaurant.distance
+          // }
+          price_level={restaurant.price_level}
           name={restaurant.name}
           rating={restaurant.rating}
           website={restaurant.website}
         />
         <Body
-          address={restaurant.address}
-          openingHours={restaurant.openingHours}
-          phoneNumber={restaurant.phoneNumber}
+          formatted_address={restaurant.formatted_address}
+          opening_hours={restaurant.opening_hours}
+          formatted_phone_number={restaurant.formatted_phone_number}
         />
       </Col>
     </div>
