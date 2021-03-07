@@ -1,20 +1,22 @@
 import { Select } from 'antd';
 import React, { ReactElement } from 'react';
 
-type OptionType = {
-  value: string;
-};
-
-export default function MultipleSelect({
-  placeholder,
-  options,
-}: {
+interface Props {
+  options: Array<{ value: string }>;
   placeholder: string;
-  options: OptionType[];
-}): ReactElement {
+
+  allowClear?: boolean;
+}
+
+export default function MultipleSelect(props: Props): ReactElement {
   return (
-    <Select showArrow mode="multiple" placeholder={placeholder}>
-      {options.map(({ value }: OptionType, index: number) => (
+    <Select
+      mode="multiple"
+      showArrow={true}
+      allowClear={props.allowClear}
+      placeholder={props.placeholder}
+    >
+      {props.options.map(({ value }, index) => (
         <Select.Option key={index} value={value}>
           {value}
         </Select.Option>

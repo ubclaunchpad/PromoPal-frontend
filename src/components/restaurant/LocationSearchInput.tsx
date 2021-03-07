@@ -64,6 +64,7 @@ export default function LocationSearchInput(props: Props): ReactElement {
 
   return (
     <AutoComplete
+      allowClear={true}
       value={value}
       onChange={handleChange}
       onSelect={handleSelect}
