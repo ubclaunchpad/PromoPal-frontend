@@ -1,6 +1,6 @@
 import { AutoComplete } from 'antd';
 import React, { ReactElement, useEffect, useState } from 'react';
-import usePlacesAutocomplete from 'use-places-autocomplete';
+import usePlacesAutocomplete, { getDetails } from 'use-places-autocomplete';
 
 import LocationService from '../../services/LocationService';
 
@@ -8,7 +8,7 @@ const { Option } = AutoComplete;
 
 interface Props {
   onChange: () => void;
-  onSelect: (placeId: string) => void;
+  onSelect: (placeId: string, address: string) => void;
 }
 
 export default function LocationSearchInput(props: Props): ReactElement {
@@ -37,16 +37,21 @@ export default function LocationSearchInput(props: Props): ReactElement {
   /**
    * Called when an option is selected from the dropdown.
    *
-   * @param value - A stringified JSON object with two keys: `description` and `place_id`
+   * @param value - A stringified JSON object with two keys: `description` and `placeId`
    */
   const handleSelect = (value: string) => {
-    const { description, place_id } = JSON.parse(value);
+    const { description, placeId } = JSON.parse(value);
 
     // Sets value to be the text displayed on the option selected
     setValue(description, false);
 
-    // Calls onSelect handler from parent
-    props.onSelect(place_id);
+    // Make Places Details request to get address and then calls onSelect handler from parent
+    getDetails({ placeId, fields: ['formatted_address'] })
+      .then((result) => {
+        const address = typeof result === 'string' ? result : result.formatted_address || '';
+        props.onSelect(placeId, address);
+      })
+      .catch(() => props.onSelect(placeId, ''));
   };
 
   /**
@@ -70,8 +75,8 @@ export default function LocationSearchInput(props: Props): ReactElement {
       onSelect={handleSelect}
       placeholder="e.g. Au Comptoir OR 2278 West 4th Avenue, Vancouver, BC"
     >
-      {suggestions.data.map(({ description, place_id }, index) => (
-        <Option key={index} value={JSON.stringify({ description, place_id })}>
+      {suggestions.data.map(({ description, place_id: placeId }, index) => (
+        <Option key={index} value={JSON.stringify({ description, placeId })}>
           {description}
         </Option>
       ))}

@@ -49,6 +49,7 @@ export interface PostPromotionDTO {
   placeId: Promotion['placeId'];
   name: Promotion['name'];
   promotionType: Promotion['promotionType'];
+  restaurantAddress: RestaurantDetails['address'];
   schedules: Promotion['schedules'];
   startDate: string;
   userId: User['id'];

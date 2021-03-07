@@ -22,6 +22,7 @@ interface FormFields {
   promotionTimes: moment.Moment[];
   promotionType: string;
   restaurant: string;
+  restaurantAddress: string;
 }
 
 interface PromotionTimes {
@@ -54,6 +55,7 @@ export default function UploadPromotionForm(): ReactElement {
     promotionTimes: [],
     promotionType: '',
     restaurant: '',
+    restaurantAddress: '',
   };
 
   /**
@@ -107,6 +109,7 @@ export default function UploadPromotionForm(): ReactElement {
       name: formValues.promotionName,
       placeId: formValues.restaurant,
       promotionType: formValues.promotionType,
+      restaurantAddress: formValues.restaurantAddress,
       schedules: getSchedules(),
       startDate: formValues.datesEffective[0],
       userId: UserService.userId,
@@ -198,17 +201,18 @@ export default function UploadPromotionForm(): ReactElement {
    * Handler to be called when a restaurant has been selected from the autocomplete options.
    *
    * @param placeId - The placeId of the chosen restaurant
+   * @param restaurantAddress - The address of the chosen restaurant
    */
-  const onSelectRestaurant = (placeId: string) => {
-    form.setFieldsValue({ restaurant: placeId });
+  const onSelectRestaurant = (placeId: string, restaurantAddress: string) => {
+    form.setFieldsValue({ restaurant: placeId, restaurantAddress });
   };
 
   /**
-   * Handler to be called when the user types in the text input. The restaurant is set to an empty string,
+   * Handler to be called when the user types in the text input. The restaurant and address are set to empty strings,
    * which fails form validation and forces the user to select a restaurant from one of the autocomplete options.
    */
   const onChangeRestaurant = () => {
-    form.setFieldsValue({ restaurant: '' });
+    form.setFieldsValue({ restaurant: '', restaurantAddress: '' });
   };
 
   return (
@@ -252,12 +256,20 @@ export default function UploadPromotionForm(): ReactElement {
         <LocationSearchInput onSelect={onSelectRestaurant} onChange={onChangeRestaurant} />
       </Form.Item>
 
+      <Form.Item name="restaurantAddress" hidden={true} />
+
       <Form.Item
         label="Discount Type"
         name="discountType"
         labelAlign="left"
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
+        rules={[
+          {
+            required: true,
+            message: 'Please select a discount type!',
+          },
+        ]}
       >
         <Radio.Group>
           <Radio value="%">Percentage Off</Radio>
