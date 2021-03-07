@@ -16,6 +16,7 @@ interface Props {
 export default function Button(props: Props & ButtonProps): ReactElement {
   return (
     <AntButton
+      {...props}
       className={className({ 'button-primary': props.type === 'primary' }, 'button')}
       shape={props.shape}
       size={props.size}

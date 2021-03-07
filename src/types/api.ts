@@ -13,7 +13,8 @@ export interface ApiError {
 export type EnumResponse = ApiResponse<string[]>;
 
 // Promotions
-export type PromotionsResponse = ApiResponse<Promotion[]>;
+export type GetPromotionsResponse = ApiResponse<Promotion[]>;
+export type PostPromotionsResponse = ApiResponse<void>;
 
 // Users
 export type UploadedPromotionsResponse = ApiResponse<User>;

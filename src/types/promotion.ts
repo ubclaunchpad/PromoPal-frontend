@@ -31,7 +31,7 @@ export interface Promotion {
   rank?: number;
 }
 
-export interface PromotionDTO {
+export interface GetPromotionDTO {
   cuisine?: Promotion['cuisine'] | Array<Promotion['cuisine']>;
   dayOfWeek?: Schedule['dayOfWeek'];
   discountType?: Discount['discountType'];
@@ -39,6 +39,19 @@ export interface PromotionDTO {
   expirationDate?: Promotion['expirationDate'];
   promotionType?: Promotion['promotionType'];
   searchQuery?: string;
+}
+
+export interface PostPromotionDTO {
+  cuisine: Promotion['cuisine'];
+  description: Promotion['description'];
+  discount: Promotion['discount'];
+  expirationDate: Promotion['expirationDate'];
+  placeId: Promotion['placeId'];
+  name: Promotion['name'];
+  promotionType: Promotion['promotionType'];
+  schedules: Promotion['schedules'];
+  startDate: string;
+  userId: User['id'];
 }
 
 export interface User {
@@ -51,7 +64,6 @@ export interface User {
 }
 
 export interface Discount {
-  id: string;
   discountValue: number;
   discountType: string;
 }
@@ -61,7 +73,6 @@ export interface PromotionImage {
 }
 
 export interface Schedule {
-  id: string;
   dayOfWeek: Day;
   endTime: string;
   startTime: string;
@@ -75,4 +86,11 @@ export interface FilterOptions {
   promotionType: Array<Promotion['promotionType']>;
 }
 
-type Day = 'Sunday' | 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday';
+export type Day =
+  | 'Sunday'
+  | 'Monday'
+  | 'Tuesday'
+  | 'Wednesday'
+  | 'Thursday'
+  | 'Friday'
+  | 'Saturday';

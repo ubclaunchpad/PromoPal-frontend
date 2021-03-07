@@ -1,5 +1,13 @@
-import { PromotionsResponse } from '../types/api';
-import { FilterOptions, Promotion, PromotionDTO, Sort } from '../types/promotion';
+import axios, { AxiosResponse } from 'axios';
+
+import { GetPromotionsResponse, PostPromotionsResponse } from '../types/api';
+import {
+  FilterOptions,
+  GetPromotionDTO,
+  PostPromotionDTO,
+  Promotion,
+  Sort,
+} from '../types/promotion';
 import { Restaurant } from '../types/restaurant';
 import { isError } from '../utils/api';
 import Routes from '../utils/routes';
@@ -10,11 +18,11 @@ import Routes from '../utils/routes';
  *
  * @param query [optional] - An array of objects with key-value pairs for the query parameters
  */
-export async function getPromotions(query?: PromotionDTO[]): Promise<Promotion[]> {
-  let endpoint = Routes.PROMOTIONS;
+export async function getPromotions(query?: GetPromotionDTO[]): Promise<Promotion[]> {
+  let endpoint = Routes.PROMOTIONS.GET;
   if (query && query.length > 0) {
     endpoint += '?';
-    query.forEach((param: PromotionDTO, index: number) => {
+    query.forEach((param: GetPromotionDTO, index: number) => {
       const [key] = Object.keys(param);
       const [value] = Object.values(param);
 
@@ -25,11 +33,29 @@ export async function getPromotions(query?: PromotionDTO[]): Promise<Promotion[]
 
   return fetch(endpoint)
     .then((response: Response) => response.json())
-    .then((response: PromotionsResponse) => {
-      if (isError<PromotionsResponse>(response)) {
+    .then((response: GetPromotionsResponse) => {
+      if (isError<GetPromotionsResponse>(response)) {
         return Promise.reject(response);
       }
       return Promise.resolve(response);
+    })
+    .catch((err: Error) => Promise.reject(err));
+}
+
+/**
+ * Creates a new promotion.
+ *
+ * @param promotionDTO - An object containing the fields of the promotion
+ */
+export async function postPromotion(promotionDTO: PostPromotionDTO): Promise<void> {
+  const url = Routes.PROMOTIONS.POST;
+  return axios
+    .post(url, promotionDTO)
+    .then(({ data }: AxiosResponse<PostPromotionsResponse>) => {
+      if (isError<PostPromotionsResponse>(data)) {
+        return Promise.reject(data);
+      }
+      return Promise.resolve();
     })
     .catch((err: Error) => Promise.reject(err));
 }

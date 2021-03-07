@@ -6,7 +6,10 @@ export default {
     DISCOUNT_TYPES: '/enums/DiscountType',
     PROMOTION_TYPES: '/enums/PromotionType',
   },
-  PROMOTIONS: '/promotions',
+  PROMOTIONS: {
+    GET: '/promotions',
+    POST: '/promotions',
+  },
   SAVED_PROMOTIONS: '/saved_promotions',
   SCHEDULES: '/schedules',
   USERS: {

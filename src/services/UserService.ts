@@ -4,6 +4,16 @@ import { isError } from '../utils/api';
 import Routes from '../utils/routes';
 
 class UserService {
+  private _userId: string;
+
+  public constructor() {
+    this._userId = '8f8fc016-5bb2-4906-ad88-68932c438665';
+  }
+
+  public get userId(): string {
+    return this._userId;
+  }
+
   public async getUploadedPromotions(userId: string): Promise<Promotion[]> {
     const url = Routes.USERS.UPLOADED_PROMOTIONS(userId);
     return fetch(url)
