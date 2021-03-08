@@ -1,15 +1,8 @@
+import { PromotionsResponse } from '../types/api';
 import { FilterOptions, Promotion, PromotionDTO, Sort } from '../types/promotion';
 import { Restaurant } from '../types/restaurant';
+import { isError } from '../utils/api';
 import Routes from '../utils/routes';
-
-type PromotionsSuccess = Promotion[];
-
-type PromotionsError = {
-  errorCode: string;
-  message: string[];
-};
-
-type PromotionsResponse = PromotionsSuccess | PromotionsError;
 
 /**
  * Fetches entire list of promotions. If a query object is given, filters the promotions according to the given query.
@@ -31,44 +24,35 @@ export async function getPromotions(query?: PromotionDTO[]): Promise<Promotion[]
   }
 
   return fetch(endpoint)
-    .then((res: Response) => res.json())
-    .then((promotions: PromotionsResponse) => {
-      // Promotions are returned in arrays
-      if (Array.isArray(promotions)) {
-        return promotions as PromotionsSuccess;
+    .then((response: Response) => response.json())
+    .then((response: PromotionsResponse) => {
+      if (isError<PromotionsResponse>(response)) {
+        return Promise.reject(response);
       }
-      // If it isn't an array, it's probably an object that indicates an error
-      return Promise.reject(promotions as PromotionsError);
+      return Promise.resolve(response);
     })
-    .catch((err: Error) => {
-      // Allow caller to handle error
-      throw err;
-    });
+    .catch((err: Error) => Promise.reject(err));
 }
 
-export async function getRestaurant({ id }: Promotion): Promise<Restaurant> {
-  // TODO: find restaurant given placeId from promotion
+export async function getRestaurant(id: string): Promise<Restaurant> {
+  // TODO: https://promopal.atlassian.net/browse/PP-25
   return {
-    id,
     address: '1850 W 4th Ave, Vancouver, BC V6J 1M3',
-    cuisineType: 'Italian',
-    distance: 500,
+    business_status: '',
+    cuisine: 'Italian',
+    distance: 1500,
+    lat: 0,
+    lon: 0,
+    openingHours: {},
     name: 'Trattoria',
     phoneNumber: '604-732-1441',
     photos: [],
-    price: '$$',
+    priceLevel: '$$',
     rating: 4.1,
-    reviews: 'https://google.com',
+    totalRating: 100,
+    mapUrl: '',
+    reviews: [],
     website: 'https://www.glowbalgroup.com/trattoria/trattoria-burnaby.html',
-    hours: {
-      sunday: '10:30 AM - Late',
-      monday: '11:30 AM - Late',
-      tuesday: '11:30 AM - Late',
-      wednesday: '11:30 AM - Late',
-      thursday: '11:30 AM - Late',
-      friday: '11:30 AM - Late',
-      saturday: '10:30 AM - Late',
-    },
   };
 }
 
