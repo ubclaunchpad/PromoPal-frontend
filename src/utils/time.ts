@@ -11,12 +11,11 @@ export function formatTime(startTime: string, endTime: string): string {
     const hourNum = parseInt(hour);
     const minuteNum = parseInt(minute);
 
-    let formattedTime = `${hourNum === 12 ? hourNum : hourNum % 12}`;
+    let formattedTime = `${hourNum <= 12 ? hourNum : hourNum % 12}`;
     if (minuteNum !== 0) {
       formattedTime += `:${minuteNum}`;
     }
-    formattedTime += hourNum < 12 ? ' AM' : ' PM';
-    return formattedTime;
+    return `${formattedTime} ${hourNum < 12 ? 'AM' : 'PM'}`;
   };
 
   return formatHour(startTime) + ' - ' + formatHour(endTime);
