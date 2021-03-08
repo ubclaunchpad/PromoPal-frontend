@@ -39,18 +39,14 @@ export default function PromotionList({
       const promotion = promos.find(({ id }) => id === promotionId);
       if (promotion) {
         if (promotion.liked) {
-          return UserService.savePromotion(promotionId)
-            .then(() => {
-              promotion.liked = false;
-              setPromotions(promos);
-            })
+          promotion.liked = false;
+          return UserService.unsavePromotion(promotionId)
+            .then(() => setPromotions(promos))
             .catch(() => null);
         }
-        return UserService.unsavePromotion(promotionId)
-          .then(() => {
-            promotion.liked = true;
-            setPromotions(promos);
-          })
+        promotion.liked = true;
+        return UserService.savePromotion(promotionId)
+          .then(() => setPromotions(promos))
           .catch(() => null);
       }
     },

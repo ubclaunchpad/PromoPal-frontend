@@ -146,18 +146,14 @@ export default function MyPromotions(): ReactElement {
       const promotion = promotions.find(({ id }) => id === promotionId);
       if (promotion) {
         if (promotion.liked) {
-          return UserService.savePromotion(promotionId)
-            .then(() => {
-              promotion.liked = false;
-              setUploadedPromotions(promotions);
-            })
+          promotion.liked = false;
+          return UserService.unsavePromotion(promotionId)
+            .then(() => setUploadedPromotions(promotions))
             .catch(() => null);
         }
-        return UserService.unsavePromotion(promotionId)
-          .then(() => {
-            promotion.liked = true;
-            setUploadedPromotions(promotions);
-          })
+        promotion.liked = true;
+        return UserService.savePromotion(promotionId)
+          .then(() => setUploadedPromotions(promotions))
           .catch(() => null);
       }
     },
