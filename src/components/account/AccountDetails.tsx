@@ -14,9 +14,6 @@ const styles: { [identifier: string]: CSSProperties } = {
     overflow: 'auto',
     padding: 30,
   },
-  inputLabel: {
-    margin: '5px 0',
-  },
   inputWrapper: {
     marginBottom: 15,
   },
@@ -42,7 +39,7 @@ export default function AccountDetails({
     defaultValue: string;
   }): ReactElement => (
     <div style={styles.inputWrapper}>
-      <p className="inputLabel">{label}</p>
+      <p className="input-label">{label}</p>
       <Input defaultValue={defaultValue} />
     </div>
   );

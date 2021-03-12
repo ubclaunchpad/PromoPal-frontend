@@ -11,22 +11,20 @@ const styles: { [identifier: string]: CSSProperties } = {
     overflow: 'auto',
     padding: 30,
   },
-  inputLabel: {
-    margin: '5px 0',
-  },
   inputWrapper: {
     marginBottom: 15,
   },
 };
 
-export default function ResetPassword(): ReactElement {
+export default function ChangePassword(): ReactElement {
   const handleClick = () => {
+    // TODO: reset password in firebase
     alert('Click');
   };
 
   const InputPasswordWrapper = ({ label }: { label: string }): ReactElement => (
     <div style={styles.inputWrapper}>
-      <p className="inputLabel">{label}</p>
+      <p className="input-label">{label}</p>
       <Input.Password placeholder="Input password" />
     </div>
   );
@@ -34,7 +32,6 @@ export default function ResetPassword(): ReactElement {
   return (
     <div style={styles.container}>
       <h1>Reset Password</h1>
-
       <InputPasswordWrapper label="Current Password" />
       <InputPasswordWrapper label="New Password" />
       <InputPasswordWrapper label="Confirm New Password" />
