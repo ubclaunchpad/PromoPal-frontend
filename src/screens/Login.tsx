@@ -22,14 +22,14 @@ export default function Login(): ReactElement {
   const [state, setState] = useState<string>('Login');
   return (
     <div style={styles.container}>
-      {state == 'Login' && (
+      {state === 'Login' && (
         <LoginCard
           onClickForgotPassword={() => setState('Forgot Password')}
           onClickRegister={() => setState('Register')}
         />
       )}
-      {state == 'Forgot Password' && <ForgotPasswordCard onClickBack={() => setState('Login')} />}
-      {state == 'Register' && <RegisterCard onClickBack={() => setState('Login')} />}
+      {state === 'Forgot Password' && <ForgotPasswordCard onClickBack={() => setState('Login')} />}
+      {state === 'Register' && <RegisterCard onClickBack={() => setState('Login')} />}
     </div>
   );
 }
