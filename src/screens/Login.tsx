@@ -2,6 +2,7 @@ import '../index.css';
 
 import React, { CSSProperties, ReactElement, useState } from 'react';
 
+import ForgotPasswordCard from '../components/account/ForgotPasswordCard';
 import LoginCard from '../components/account/LoginCard';
 import RegisterCard from '../components/account/RegisterCard';
 
@@ -16,16 +17,19 @@ const styles: { [identifier: string]: CSSProperties } = {
     padding: 30,
   },
 };
-export default function Login(): ReactElement {
-  const [isRegistering, setIsRegistering] = useState<boolean>(false);
 
+export default function Login(): ReactElement {
+  const [state, setState] = useState<string>('Login');
   return (
     <div style={styles.container}>
-      {isRegistering ? (
-        <RegisterCard onClickBack={() => setIsRegistering(false)} />
-      ) : (
-        <LoginCard onClickRegister={() => setIsRegistering(true)} />
+      {state == 'Login' && (
+        <LoginCard
+          onClickForgotPassword={() => setState('Forgot Password')}
+          onClickRegister={() => setState('Register')}
+        />
       )}
+      {state == 'Forgot Password' && <ForgotPasswordCard onClickBack={() => setState('Login')} />}
+      {state == 'Register' && <RegisterCard onClickBack={() => setState('Login')} />}
     </div>
   );
 }

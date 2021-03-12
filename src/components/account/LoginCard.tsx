@@ -5,19 +5,25 @@ const styles: { [identifier: string]: CSSProperties } = {
   button: {
     float: 'left',
   },
+  forgot: {
+    marginLeft: 15,
+  },
   inputWrapper: {
     marginBottom: 15,
   },
 };
 
 const layout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 8 },
+  labelCol: {
+    span: 4,
+  },
+  wrapperCol: {
+    span: 8,
+  },
 };
-const tailLayout = {
-  wrapperCol: { offset: 4, span: 8 },
-};
+
 interface Props {
+  onClickForgotPassword: () => void;
   onClickRegister: () => void;
 }
 
@@ -45,46 +51,47 @@ export default function LoginCard(props: Props): ReactElement {
         requiredMark={false}
       >
         <h1>Login</h1>
-
         <p>Login to see your favourite deals and upload promotions.</p>
         <Form.Item
-          name="username"
+          name="email"
           style={styles.inputWrapper}
-          label="Username or email"
-          rules={[{ required: true, message: 'Please input your username!' }]}
+          rules={[{ required: true, message: 'Please input your email!' }]}
+          hasFeedback={true}
         >
-          <Input placeholder="Username or email" />
+          <Input placeholder="Email" />
         </Form.Item>
         <Form.Item
           name="password"
           style={styles.inputWrapper}
-          label="Password"
           rules={[{ required: true, message: 'Please input your password!' }]}
+          hasFeedback={true}
         >
           <Input.Password placeholder="Password" />
         </Form.Item>
-
-        <Form.Item {...tailLayout} name="remember" valuePropName="checked">
+        <Form.Item name="remember" valuePropName="checked">
           <Checkbox>Stay signed in</Checkbox>
         </Form.Item>
-
-        <Form.Item {...tailLayout}>
+        <Form.Item>
           <Button className="button" style={styles.button} htmlType="submit">
             Login
           </Button>
+          <a style={styles.forgot} onClick={props.onClickForgotPassword}>
+            Forgot password?
+          </a>
+        </Form.Item>
+        <Form.Item>
+          <p className="input-label">Don't have an account yet?</p>
+          <Button
+            size="large"
+            shape="round"
+            onClick={props.onClickRegister}
+            className="button"
+            style={styles.button}
+          >
+            Register here!
+          </Button>
         </Form.Item>
       </Form>
-
-      <p className="inputLabel">Don't have an account yet?</p>
-      <Button
-        size="large"
-        shape="round"
-        onClick={props.onClickRegister}
-        className="button"
-        style={styles.button}
-      >
-        Register here!
-      </Button>
     </>
   );
 }
