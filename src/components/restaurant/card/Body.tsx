@@ -3,7 +3,9 @@ import './Body.css';
 import { Col, Row, Tabs, Typography } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
 
+import { usePromotionsList } from '../../../contexts/PromotionsListContext';
 import { Restaurant } from '../../../types/restaurant';
+import PromotionsTab from './tab/PromotionsTab';
 
 const { TabPane } = Tabs;
 const { Text } = Typography;
@@ -41,6 +43,9 @@ export default function Body({
   openingHours,
   phoneNumber,
 }: Pick<Restaurant, 'address' | 'openingHours' | 'phoneNumber'>): ReactElement {
+  // TODO: https://promopal.atlassian.net/browse/PP-81
+  const { state } = usePromotionsList();
+
   function formatHours(hours: Restaurant['openingHours']): string {
     return `Sun: ${hours.sunday}
       Mon: ${hours.monday}
@@ -63,7 +68,7 @@ export default function Body({
   }
 
   return (
-    <Row>
+    <Row className="restaurant-card-body">
       <Tabs style={styles.tabs} defaultActiveKey="1" size="small">
         <TabPane tab="Info" key="1" style={styles.tabContent}>
           <Section title="Address" details={address} />
@@ -71,7 +76,7 @@ export default function Body({
           <Section title="Phone" details={formatPhoneNumber(phoneNumber)} />
         </TabPane>
         <TabPane tab="Promotions" key="2" style={styles.tabContent}>
-          Promotions
+          <PromotionsTab promotions={state.data} />
         </TabPane>
         <TabPane tab="Photos" key="3" style={styles.tabContent}>
           Photos
