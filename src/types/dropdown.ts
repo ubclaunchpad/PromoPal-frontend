@@ -2,6 +2,8 @@ export interface Dropdown {
   text: string;
   type: DropdownType;
   options: DropdownOption[];
+
+  defaultValue?: string;
 }
 
 export type DropdownAction = (...args: any[]) => void;

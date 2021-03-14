@@ -1,10 +1,10 @@
 import { RestaurantDetails } from './restaurant';
 
 export enum Sort {
-  Default = 'DEFAULT',
-  Distance = 'DISTANCE',
-  MostPopular = 'MOST_POPULAR',
-  MostRecent = 'MOST_RECENT',
+  Default = 'Distance',
+  Distance = 'Distance',
+  Popularity = 'Popularity',
+  Recency = 'Recency',
 }
 
 export interface Promotion {

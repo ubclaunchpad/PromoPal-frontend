@@ -9,12 +9,7 @@ import {
   DispatchAction as RestaurantDispatch,
   useRestaurantCard,
 } from '../contexts/RestaurantCardContext';
-import {
-  filterPromotions,
-  getPromotions,
-  getRestaurant,
-  sortPromotions,
-} from '../services/PromotionService';
+import { getPromotions, getRestaurant, queryPromotions } from '../services/PromotionService';
 import { Promotion } from '../types/promotion';
 import { Restaurant } from '../types/restaurant';
 
@@ -66,17 +61,15 @@ export default function PromotionList({
    */
   useEffect(() => {
     promotionsDispatch({ type: PromotionsDispatch.DATA_LOADING });
-    filterPromotions(promotionsState.filter)
-      .then((filteredPromotions: Promotion[]) =>
-        sortPromotions(filteredPromotions, promotionsState.sort)
-      )
-      .then((sortedPromotions: Promotion[]) => {
+
+    queryPromotions(promotionsState.filter, promotionsState.sort)
+      .then((promotions: Promotion[]) => {
         promotionsDispatch({ type: PromotionsDispatch.DATA_SUCCESS });
 
         // If search bar contains keyword, reset it. This is only minimal behaviour and a temporary workaround, needs work with PP-68
         promotionsDispatch({ type: PromotionsDispatch.RESET_SEARCH_QUERY });
 
-        setPromotions(sortedPromotions);
+        setPromotions(promotions);
       })
       .catch(() => {
         promotionsDispatch({ type: PromotionsDispatch.DATA_FAILURE });

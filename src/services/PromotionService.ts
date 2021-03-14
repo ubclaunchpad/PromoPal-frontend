@@ -1,6 +1,4 @@
-import { isAfter, isBefore } from 'date-fns';
-
-import GoogleGeometryService from '../services/GoogleGeometryService';
+import LocationService from '../services/LocationService';
 import { PromotionsResponse } from '../types/api';
 import { FilterOptions, Promotion, PromotionDTO, Sort } from '../types/promotion';
 import { Restaurant } from '../types/restaurant';
@@ -18,11 +16,10 @@ export async function getPromotions(query?: PromotionDTO[]): Promise<Promotion[]
   if (query && query.length > 0) {
     endpoint += '?';
     query.forEach((param: PromotionDTO, index: number) => {
-      const [key] = Object.keys(param);
-      const [value] = Object.values(param);
-
-      // First query param is not prefixed by an ampersand
-      endpoint += `${index > 0 ? '&' : ''}${key}=${value}`;
+      Object.entries(param).forEach(([key, value], paramIdx) => {
+        // First query param is not prefixed by an ampersand
+        endpoint += `${index + paramIdx > 0 ? '&' : ''}${key}=${value}`;
+      });
     });
   }
 
@@ -60,11 +57,13 @@ export async function getRestaurant(id: string): Promise<Restaurant> {
 }
 
 /**
- * Returns the subset of all promotions which satisfy at least one filter key in the `filters` parameter.
+ * Returns the subset of all promotions which satisfy at least one filter key in the `filters` parameter
+ * and sort them by the `sort` parameter.
  *
  * @param filters - An object specifying the keys and the values to filter the promotions by
+ * @param sort - A string representing the key to sort the promotions by
  */
-export function filterPromotions(filters: FilterOptions): Promise<Promotion[]> {
+export async function queryPromotions(filters: FilterOptions, sort?: Sort): Promise<Promotion[]> {
   const { cuisine, dayOfWeek, discountType, promotionType } = filters;
 
   const promotionQueryDTO: Record<string, string>[] = [];
@@ -86,65 +85,17 @@ export function filterPromotions(filters: FilterOptions): Promise<Promotion[]> {
     promotionType.forEach((promotionType: string) => promotionQueryDTO.push({ promotionType }));
   }
 
-  return getPromotions(promotionQueryDTO);
-}
-
-/**
- * Sorts the given of list of promotions by the given key.
- *
- * @param arr - The list of promotions to sort
- * @param key - The key which to sort the promotions by
- */
-export async function sortPromotions(arr: Promotion[], key: Sort): Promise<Promotion[]> {
-  const promotions = [...arr];
-  switch (key) {
-    case Sort.Distance:
-      return sortByDistance(promotions);
-    case Sort.MostPopular:
-      return sortByPopularity(promotions);
-    case Sort.MostRecent:
-      return sortByRecency(promotions);
-    default:
-      return promotions;
+  if (sort) {
+    const queryParams: { [paramKey: string]: string } = { sort };
+    if (sort === Sort.Distance) {
+      const {
+        coords: { latitude, longitude },
+      } = await LocationService.getCurrentLocation();
+      queryParams.lat = `${latitude}`;
+      queryParams.lon = `${longitude}`;
+    }
+    promotionQueryDTO.push(queryParams);
   }
-}
 
-async function sortByDistance(promotions: Promotion[]): Promise<Promotion[]> {
-  return new Promise((resolve, reject) => {
-    if (navigator.geolocation) {
-      const success = (position: { coords: { latitude: number; longitude: number } }) => {
-        const { latitude: currLat, longitude: currLon } = position.coords;
-
-        const promos = promotions.map((promotion) => {
-          const { lat, lon } = promotion;
-          promotion.distance = GoogleGeometryService.computeDistance(currLat, currLon, lat, lon);
-          return promotion;
-        });
-
-        const sortedPromotions = promos.sort((a, b) => b.distance - a.distance);
-        resolve(sortedPromotions);
-      };
-
-      const error = () => reject(promotions);
-
-      navigator.geolocation.getCurrentPosition(success, error, { timeout: 10000 });
-    } else {
-      reject(promotions);
-    }
-  });
-}
-
-function sortByPopularity(promotions: Promotion[]) {
-  return promotions.sort((a, b) => b.votes - a.votes);
-}
-
-function sortByRecency(promotions: Promotion[]) {
-  return promotions.sort((a, b) => {
-    if (isBefore(new Date(a.dateAdded), new Date(b.dateAdded))) {
-      return -1;
-    } else if (isAfter(new Date(a.dateAdded), new Date(b.dateAdded))) {
-      return 1;
-    }
-    return 0;
-  });
+  return getPromotions(promotionQueryDTO);
 }
