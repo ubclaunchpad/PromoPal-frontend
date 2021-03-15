@@ -2,7 +2,7 @@ import './PromotionsTab.css';
 
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { Col, Row, Tabs } from 'antd';
-import React, { ReactElement, useMemo } from 'react';
+import React, { ReactElement } from 'react';
 
 import { Promotion } from '../../../../types/promotion';
 import { formatTime } from '../../../../utils/time';
@@ -19,21 +19,18 @@ interface Props {
 
 export default function PromotionsTab(props: Props): ReactElement {
   /**
-   * Produces an object that maps days to the promotions that occur on those days.
+   * An object that maps days to the promotions that occur on those days.
    */
-  const daysToPromotions = useMemo((): DayToPromotions => {
-    const daysToPromotions: DayToPromotions = {};
-    props.promotions.forEach((promotion) => {
-      promotion.schedules.forEach(({ dayOfWeek }) => {
-        const abbreviation =
-          dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.slice(1, 3).toLowerCase();
-        const promos = daysToPromotions[abbreviation] || [];
-        promos.push(promotion);
-        daysToPromotions[abbreviation] = promos;
-      });
+  const daysToPromotions: DayToPromotions = {};
+
+  props.promotions.forEach((promotion) => {
+    promotion.schedules.forEach(({ dayOfWeek }) => {
+      const abbreviation = dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.slice(1, 3).toLowerCase();
+      const promos = daysToPromotions[abbreviation] || [];
+      promos.push(promotion);
+      daysToPromotions[abbreviation] = promos;
     });
-    return daysToPromotions;
-  }, [props.promotions]);
+  });
 
   return (
     <Tabs className="tab-promotions" defaultActiveKey="Sun" size="small">
