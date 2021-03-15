@@ -14,7 +14,7 @@ class UserService {
   private userId: string;
 
   public constructor() {
-    this.userId = '8f8fc016-5bb2-4906-ad88-68932c438665';
+    this.userId = 'abdf0d76-2d5f-4b4c-9f6f-2d669a56b766';
   }
 
   public getUserId(): string {

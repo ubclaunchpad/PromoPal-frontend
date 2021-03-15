@@ -4,7 +4,7 @@ import { ClockCircleOutlined, DeleteOutlined, HeartFilled, HeartOutlined } from 
 import { Button, Col, Row, Typography } from 'antd';
 import { formatDistanceToNow } from 'date-fns';
 import parse from 'html-react-parser';
-import React, { CSSProperties, ReactElement } from 'react';
+import React, { CSSProperties, MouseEvent, ReactElement } from 'react';
 
 import { Schedule } from '../../types/promotion';
 
@@ -53,17 +53,18 @@ interface Props {
   dateAdded: string;
   description: string;
   expirationDate: string;
-  liked: boolean;
   id: string;
   name: string;
   restaurantName: string;
+  savedByUser: boolean;
   schedules: Schedule[];
 
-  onDeleteButtonClick?: () => void;
-  onLikeButtonClick: () => void;
+  onSaveButtonClick: () => void;
 
   boldName?: string;
   boldDescription?: string;
+
+  onDeleteButtonClick?: () => void;
 }
 
 export default function PromotionDetails(props: Props): ReactElement {
@@ -72,6 +73,16 @@ export default function PromotionDetails(props: Props): ReactElement {
    */
   const promotionAge = (dateAdded: string): string => {
     return formatDistanceToNow(new Date(dateAdded), { addSuffix: true });
+  };
+
+  /**
+   * On click handler for "save" button: stops restaurant card from being opened when the save button is pressed.
+   *
+   * @param event - The event received from the button click
+   */
+  const onSaveHandler = (event: MouseEvent<HTMLElement>): void => {
+    event.stopPropagation();
+    props.onSaveButtonClick();
   };
 
   const displaySchedules = (schedules: Schedule[]): ReactElement[] => {
@@ -103,13 +114,13 @@ export default function PromotionDetails(props: Props): ReactElement {
       <Button
         type="link"
         icon={
-          props.liked ? (
+          props.savedByUser ? (
             <HeartFilled className="heart-icon-filled" style={styles.heart} />
           ) : (
             <HeartOutlined className="heart-icon-outlined" style={styles.heart} />
           )
         }
-        onClick={props.onLikeButtonClick}
+        onClick={onSaveHandler}
       />
     );
 

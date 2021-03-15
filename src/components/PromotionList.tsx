@@ -33,18 +33,18 @@ export default function PromotionList({
   /**
    * If the user has not saved the promotion, save the promotion. Otherwise, delete it from their saved promotions.
    */
-  const onLikeButtonClick = useCallback(
+  const onSaveButtonClick = useCallback(
     (promotionId: string) => {
       const promos = [...promotions];
       const promotion = promos.find(({ id }) => id === promotionId);
       if (promotion) {
-        if (promotion.liked) {
-          promotion.liked = false;
+        if (promotion.isSavedByUser) {
+          promotion.isSavedByUser = false;
           return UserService.unsavePromotion(promotionId)
             .then(() => setPromotions(promos))
             .catch(() => null);
         }
-        promotion.liked = true;
+        promotion.isSavedByUser = true;
         return UserService.savePromotion(promotionId)
           .then(() => setPromotions(promos))
           .catch(() => null);
@@ -103,12 +103,12 @@ export default function PromotionList({
           expirationDate={promotion.expirationDate}
           description={promotion.description}
           image={promotion.image}
-          liked={promotion.liked}
           name={promotion.name}
           placeId={promotion.placeId}
           restaurantName={promotion.restaurantName}
+          savedByUser={promotion.isSavedByUser}
           schedules={promotion.schedules}
-          onLikeButtonClick={() => onLikeButtonClick(promotion.id)}
+          onSaveButtonClick={() => onSaveButtonClick(promotion.id)}
         />
       ))}
     </div>

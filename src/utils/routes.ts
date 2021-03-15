@@ -7,7 +7,7 @@ export default {
     PROMOTION_TYPES: '/enums/PromotionType',
   },
   PROMOTIONS: {
-    GET: '/promotions',
+    GET: (userId: string): string => `/promotions/?userId=${userId}`,
     DELETE: (promotionId: string): string => `/promotions/${promotionId}`,
   },
   SAVED_PROMOTIONS: 'saved_promotions',

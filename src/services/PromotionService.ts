@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 
+import UserService from '../services/UserService';
 import { DeletePromotionsResponse, GetPromotionsResponse } from '../types/api';
 import { FilterOptions, Promotion, PromotionDTO, Sort } from '../types/promotion';
 import { Restaurant } from '../types/restaurant';
@@ -13,7 +14,8 @@ import Routes from '../utils/routes';
  * @param query [optional] - An array of objects with key-value pairs for the query parameters
  */
 export async function getPromotions(query?: PromotionDTO[]): Promise<Promotion[]> {
-  let endpoint = Routes.PROMOTIONS.GET;
+  const userId = UserService.getUserId();
+  let endpoint = Routes.PROMOTIONS.GET(userId);
   if (query && query.length > 0) {
     endpoint += '?';
     query.forEach((param: PromotionDTO, index: number) => {

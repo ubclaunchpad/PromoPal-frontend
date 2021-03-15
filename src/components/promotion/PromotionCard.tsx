@@ -32,14 +32,14 @@ interface Props {
   expirationDate: string;
   id: string;
   image: PromotionImageType;
-  liked: boolean;
   name: string;
   placeId: string;
   restaurantName: string;
+  savedByUser: boolean;
   schedules: Schedule[];
 
   onDeleteButtonClick?: () => void;
-  onLikeButtonClick: () => void;
+  onSaveButtonClick: () => void;
 
   boldName?: string;
   boldDescription?: string;
@@ -83,12 +83,12 @@ export default function PromotionCard(props: Props): ReactElement {
         description={props.description}
         expirationDate={props.expirationDate}
         id={props.id}
-        liked={props.liked}
         name={props.name}
         restaurantName={props.restaurantName}
+        savedByUser={props.savedByUser}
         schedules={props.schedules}
         onDeleteButtonClick={props.onDeleteButtonClick}
-        onLikeButtonClick={props.onLikeButtonClick}
+        onSaveButtonClick={props.onSaveButtonClick}
       />
     </Card>
   );
