@@ -101,6 +101,10 @@ export default function MyPromotions(): ReactElement {
   const [promotionToDelete, setPromotionToDelete] = useState<Promotion | null>(null);
   const [uploadedPromotions, setUploadedPromotions] = useState<Promotion[]>([]);
 
+  const onClick = (): void => {
+    /* stub */
+  };
+
   /**
    * Fetches the user's uploaded promotions and sets them on this component.
    */

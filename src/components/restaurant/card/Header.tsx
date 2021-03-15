@@ -50,14 +50,16 @@ const styles: { [identifier: string]: CSSProperties } = {
 };
 
 export default function Header({
-  cuisineType,
+  cuisine,
   distance,
   name,
-  price,
+  priceLevel,
   rating,
-  reviews,
   website,
-}: Restaurant): ReactElement {
+}: Pick<
+  Restaurant,
+  'cuisine' | 'distance' | 'name' | 'priceLevel' | 'rating' | 'website'
+>): ReactElement {
   const { dispatch } = useRestaurantCard();
 
   const HeaderTitle = (): ReactElement => (
@@ -84,11 +86,6 @@ export default function Header({
         </a>
       </Button>
       <Button style={styles.button}>
-        <a style={styles.link} href={reviews}>
-          Reviews
-        </a>
-      </Button>
-      <Button style={styles.button}>
         {/* TODO: update link */}
         <a style={styles.link} href="/">
           Directions
@@ -110,8 +107,8 @@ export default function Header({
         <Rate allowHalf disabled defaultValue={rating} style={styles.rating} />
       </Row>
       <Row style={styles.details}>
-        <Text style={styles.detailsText}>{cuisineType}</Text>
-        <Text style={styles.detailsText}>{price}</Text>
+        <Text style={styles.detailsText}>{cuisine}</Text>
+        <Text style={styles.detailsText}>{priceLevel}</Text>
         <Text style={styles.detailsText}>{distance}m</Text>
       </Row>
       <Buttons />

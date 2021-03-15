@@ -11,15 +11,16 @@ const styles: { [identifier: string]: CSSProperties } = {
     borderRadius: 15,
     boxShadow: '0 4px 4px 0 #40333333',
     padding: 0,
-    position: 'absolute',
     width: 350,
     zIndex: 10,
   },
   container: {
-    height: '100%',
+    display: 'flex',
+    flexFlow: 'column',
     marginTop: 60,
-    position: 'absolute',
+    position: 'fixed',
     width: '100%',
+    zIndex: 10,
   },
 };
 
@@ -34,8 +35,19 @@ export default function RestaurantCard(restaurant: Restaurant): ReactElement {
           left: `calc(65% - ${containerPadding} - ${styles.card.width}px)`,
         }}
       >
-        <Header {...restaurant} />
-        <Body {...restaurant} />
+        <Header
+          cuisine={restaurant.cuisine}
+          distance={restaurant.distance}
+          priceLevel={restaurant.priceLevel}
+          name={restaurant.name}
+          rating={restaurant.rating}
+          website={restaurant.website}
+        />
+        <Body
+          address={restaurant.address}
+          openingHours={restaurant.openingHours}
+          phoneNumber={restaurant.phoneNumber}
+        />
       </Col>
     </div>
   );

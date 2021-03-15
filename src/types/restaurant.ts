@@ -1,24 +1,21 @@
 export type Restaurant = {
-  id: string;
-  address: string;
-  cuisineType: string;
+  cuisine: string;
   distance: number;
-  hours: Hours;
-  name: string;
-  phoneNumber: string;
-  photos: Array<{ src: string }>;
-  price: string;
-  rating: number;
-  reviews: string;
-  website: string;
-};
+} & RestaurantDetails;
 
-type Hours = {
-  sunday: string;
-  monday: string;
-  tuesday: string;
-  wednesday: string;
-  thursday: string;
-  friday: string;
-  saturday: string;
-};
+export interface RestaurantDetails {
+  address: string;
+  business_status: string;
+  lat: number;
+  lon: number;
+  mapUrl: string;
+  name: string;
+  openingHours: Record<string, unknown>;
+  phoneNumber: string;
+  photos: Record<string, unknown>[];
+  priceLevel: string;
+  rating: number;
+  reviews: Record<string, unknown>[];
+  totalRating: number;
+  website: string;
+}

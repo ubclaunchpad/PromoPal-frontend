@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 
-import { RestaurantDetails } from '../types/RestaurantDetails';
+import { RestaurantDetails } from '../types/restaurant';
 import { RestaurantInfo } from '../types/RestaurantInfo';
 
 /* eslint-disable  @typescript-eslint/no-explicit-any */
@@ -95,14 +95,14 @@ class GooglePlacesService {
             : this.refreshPlaceIDAndGetDetails(placeID);
         }
 
-        const restaurant = {
+        const restaurant: RestaurantDetails = {
           name: restaurantResults.name,
-          price_level: restaurantResults.price_level,
+          priceLevel: restaurantResults.price_level,
           rating: restaurantResults.rating,
-          total_rating: restaurantResults.user_ratings_total,
-          map_url: restaurantResults.url,
-          phone_number: restaurantResults.formatted_phone_number,
-          opening_hours: restaurantResults.opening_hours,
+          totalRating: restaurantResults.user_ratings_total,
+          mapUrl: restaurantResults.url,
+          phoneNumber: restaurantResults.formatted_phone_number,
+          openingHours: restaurantResults.opening_hours,
           website: restaurantResults.website,
           reviews: restaurantResults.reviews,
           photos: restaurantResults.photos,
