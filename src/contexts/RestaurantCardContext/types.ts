@@ -7,6 +7,8 @@ export enum DispatchAction {
   HIDE_CARD,
   // Show restaurant card
   SHOW_CARD,
+  // Toggles restaurant card based on current state + given restaurant
+  TOGGLE_CARD,
 }
 
 /**
@@ -39,8 +41,10 @@ export type DispatchParams = {
  *
  * @property showCard - Whether or not the card is currently being shown
  * @property restaurant - The last selected restaurant
+ * @property placeId - The placeId of the last selected restaurant
  */
 export type State = {
   showCard: boolean;
   restaurant: Restaurant;
+  placeId: string;
 };
