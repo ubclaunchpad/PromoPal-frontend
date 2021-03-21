@@ -2,6 +2,8 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Tooltip } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
 
+import { useFirebase } from '../../contexts/FirebaseContext';
+
 const styles: { [identifier: string]: CSSProperties } = {
   button: {
     float: 'left',
@@ -25,16 +27,17 @@ interface Props {
 }
 
 export default function ForgotPasswordCard(props: Props): ReactElement {
-  const onFinish = () => {
-    alert('Finish');
-    //console.log('Success:', values);
-    // TODO https://promopal.atlassian.net/jira/software/projects/PP/boards/1?selectedIssue=PP-35
-    // TODO https://promopal.atlassian.net/jira/software/projects/PP/boards/1?selectedIssue=PP-37
+  const firebase = useFirebase();
+
+  const onFinish = (data: { email: string }) => {
+    firebase.doPasswordReset(data.email);
+    // TODO: https://promopal.atlassian.net/browse/PP-80
+    alert('A password reset email has been sent if an account with the email exists');
   };
 
   const onFinishFailed = () => {
-    //console.log('Failed:', errorInfo);
-    // TODO https://promopal.atlassian.net/jira/software/projects/PP/boards/1?selectedIssue=PP-38
+    // TODO: https://promopal.atlassian.net/browse/PP-80
+    alert('Please submit the form after filling out all fields.');
   };
 
   return (

@@ -1,7 +1,9 @@
-import { Menu } from 'antd';
+import { Button, Menu } from 'antd';
 import React, { CSSProperties, ReactElement, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { useAuthUser } from '../../contexts/AuthUserContext';
+import { useFirebase } from '../../contexts/FirebaseContext';
 import SearchBar from '../navigation/SearchBar';
 
 enum Pages {
@@ -40,13 +42,14 @@ const styles: { [identifier: string]: CSSProperties } = {
 
 export default function NavigationBar(): ReactElement {
   const [current, setCurrent] = useState<Pages>(Pages.Home);
+  const firebase = useFirebase();
+  const authUser = useAuthUser();
 
+  // TODO: isActive is not highlighting the active page when the browser back button is pressed
   const isActive = (key: Pages): CSSProperties => ({
     ...styles.menuItem,
     fontWeight: current === key ? 'bold' : 'normal',
   });
-
-  const loggedIn = false;
 
   return (
     <header id="navigation-header" style={styles.header}>
@@ -62,7 +65,7 @@ export default function NavigationBar(): ReactElement {
             <Link to="/">Home</Link>
           </Menu.Item>
           <Menu.Item key={Pages.Account} style={isActive(Pages.Account)}>
-            <Link to="/account">{loggedIn ? 'My Account' : 'Login'}</Link>
+            <Link to="/account">{authUser ? 'My Account' : 'Login'}</Link>
           </Menu.Item>
           <Menu.Item key={Pages.UploadPromotion} style={isActive(Pages.UploadPromotion)}>
             <Link to="/promotion/upload">Upload Promotion</Link>
@@ -70,6 +73,7 @@ export default function NavigationBar(): ReactElement {
         </Menu>
       </div>
       <SearchBar />
+      {authUser && <Button onClick={firebase.doSignOut}>Sign Out</Button>}
     </header>
   );
 }
