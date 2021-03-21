@@ -37,7 +37,7 @@ export default function RestaurantCard(restaurant: Place): ReactElement {
         <Header
           // cuisine={
           //   'Italian'
-          //   // todo: this should use a promotions cuisine, google place details doesn't have this
+          //   // todo: this should use a promotions cuisine https://promopal.atlassian.net/browse/PP-91
           //   // restaurant.cuisine
           // }
           // distance={

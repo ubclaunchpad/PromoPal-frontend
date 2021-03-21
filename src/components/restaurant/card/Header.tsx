@@ -50,7 +50,7 @@ const styles: { [identifier: string]: CSSProperties } = {
 };
 
 export default function Header({
-  // cuisine,
+  // cuisine, todo: this should use a promotions cuisine https://promopal.atlassian.net/browse/PP-91
   // distance,
   name,
   price_level,
