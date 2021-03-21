@@ -1,4 +1,12 @@
-import React, { CSSProperties, ReactElement, useCallback, useEffect, useState } from 'react';
+import { Pagination } from 'antd';
+import React, {
+  CSSProperties,
+  ReactElement,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import PromotionCard from '../components/promotion/PromotionCard';
 import {
@@ -18,12 +26,15 @@ import {
 import { Promotion } from '../types/promotion';
 import { Restaurant } from '../types/restaurant';
 
+const PAGE_SIZE = 10;
+
 const styles: { [identifier: string]: CSSProperties } = {
   container: {
     backgroundColor: '#FFEDDC',
     padding: 15,
-    paddingBottom: 0,
     overflow: 'auto',
+    scrollBehavior: 'smooth',
+    textAlign: 'center',
   },
 };
 
@@ -32,7 +43,11 @@ export default function PromotionList({
 }: {
   dimensions: { width: string; height: string };
 }): ReactElement {
+  const container = useRef<HTMLDivElement>(null);
+
+  const [pageNum, setPageNum] = useState<number>(1);
   const [promotions, setPromotions] = useState<Promotion[]>([]);
+  const [promotionsToDisplay, setPromotionsToDisplay] = useState<Promotion[]>([]);
 
   const { state: promotionsState, dispatch: promotionsDispatch } = usePromotionsList();
   const { dispatch: restaurantDispatch } = useRestaurantCard();
@@ -59,6 +74,32 @@ export default function PromotionList({
     },
     [restaurantDispatch]
   );
+
+  /**
+   * When the page is changed, updates the currently displayed promotions.
+   *
+   * @param page - The current page number
+   */
+  const onPageChange = (page: number) => {
+    if (container?.current) {
+      container.current.scrollTop = 0;
+    }
+
+    // Timeout to allow scrolling time to execute
+    setTimeout(() => {
+      const start = (page - 1) * PAGE_SIZE;
+      const end = Math.min(page * PAGE_SIZE, promotions.length);
+      setPromotionsToDisplay(promotions.slice(start, end));
+      setPageNum(page);
+    }, 250);
+  };
+
+  /**
+   * On initial render, display the first page of promotions.
+   */
+  useEffect(() => {
+    setPromotionsToDisplay(promotions.slice(0, PAGE_SIZE));
+  }, [promotions]);
 
   /**
    * This hook is run everytime the promotionsState changes. This function sorts and filters the promotions
@@ -98,14 +139,21 @@ export default function PromotionList({
   }, [promotionsDispatch, promotionsState.searchQuery]);
 
   return (
-    <div style={containerStyles}>
-      {promotions.map((promotion: Promotion) => (
+    <div style={containerStyles} ref={container}>
+      {promotionsToDisplay.map((promotion) => (
         <PromotionCard
           key={promotion.id}
           promotion={promotion}
           onClick={() => onClickHandler(promotion.placeId)}
         />
       ))}
+      <Pagination
+        size="small"
+        defaultCurrent={1}
+        current={pageNum}
+        onChange={onPageChange}
+        total={promotions.length}
+      />
     </div>
   );
 }
