@@ -4,6 +4,9 @@ import { Place } from '@googlemaps/google-maps-services-js';
 import { Col, Row, Tabs, Typography } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
 
+import { usePromotionsList } from '../../../contexts/PromotionsListContext';
+import PromotionsTab from './tab/PromotionsTab';
+
 const { TabPane } = Tabs;
 const { Text } = Typography;
 
@@ -40,8 +43,11 @@ export default function Body({
   opening_hours,
   formatted_phone_number,
 }: Pick<Place, 'formatted_address' | 'opening_hours' | 'formatted_phone_number'>): ReactElement {
+  // TODO: https://promopal.atlassian.net/browse/PP-81
+  const { state } = usePromotionsList();
+
   return (
-    <Row>
+    <Row className="restaurant-card-body">
       <Tabs style={styles.tabs} defaultActiveKey="1" size="small">
         <TabPane tab="Info" key="1" style={styles.tabContent}>
           <Section title="Address" details={formatted_address ?? 'No address found'} />
@@ -52,7 +58,7 @@ export default function Body({
           <Section title="Phone" details={formatted_phone_number ?? 'No phone number found'} />
         </TabPane>
         <TabPane tab="Promotions" key="2" style={styles.tabContent}>
-          Promotions
+          <PromotionsTab promotions={state.data} />
         </TabPane>
         <TabPane tab="Photos" key="3" style={styles.tabContent}>
           Photos
