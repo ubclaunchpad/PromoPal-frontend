@@ -38,14 +38,27 @@ const styles: { [identifier: string]: CSSProperties } = {
   },
 };
 
-export default function PromotionList({
-  dimensions: { width, height },
-}: {
+/**
+ * Selects the promotions that should be displayed on the current page.
+ *
+ * @param promotions - All promotions
+ * @param page - The current page
+ */
+function getPage(promotions: Promotion[], page: number) {
+  const start = (page - 1) * PAGE_SIZE;
+  const end = Math.min(page * PAGE_SIZE, promotions.length);
+  return promotions.slice(start, end);
+}
+
+interface Props {
   dimensions: { width: string; height: string };
-}): ReactElement {
+  pageNum: number;
+  onPageChange: (pageNum: number) => void;
+}
+
+export default function PromotionList(props: Props): ReactElement {
   const container = useRef<HTMLDivElement>(null);
 
-  const [pageNum, setPageNum] = useState<number>(1);
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [promotionsToDisplay, setPromotionsToDisplay] = useState<Promotion[]>([]);
 
@@ -53,8 +66,8 @@ export default function PromotionList({
   const { dispatch: restaurantDispatch } = useRestaurantCard();
 
   const containerStyles = {
-    height,
-    width,
+    height: props.dimensions.height,
+    width: props.dimensions.width,
     ...styles.container,
   };
 
@@ -85,21 +98,22 @@ export default function PromotionList({
       container.current.scrollTop = 0;
     }
 
-    // Timeout to allow scrolling time to execute
+    props.onPageChange(page);
+
+    // Timeout to allow scrolling to complete
     setTimeout(() => {
-      const start = (page - 1) * PAGE_SIZE;
-      const end = Math.min(page * PAGE_SIZE, promotions.length);
-      setPromotionsToDisplay(promotions.slice(start, end));
-      setPageNum(page);
+      const promotionsToDisplay = getPage(promotions, page);
+      setPromotionsToDisplay(promotionsToDisplay);
     }, 250);
   };
 
   /**
-   * On initial render, display the first page of promotions.
+   * On initial render, display promotions for current page.
    */
   useEffect(() => {
-    setPromotionsToDisplay(promotions.slice(0, PAGE_SIZE));
-  }, [promotions]);
+    const promotionsToDisplay = getPage(promotions, props.pageNum);
+    setPromotionsToDisplay(promotionsToDisplay);
+  }, [promotions, props.pageNum]);
 
   /**
    * This hook is run everytime the promotionsState changes. This function sorts and filters the promotions
@@ -150,7 +164,7 @@ export default function PromotionList({
       <Pagination
         size="small"
         defaultCurrent={1}
-        current={pageNum}
+        current={props.pageNum}
         onChange={onPageChange}
         total={promotions.length}
       />

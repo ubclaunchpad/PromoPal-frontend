@@ -1,4 +1,5 @@
 import React, { ReactElement, useEffect, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import DropdownMenu from '../components/DropdownMenu';
 import MapContainer from '../components/MapContainer';
@@ -13,8 +14,21 @@ import Routes from '../utils/routes';
 
 const mapWidth = 65;
 
+/**
+ * Gets the page number from the URL query params. Defaults to 1 if there is no `page` query param.
+ *
+ * @param location - The location object from `useLocation`
+ */
+function getPageNum(location: { search: string }): number {
+  return parseInt(new URLSearchParams(location.search).get('page') || '1');
+}
+
 export default function Home(): ReactElement {
+  const history = useHistory();
+  const location = useLocation();
+
   const [height, setHeight] = useState<string>('');
+  const [pageNum, setPageNum] = useState<number>(getPageNum(location));
 
   /* Options for each dropdown */
   const [cuisineTypes, setCuisineTypes] = useState<string[]>([]);
@@ -156,13 +170,26 @@ export default function Home(): ReactElement {
     setHeight(`calc(100vh - ${headerHeight}px - ${dropdownMenuHeight}px)`);
   }, []);
 
+  /**
+   * On page number change, update the query params to include the page number.
+   */
+  useEffect(() => {
+    const query = new URLSearchParams(location.search);
+    query.set('page', `${pageNum}`);
+    history.push({ search: query.toString() });
+  }, [history, location.search, pageNum]);
+
   return (
     <>
       <DropdownMenu dropdowns={dropdowns} shadow />
       <div id="content-container" style={{ display: 'inline-flex', height, position: 'relative' }}>
         {restaurantCardState.showCard && <RestaurantCard {...restaurantCardState.restaurant} />}
         <MapContainer dimensions={{ width: `${mapWidth}vw`, height }} />
-        <PromotionList dimensions={{ width: `${100 - mapWidth}vw`, height }} />
+        <PromotionList
+          dimensions={{ width: `${100 - mapWidth}vw`, height }}
+          pageNum={pageNum}
+          onPageChange={setPageNum}
+        />
       </div>
     </>
   );
