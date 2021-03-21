@@ -1,5 +1,8 @@
 import { Button, Checkbox, Form, Input } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
+import { useHistory } from 'react-router-dom';
+
+import { useFirebase } from '../../contexts/FirebaseContext';
 
 const styles: { [identifier: string]: CSSProperties } = {
   button: {
@@ -28,16 +31,24 @@ interface Props {
 }
 
 export default function LoginCard(props: Props): ReactElement {
-  const onFinish = () => {
-    alert('Finish');
-    //console.log('Success:', values);
-    // TODO https://promopal.atlassian.net/jira/software/projects/PP/boards/1?selectedIssue=PP-42
-    // TODO https://promopal.atlassian.net/jira/software/projects/PP/boards/1?selectedIssue=PP-43
+  const firebase = useFirebase();
+  const history = useHistory();
+
+  const onFinish = (data: { email: string; password: string; staySignedIn: boolean }) => {
+    firebase
+      .doSignInWithEmailAndPassword(data.email, data.password, data.staySignedIn)
+      .then(() => {
+        history.push('/');
+      })
+      .catch((err: Error) => {
+        // TODO: https://promopal.atlassian.net/browse/PP-80
+        alert(err.message);
+      });
   };
 
   const onFinishFailed = () => {
-    // TODO https://promopal.atlassian.net/jira/software/projects/PP/boards/1?selectedIssue=PP-44
-    //console.log('Failed:', errorInfo);
+    // TODO: https://promopal.atlassian.net/browse/PP-80
+    alert('Please submit the form after filling out all fields.');
   };
 
   return (
@@ -45,7 +56,7 @@ export default function LoginCard(props: Props): ReactElement {
       <Form
         {...layout}
         name="loginCard"
-        initialValues={{ remember: true }}
+        initialValues={{ staySignedIn: true }}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         requiredMark={false}
@@ -68,7 +79,7 @@ export default function LoginCard(props: Props): ReactElement {
         >
           <Input.Password placeholder="Password" />
         </Form.Item>
-        <Form.Item name="remember" valuePropName="checked">
+        <Form.Item name="staySignedIn" valuePropName="checked">
           <Checkbox>Stay signed in</Checkbox>
         </Form.Item>
         <Form.Item>

@@ -1,6 +1,11 @@
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Tooltip } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
+import { useHistory } from 'react-router-dom';
+
+import { useFirebase } from '../../contexts/FirebaseContext';
+import RegistrationService from '../../services/RegistrationService';
+import { RegistrationData } from '../../types/user';
 
 const styles: { [identifier: string]: CSSProperties } = {
   button: {
@@ -25,26 +30,27 @@ interface Props {
 }
 
 export default function RegisterCard(props: Props): ReactElement {
-  const onFinish = () => {
-    alert('Finish');
-    //console.log('Success:', values);
-    // TODO https://promopal.atlassian.net/jira/software/projects/PP/boards/1?selectedIssue=PP-35
-    // TODO https://promopal.atlassian.net/jira/software/projects/PP/boards/1?selectedIssue=PP-37
+  const firebase = useFirebase();
+  const history = useHistory();
+
+  const onFinish = (data: RegistrationData) => {
+    RegistrationService.register(firebase, data)
+      .then(() => {
+        history.push('/');
+      })
+      .catch((err: Error) => {
+        // TODO: https://promopal.atlassian.net/browse/PP-80
+        alert(err.message);
+      });
   };
 
   const onFinishFailed = () => {
-    //console.log('Failed:', errorInfo);
-    // TODO https://promopal.atlassian.net/jira/software/projects/PP/boards/1?selectedIssue=PP-38
+    // TODO: https://promopal.atlassian.net/browse/PP-80
+    alert('Please submit the form after filling out all fields.');
   };
 
   return (
-    <Form
-      {...layout}
-      name="registerCard"
-      initialValues={{ remember: true }}
-      onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
-    >
+    <Form {...layout} name="registerCard" onFinish={onFinish} onFinishFailed={onFinishFailed}>
       <Tooltip title="Back">
         <Button shape="circle" onClick={props.onClickBack} icon={<ArrowLeftOutlined />} />
       </Tooltip>
@@ -52,7 +58,7 @@ export default function RegisterCard(props: Props): ReactElement {
       <p>Create an account to upload promotions and save deals you like.</p>
       <Form.Item style={{ marginBottom: 0 }}>
         <Form.Item
-          name="firstname"
+          name="firstName"
           rules={[{ required: true, message: 'Please enter your first name.' }]}
           style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
           hasFeedback={true}
@@ -60,7 +66,7 @@ export default function RegisterCard(props: Props): ReactElement {
           <Input placeholder="First name" />
         </Form.Item>
         <Form.Item
-          name="lastname"
+          name="lastName"
           rules={[{ required: true, message: 'Please enter your last name.' }]}
           style={{ display: 'inline-block', width: 'calc(50% - 8px)', margin: '0 8px' }}
           hasFeedback={true}
@@ -71,7 +77,7 @@ export default function RegisterCard(props: Props): ReactElement {
 
       <Form.Item
         style={styles.inputWrapper}
-        name="username"
+        name="userName"
         rules={[{ required: true, message: 'A username is required.' }]}
         hasFeedback={true}
       >

@@ -8,3 +8,11 @@ export interface User {
   uploadedPromotions: Promotion[];
   userName: string;
 }
+
+export interface RegistrationData {
+  firstName: string;
+  lastName: string;
+  userName: string;
+  email: string;
+  password: string;
+}
