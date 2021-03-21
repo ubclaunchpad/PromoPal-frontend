@@ -1,14 +1,15 @@
 import './UploadPromotionForm.less';
 
-import { DatePicker, Form, Input, Radio, Row, Select } from 'antd';
+import { DatePicker, Form, Input, message, Radio, Row, Select } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import moment from 'moment';
 import React, { ReactElement, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import EnumService from '../../services/EnumService';
 import * as PromotionService from '../../services/PromotionService';
 import UserService from '../../services/UserService';
-import { Day, Schedule } from '../../types/promotion';
+import { Day, PostPromotionDTO, Schedule } from '../../types/promotion';
 import Button from '../button/Button';
 import LocationSearchInput from '../restaurant/LocationSearchInput';
 import PromotionTime from './PromotionTime';
@@ -42,6 +43,8 @@ interface PromotionDates {
 // https://promopal.atlassian.net/browse/PP-87
 export default function UploadPromotionForm(): ReactElement {
   const [form] = Form.useForm();
+
+  const history = useHistory();
 
   const [datesEffective, setDatesEffective] = useState<PromotionDates>({ start: '', end: '' });
   const [times, setTimes] = useState<PromotionTimes>({});
@@ -96,7 +99,7 @@ export default function UploadPromotionForm(): ReactElement {
     };
 
     const formValues = values as FormFields;
-    PromotionService.postPromotion({
+    const promotionDTO: PostPromotionDTO = {
       cuisine: formValues.cuisineType,
       description: formValues.promotionDescription,
       discount: {
@@ -113,7 +116,19 @@ export default function UploadPromotionForm(): ReactElement {
       schedules: getSchedules(),
       startDate: formValues.datesEffective[0],
       userId: UserService.userId,
-    });
+    };
+
+    PromotionService.postPromotion(promotionDTO)
+      .then(() => {
+        history.push('/promotions');
+
+        const successMessage = `The promotion "${formValues.promotionName}" was successfully uploaded!`;
+        message.success(successMessage, 5);
+      })
+      .catch(() => {
+        const errorMessage = 'An error occurred. Please review the form to see what went wrong.';
+        message.error(errorMessage, 5);
+      });
   };
 
   /**
@@ -219,7 +234,6 @@ export default function UploadPromotionForm(): ReactElement {
     <Form
       className="upload-promotion-form"
       layout="vertical"
-      name="basic"
       requiredMark={false}
       scrollToFirstError={true}
       labelCol={{ span: 24 }}
