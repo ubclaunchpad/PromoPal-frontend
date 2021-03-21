@@ -156,11 +156,25 @@ export default function Home(): ReactElement {
     setHeight(`calc(100vh - ${headerHeight}px - ${dropdownMenuHeight}px)`);
   }, []);
 
+  const { restaurant } = restaurantCardState;
+
   return (
     <>
       <DropdownMenu dropdowns={dropdowns} shadow />
       <div id="content-container" style={{ display: 'inline-flex', height, position: 'relative' }}>
-        {restaurantCardState.showCard && <RestaurantCard {...restaurantCardState.restaurant} />}
+        {restaurantCardState.showCard && (
+          <RestaurantCard
+            formattedAddress={restaurant.formatted_address}
+            formattedPhoneNumber={restaurant.formatted_phone_number}
+            latitude={restaurant.lat}
+            longitude={restaurant.lon}
+            openingHours={restaurant.opening_hours}
+            priceLevel={restaurant.price_level}
+            name={restaurant.name}
+            rating={restaurant.rating}
+            website={restaurant.website}
+          />
+        )}
         <MapContainer dimensions={{ width: `${mapWidth}vw`, height }} />
         <PromotionList dimensions={{ width: `${100 - mapWidth}vw`, height }} />
       </div>

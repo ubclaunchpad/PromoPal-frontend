@@ -9,6 +9,7 @@ import {
 import GooglePlacesApiLoaderService from '../services/GoogleMapsApiLoaderService';
 import LocationService, { GeolocationPosition } from '../services/LocationService';
 import { getRestaurant } from '../services/PromotionService';
+import { Restaurant } from '../types/promotion';
 
 function MapContainer({
   dimensions,
@@ -25,12 +26,17 @@ function MapContainer({
    */
   const initializeMarkers = useCallback(
     (map: google.maps.Map | null) => {
-      const onClickHandler = (restaurantId: string) => {
-        getRestaurant(restaurantId)
+      const onClickHandler = (promoRestaurant: Restaurant) => {
+        getRestaurant(promoRestaurant.id)
           .then((restaurant: Place) => {
             restaurantDispatch({
               type: RestaurantDispatch.TOGGLE_CARD,
-              payload: { restaurantId, restaurant },
+              payload: {
+                restaurant: {
+                  ...restaurant,
+                  ...promoRestaurant,
+                },
+              },
             });
           })
           .catch(() => restaurantDispatch({ type: RestaurantDispatch.HIDE_CARD }));
@@ -40,7 +46,7 @@ function MapContainer({
         promotionsState.data.forEach(({ restaurant }) => {
           const position = { lat: restaurant.lat, lng: restaurant.lon };
           const marker = new google.maps.Marker({ position, map });
-          marker.addListener('click', () => onClickHandler(restaurant.id));
+          marker.addListener('click', () => onClickHandler(restaurant));
         });
       }
     },
@@ -66,7 +72,7 @@ function MapContainer({
    * - Creates and displays the markers for all promotions listed
    */
   useEffect(() => {
-    LocationService.getCurrentLocation()
+    LocationService.GeolocationPosition.getCurrentLocation()
       .then(({ coords: { latitude, longitude } }: GeolocationPosition) => {
         createMap({ lat: latitude, lng: longitude });
       })
@@ -75,7 +81,7 @@ function MapContainer({
           defaultLocation: {
             coords: { latitude, longitude },
           },
-        } = LocationService;
+        } = LocationService.GeolocationPosition;
         createMap({ lat: latitude, lng: longitude });
       });
   }, [createMap]);

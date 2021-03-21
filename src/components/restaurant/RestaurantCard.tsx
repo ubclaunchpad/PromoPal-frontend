@@ -1,7 +1,8 @@
-import { Place } from '@googlemaps/google-maps-services-js';
+import { OpeningHours } from '@googlemaps/google-maps-services-js';
 import { Col } from 'antd';
-import React, { CSSProperties, ReactElement } from 'react';
+import React, { CSSProperties, ReactElement, useEffect, useState } from 'react';
 
+import LocationService, { LatLng } from '../../services/LocationService';
 import Body from './card/Body';
 import Header from './card/Header';
 
@@ -23,8 +24,46 @@ const styles: { [identifier: string]: CSSProperties } = {
   },
 };
 
-export default function RestaurantCard(restaurant: Place): ReactElement {
+interface Props {
+  latitude: number;
+  longitude: number;
+
+  formattedAddress?: string;
+  formattedPhoneNumber?: string;
+  openingHours?: OpeningHours;
+  priceLevel?: number;
+  name?: string;
+  rating?: number;
+  website?: string;
+}
+
+export default function RestaurantCard(props: Props): ReactElement {
+  const [distance, setDistance] = useState<number>(0);
+
   const containerPadding = '15px';
+
+  /**
+   * On initial render, calculates the distance of the restaurant from the user's current location.
+   */
+  useEffect(() => {
+    getRestaurantDistance(props.latitude, props.longitude)
+      .then((distance) => setDistance(distance))
+      .catch(() => setDistance(0));
+  }, []);
+
+  /**
+   * Calculates the distance between the user's current location and the restaurant.
+   */
+  const getRestaurantDistance = async (latitude: number, longitude: number): Promise<number> => {
+    return LocationService.LatLng.getCurrentLocation()
+      .then((userLocation: LatLng) => {
+        const restaurantLocation = new google.maps.LatLng(latitude, longitude);
+        return LocationService.LatLng.computeDistanceBetween(userLocation, restaurantLocation);
+      })
+      .catch(() => {
+        return 0;
+      });
+  };
 
   return (
     <div style={styles.container}>
@@ -40,20 +79,16 @@ export default function RestaurantCard(restaurant: Place): ReactElement {
           //   // todo: this should use a promotions cuisine, google place details doesn't have this
           //   // restaurant.cuisine
           // }
-          // distance={
-          //   1500
-          //   // // todo: where is this coming from?
-          //   // restaurant.distance
-          // }
-          price_level={restaurant.price_level}
-          name={restaurant.name}
-          rating={restaurant.rating}
-          website={restaurant.website}
+          distance={distance}
+          priceLevel={props.priceLevel}
+          name={props.name}
+          rating={props.rating}
+          website={props.website}
         />
         <Body
-          formatted_address={restaurant.formatted_address}
-          opening_hours={restaurant.opening_hours}
-          formatted_phone_number={restaurant.formatted_phone_number}
+          formatted_address={props.formattedAddress}
+          opening_hours={props.openingHours}
+          formatted_phone_number={props.formattedPhoneNumber}
         />
       </Col>
     </div>
