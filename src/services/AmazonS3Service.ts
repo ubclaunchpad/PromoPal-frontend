@@ -38,7 +38,7 @@ class AmazonS3Service {
     });
   }
 
-  uploadImage(image: Image, promotionId: string) {
+  uploadImage(image: Image, promotionId: string): void {
     // Get the presigned URL
     axios
       .get(process.env.REACT_APP_AWS_PRESIGNED_URL_ENDPOINT as string, {

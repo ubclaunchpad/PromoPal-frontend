@@ -13,11 +13,6 @@ const styles: { [identifier: string]: CSSProperties } = {
     paddingTop: 30,
     paddingBottom: 30,
   },
-  button: {
-    backgroundColor: '#FFC529',
-    fontWeight: 'bold',
-    marginTop: 10,
-  },
   deleteAccount: {
     marginTop: 10,
     textDecoration: 'underline',
@@ -32,7 +27,7 @@ export default function AccountPhoto(): ReactElement {
   return (
     <div style={styles.container}>
       <Avatar size={128} icon={<UserOutlined />} />
-      <Button size="large" shape="round" onClick={handleClick} style={styles.button}>
+      <Button size="large" shape="round" onClick={handleClick} className="button">
         Update Photo
       </Button>
       <p style={styles.deleteAccount}>Delete Account</p>

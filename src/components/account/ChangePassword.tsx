@@ -11,15 +11,6 @@ const styles: { [identifier: string]: CSSProperties } = {
     overflow: 'auto',
     padding: 30,
   },
-  button: {
-    backgroundColor: '#FFC529',
-    float: 'right',
-    fontWeight: 'bold',
-    marginTop: 10,
-  },
-  inputLabel: {
-    margin: '5px 0',
-  },
   inputWrapper: {
     marginBottom: 15,
   },
@@ -27,12 +18,13 @@ const styles: { [identifier: string]: CSSProperties } = {
 
 export default function ResetPassword(): ReactElement {
   const handleClick = (): void => {
+    // TODO: reset password in firebase
     alert('Click');
   };
 
   const InputPasswordWrapper = ({ label }: { label: string }): ReactElement => (
     <div style={styles.inputWrapper}>
-      <p style={styles.inputLabel}>{label}</p>
+      <p className="input-label">{label}</p>
       <Input.Password placeholder="Input password" />
     </div>
   );
@@ -40,11 +32,10 @@ export default function ResetPassword(): ReactElement {
   return (
     <div style={styles.container}>
       <h1>Reset Password</h1>
-
       <InputPasswordWrapper label="Current Password" />
       <InputPasswordWrapper label="New Password" />
       <InputPasswordWrapper label="Confirm New Password" />
-      <Button size="large" shape="round" onClick={handleClick} style={styles.button}>
+      <Button size="large" shape="round" onClick={handleClick} className="button">
         Save
       </Button>
     </div>
