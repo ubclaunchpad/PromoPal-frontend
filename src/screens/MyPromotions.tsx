@@ -99,6 +99,10 @@ const onChange = () => {
 export default function MyPromotions(): ReactElement {
   const [uploadedPromotions, setUploadedPromotions] = useState<Promotion[]>([]);
 
+  const onClick = () => {
+    /* stub */
+  };
+
   /**
    * On initial render, retrieves the user's uploaded promotions.
    */
@@ -126,7 +130,7 @@ export default function MyPromotions(): ReactElement {
           <Row gutter={16}>
             {uploadedPromotions.map((promotion: Promotion) => (
               <Col span={12}>
-                <PromotionCard {...promotion} />
+                <PromotionCard promotion={promotion} onClick={onClick} />
               </Col>
             ))}
           </Row>

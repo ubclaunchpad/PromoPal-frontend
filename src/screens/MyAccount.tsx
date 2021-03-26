@@ -3,7 +3,7 @@ import React, { CSSProperties, ReactElement, useEffect, useState } from 'react';
 
 import AccountDetails from '../components/account/AccountDetails';
 import AccountPhoto from '../components/account/AccountPhoto';
-import ResetPassword from '../components/account/ResetPassword';
+import ChangePassword from '../components/account/ChangePassword';
 import UserService from '../services/UserService';
 import { User } from '../types/user';
 
@@ -53,7 +53,7 @@ export default function MyAccount(): ReactElement {
         />
       </Col>
       <Col span={10}>
-        <ResetPassword />
+        <ChangePassword />
       </Col>
     </Row>
   );

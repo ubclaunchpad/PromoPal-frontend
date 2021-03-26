@@ -8,6 +8,7 @@ import { Context, DispatchAction, DispatchParams, State } from './types';
 export const initialState: State = {
   showCard: false,
   restaurant: {} as Restaurant,
+  placeId: '',
 };
 
 /**

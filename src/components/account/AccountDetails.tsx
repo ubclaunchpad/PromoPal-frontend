@@ -95,7 +95,6 @@ export default function AccountDetails(props: Props): ReactElement {
   return (
     <div className="account-details-container">
       <h1>Account Details</h1>
-
       <Form
         form={form}
         layout="vertical"
