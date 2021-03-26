@@ -56,7 +56,7 @@ class GooglePlacesService {
       maxheight: '1600',
       maxwidth: '1600',
       photoreference: photo_reference,
-      key: process.env.REACT_APP_GOOGLE_PLACES_API_KEY as string,
+      key: process.env.REACT_APP_GOOGLE_PHOTOS_PUBLIC_API_KEY as string,
     });
     return baseUrl + queryParams.toString();
   }
