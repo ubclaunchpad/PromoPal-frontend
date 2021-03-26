@@ -3,7 +3,7 @@ import React, { CSSProperties, ReactElement } from 'react';
 
 import AccountDetails from '../components/account/AccountDetails';
 import AccountPhoto from '../components/account/AccountPhoto';
-import ResetPassword from '../components/account/ResetPassword';
+import ChangePassword from '../components/account/ChangePassword';
 import { User } from '../types/promotion';
 
 const user: User = {
@@ -35,7 +35,7 @@ export default function MyAccount(): ReactElement {
         <AccountDetails {...user} />
       </Col>
       <Col span={10}>
-        <ResetPassword />
+        <ChangePassword />
       </Col>
     </Row>
   );
