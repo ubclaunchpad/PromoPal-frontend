@@ -77,4 +77,5 @@ export interface FilterOptions {
   promotionType: Array<Promotion['promotionType']>;
 }
 
-type Day = 'Sunday' | 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday';
+const DAY = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as const;
+export type Day = typeof DAY[number];
