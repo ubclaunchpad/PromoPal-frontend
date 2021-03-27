@@ -1,10 +1,10 @@
 import './Body.css';
 
+import { Place } from '@googlemaps/google-maps-services-js';
 import { Col, Row, Tabs, Typography } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
 
 import { usePromotionsList } from '../../../contexts/PromotionsListContext';
-import { Restaurant } from '../../../types/restaurant';
 import PromotionsTab from './tab/PromotionsTab';
 
 const { TabPane } = Tabs;
@@ -39,41 +39,23 @@ function Section({ title, details }: { title: string; details: string }): ReactE
 }
 
 export default function Body({
-  address,
-  openingHours,
-  phoneNumber,
-}: Pick<Restaurant, 'address' | 'openingHours' | 'phoneNumber'>): ReactElement {
+  formatted_address,
+  opening_hours,
+  formatted_phone_number,
+}: Pick<Place, 'formatted_address' | 'opening_hours' | 'formatted_phone_number'>): ReactElement {
   // TODO: https://promopal.atlassian.net/browse/PP-81
   const { state } = usePromotionsList();
-
-  function formatHours(hours: Restaurant['openingHours']): string {
-    return `Sun: ${hours.sunday}
-      Mon: ${hours.monday}
-      Tue: ${hours.tuesday}
-      Wed: ${hours.wednesday}
-      Thu: ${hours.thursday}
-      Fri: ${hours.friday}
-      Sat: ${hours.saturday}
-    `;
-  }
-
-  function formatPhoneNumber(phoneNumber: string): string {
-    const segments = phoneNumber.split('-');
-    if (segments.length > 1) {
-      const areaCode = segments[0];
-      const kebab = segments.slice(1).join('-');
-      return `(${areaCode}) ${kebab}`;
-    }
-    return phoneNumber;
-  }
 
   return (
     <Row className="restaurant-card-body">
       <Tabs style={styles.tabs} defaultActiveKey="1" size="small">
         <TabPane tab="Info" key="1" style={styles.tabContent}>
-          <Section title="Address" details={address} />
-          <Section title="Hours" details={formatHours(openingHours)} />
-          <Section title="Phone" details={formatPhoneNumber(phoneNumber)} />
+          <Section title="Address" details={formatted_address ?? 'No address found'} />
+          <Section
+            title="Hours"
+            details={opening_hours?.weekday_text.join('\r\n') ?? 'No available hours found'}
+          />
+          <Section title="Phone" details={formatted_phone_number ?? 'No phone number found'} />
         </TabPane>
         <TabPane tab="Promotions" key="2" style={styles.tabContent}>
           <PromotionsTab promotions={state.data} />

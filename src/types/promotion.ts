@@ -1,5 +1,3 @@
-import { RestaurantDetails } from './restaurant';
-
 export enum Sort {
   Default = 'DEFAULT',
   Distance = 'DISTANCE',
@@ -16,14 +14,10 @@ export interface Promotion {
   discount: Discount;
   expirationDate: string;
   image: PromotionImage;
-  lat: number;
-  lon: number;
   liked: boolean;
   name: string;
-  placeId: string;
   promotionType: string;
-  restaurant: RestaurantDetails;
-  restaurantName: string;
+  restaurant: Restaurant;
   schedules: Schedule[];
   user: User;
   boldDescription?: string;
@@ -66,6 +60,13 @@ export interface Schedule {
   endTime: string;
   startTime: string;
   isRecurring: boolean;
+}
+
+export interface Restaurant {
+  id: string;
+  placeId: string;
+  lat: number;
+  lon: number;
 }
 
 export interface FilterOptions {

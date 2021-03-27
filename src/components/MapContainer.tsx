@@ -1,3 +1,4 @@
+import { Place } from '@googlemaps/google-maps-services-js';
 import React, { ReactElement, useCallback, useEffect, useRef } from 'react';
 
 import { usePromotionsList } from '../contexts/PromotionsListContext';
@@ -8,7 +9,6 @@ import {
 import GooglePlacesApiLoaderService from '../services/GoogleMapsApiLoaderService';
 import LocationService, { GeolocationPosition } from '../services/LocationService';
 import { getRestaurant } from '../services/PromotionService';
-import { Restaurant } from '../types/restaurant';
 
 function MapContainer({
   dimensions,
@@ -25,22 +25,22 @@ function MapContainer({
    */
   const initializeMarkers = useCallback(
     (map: google.maps.Map | null) => {
-      const onClickHandler = (placeId: string) => {
-        getRestaurant(placeId)
-          .then((restaurant: Restaurant) => {
+      const onClickHandler = (restaurantId: string) => {
+        getRestaurant(restaurantId)
+          .then((restaurant: Place) => {
             restaurantDispatch({
               type: RestaurantDispatch.TOGGLE_CARD,
-              payload: { placeId, restaurant },
+              payload: { restaurantId, restaurant },
             });
           })
           .catch(() => restaurantDispatch({ type: RestaurantDispatch.HIDE_CARD }));
       };
 
       if (map) {
-        promotionsState.data.forEach(({ lat, lon, placeId }) => {
-          const position = { lat, lng: lon };
+        promotionsState.data.forEach(({ restaurant }) => {
+          const position = { lat: restaurant.lat, lng: restaurant.lon };
           const marker = new google.maps.Marker({ position, map });
-          marker.addListener('click', () => onClickHandler(placeId));
+          marker.addListener('click', () => onClickHandler(restaurant.id));
         });
       }
     },
