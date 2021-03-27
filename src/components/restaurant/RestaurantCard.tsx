@@ -1,4 +1,4 @@
-import { OpeningHours } from '@googlemaps/google-maps-services-js';
+import { OpeningHours, PlacePhoto } from '@googlemaps/google-maps-services-js';
 import { Col } from 'antd';
 import React, { CSSProperties, ReactElement, useEffect, useState } from 'react';
 
@@ -12,29 +12,30 @@ const styles: { [identifier: string]: CSSProperties } = {
     borderRadius: 15,
     boxShadow: '0 4px 4px 0 #40333333',
     padding: 0,
-    position: 'absolute',
     width: 350,
     zIndex: 10,
   },
   container: {
-    height: '100%',
+    display: 'flex',
+    flexFlow: 'column',
     marginTop: 60,
-    position: 'absolute',
+    position: 'fixed',
     width: '100%',
+    zIndex: 10,
   },
 };
 
 interface Props {
+  formattedAddress: string | undefined;
+  formattedPhoneNumber: string | undefined;
   latitude: number;
   longitude: number;
-
-  formattedAddress?: string;
-  formattedPhoneNumber?: string;
-  openingHours?: OpeningHours;
-  priceLevel?: number;
-  name?: string;
-  rating?: number;
-  website?: string;
+  openingHours: OpeningHours | undefined;
+  photos: PlacePhoto[] | undefined;
+  priceLevel: number | undefined;
+  name: string | undefined;
+  rating: number | undefined;
+  website: string | undefined;
 }
 
 export default function RestaurantCard(props: Props): ReactElement {
@@ -43,13 +44,13 @@ export default function RestaurantCard(props: Props): ReactElement {
   const containerPadding = '15px';
 
   /**
-   * On initial render, calculates the distance of the restaurant from the user's current location.
+   * Calculates the distance of the restaurant from the user's current location.
    */
   useEffect(() => {
     getRestaurantDistance(props.latitude, props.longitude)
       .then((distance) => setDistance(distance))
       .catch(() => setDistance(0));
-  }, []);
+  }, [props.latitude, props.longitude]);
 
   /**
    * Calculates the distance between the user's current location and the restaurant.
@@ -76,7 +77,7 @@ export default function RestaurantCard(props: Props): ReactElement {
         <Header
           // cuisine={
           //   'Italian'
-          //   // todo: this should use a promotions cuisine, google place details doesn't have this
+          //   // todo: this should use a promotions cuisine https://promopal.atlassian.net/browse/PP-91
           //   // restaurant.cuisine
           // }
           distance={distance}
@@ -86,9 +87,10 @@ export default function RestaurantCard(props: Props): ReactElement {
           website={props.website}
         />
         <Body
-          formatted_address={props.formattedAddress}
-          opening_hours={props.openingHours}
-          formatted_phone_number={props.formattedPhoneNumber}
+          formattedAddress={props.formattedAddress}
+          openingHours={props.openingHours}
+          formattedPhoneNumber={props.formattedPhoneNumber}
+          photos={props.photos}
         />
       </Col>
     </div>

@@ -9,12 +9,12 @@ import { DispatchAction, useRestaurantCard } from '../../../contexts/RestaurantC
 const { Text, Title } = Typography;
 
 interface Props {
-  // cuisine: string;
-  distance?: number;
-  name?: string;
-  priceLevel?: number;
-  rating?: number;
-  website?: string;
+  // cuisine: string; // todo: this should use a promotions cuisine https://promopal.atlassian.net/browse/PP-91
+  distance: number;
+  name: string | undefined;
+  priceLevel: number | undefined;
+  rating: number | undefined;
+  website: string | undefined;
 }
 
 export default function Header(props: Props): ReactElement {

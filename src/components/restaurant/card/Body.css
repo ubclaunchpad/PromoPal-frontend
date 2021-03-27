@@ -1,3 +1,8 @@
+/* Tab content */
+.ant-tabs-content .ant-tabs-content-top {
+  margin-bottom: 15px;
+}
+
 /* Tab bar */
 .ant-tabs-nav-wrap {
   background-color: #ffeddc;
@@ -6,38 +11,86 @@
 }
 
 /* Tab bar button spacing */
-.ant-tabs .ant-tabs-nav-wrap .ant-tabs-nav-list .ant-tabs-tab {
+.ant-tabs-nav-wrap .ant-tabs-nav-list .ant-tabs-tab {
   padding-left: 20px;
   padding-right: 20px;
   margin-right: 0px;
 }
 
 /* Active tab bar */
-.ant-tabs .ant-tabs-nav-wrap .ant-tabs-nav-list .ant-tabs-tab.ant-tabs-tab-active {
+.ant-tabs-nav-list .ant-tabs-tab.ant-tabs-tab-active {
   background-color: #fac15e;
 }
 
 /* Active tab bar button text */
-.ant-tabs
-  .ant-tabs-nav-wrap
-  .ant-tabs-nav-list
-  .ant-tabs-tab.ant-tabs-tab-active
-  .ant-tabs-tab-btn {
+.ant-tabs-nav-list .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
   font-weight: bold;
 }
 
 /* Hover: tab bar div */
-.ant-tabs .ant-tabs-nav-wrap .ant-tabs-nav-list .ant-tabs-tab:hover {
+.ant-tabs-nav-list .ant-tabs-tab:hover {
   color: #333;
 }
 
 /* Tab bar button text */
-.ant-tabs .ant-tabs-nav-wrap .ant-tabs-nav-list .ant-tabs-tab .ant-tabs-tab-btn {
+.ant-tabs-nav-list .ant-tabs-tab .ant-tabs-tab-btn {
   color: #333;
 }
 
 /* Remove underline on active tab */
-.ant-tabs .ant-tabs-nav-list .ant-tabs-ink-bar.ant-tabs-ink-bar-animated {
+.ant-tabs-nav-list .ant-tabs-ink-bar.ant-tabs-ink-bar-animated {
   height: 0;
   width: 0;
+}
+
+.photo-container {
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.photo-container img {
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.photo-caption {
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+}
+
+.photo-caption a {
+  color: grey;
+  font-size: 0.75rem;
+  text-decoration: underline;
+}
+
+.photos-tab {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.restaurant-section {
+  padding-bottom: 10px;
+}
+
+.restaurant-section-details {
+  white-space: pre-line;
+}
+
+.restaurant-tabs {
+  width: 100%;
+}
+
+.restaurant-tab-content {
+  flex: inherit;
+  margin: 10px 20px;
+  max-height: 350px;
+  overflow-y: scroll;
+  word-break: break-word;
 }

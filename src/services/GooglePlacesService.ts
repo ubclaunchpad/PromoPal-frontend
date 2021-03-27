@@ -21,7 +21,9 @@ class GooglePlacesService {
   getRestaurantDetails(restaurantId: string): Promise<Place> {
     // if mapping already contains this restaurantId, return the place
     const existingPlace = this.currRestaurants.get(restaurantId);
-    if (existingPlace) return Promise.resolve(existingPlace);
+    if (existingPlace) {
+      return Promise.resolve(existingPlace);
+    }
 
     return axios
       .get(Routes.RESTAURANTS.RESTAURANT_DETAILS(restaurantId))
@@ -40,8 +42,29 @@ class GooglePlacesService {
    * @param restaurantId the id of the restaurant
    * */
   async getRestaurantPhoto(restaurantId: string): Promise<PlacePhoto[]> {
-    const place = await this.getRestaurantDetails(restaurantId);
-    return place.photos ?? [];
+    try {
+      const place = await this.getRestaurantDetails(restaurantId);
+      return place.photos ?? [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /**
+   * Constructs and returns the url for a restaurant photo.
+   * Note: retrieves the photo with the largest max width/height for the best quality.
+   *
+   * @param photo the restaurant photo
+   */
+  getRestaurantPhotoUrl({ photo_reference }: PlacePhoto): string {
+    const baseUrl = 'https://maps.googleapis.com/maps/api/place/photo?';
+    const queryParams = new URLSearchParams({
+      maxheight: '1600',
+      maxwidth: '1600',
+      photoreference: photo_reference,
+      key: process.env.REACT_APP_GOOGLE_PHOTOS_PUBLIC_API_KEY as string,
+    });
+    return baseUrl + queryParams.toString();
   }
 }
 

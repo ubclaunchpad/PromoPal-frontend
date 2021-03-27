@@ -169,6 +169,7 @@ export default function Home(): ReactElement {
             latitude={restaurant.lat}
             longitude={restaurant.lon}
             openingHours={restaurant.opening_hours}
+            photos={restaurant.photos}
             priceLevel={restaurant.price_level}
             name={restaurant.name}
             rating={restaurant.rating}
