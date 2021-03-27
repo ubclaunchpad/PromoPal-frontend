@@ -49,6 +49,23 @@ class GooglePlacesService {
       return [];
     }
   }
+
+  /**
+   * Constructs and returns the url for a restaurant photo.
+   * Note: retrieves the photo with the largest max width/height for the best quality.
+   *
+   * @param photo the restaurant photo
+   */
+  getRestaurantPhotoUrl({ photo_reference }: PlacePhoto): string {
+    const baseUrl = 'https://maps.googleapis.com/maps/api/place/photo?';
+    const queryParams = new URLSearchParams({
+      maxheight: '1600',
+      maxwidth: '1600',
+      photoreference: photo_reference,
+      key: process.env.REACT_APP_GOOGLE_PHOTOS_PUBLIC_API_KEY as string,
+    });
+    return baseUrl + queryParams.toString();
+  }
 }
 
 export default new GooglePlacesService();

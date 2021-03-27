@@ -55,6 +55,7 @@ export default function RestaurantCard(restaurant: Place): ReactElement {
           formatted_address={restaurant.formatted_address}
           opening_hours={restaurant.opening_hours}
           formatted_phone_number={restaurant.formatted_phone_number}
+          photos={restaurant.photos}
         />
       </Col>
     </div>
