@@ -11,15 +11,16 @@ const styles: { [identifier: string]: CSSProperties } = {
     borderRadius: 15,
     boxShadow: '0 4px 4px 0 #40333333',
     padding: 0,
-    position: 'absolute',
     width: 350,
     zIndex: 10,
   },
   container: {
-    height: '100%',
+    display: 'flex',
+    flexFlow: 'column',
     marginTop: 60,
-    position: 'absolute',
+    position: 'fixed',
     width: '100%',
+    zIndex: 10,
   },
 };
 
@@ -37,7 +38,7 @@ export default function RestaurantCard(restaurant: Place): ReactElement {
         <Header
           // cuisine={
           //   'Italian'
-          //   // todo: this should use a promotions cuisine, google place details doesn't have this
+          //   // todo: this should use a promotions cuisine https://promopal.atlassian.net/browse/PP-91
           //   // restaurant.cuisine
           // }
           // distance={

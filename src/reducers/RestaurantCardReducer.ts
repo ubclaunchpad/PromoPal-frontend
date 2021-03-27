@@ -19,7 +19,7 @@ export function restaurantCardReducer(state: State, { type, payload }: DispatchP
       const { restaurantId, restaurant } = payload as { restaurantId: string; restaurant: Place };
       nextState = {
         ...nextState,
-        restaurantId: restaurantId,
+        restaurantId,
         restaurant: restaurant ?? state.restaurant,
         showCard: true,
       };

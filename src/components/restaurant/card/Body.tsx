@@ -4,7 +4,9 @@ import { Place } from '@googlemaps/google-maps-services-js';
 import { Col, Row, Tabs, Typography } from 'antd';
 import React, { ReactElement } from 'react';
 
+import { usePromotionsList } from '../../../contexts/PromotionsListContext';
 import PhotosTab from './PhotosTab';
+import PromotionsTab from './tab/PromotionsTab';
 
 const { TabPane } = Tabs;
 const { Text } = Typography;
@@ -29,15 +31,8 @@ export default function Body({
   Place,
   'formatted_address' | 'opening_hours' | 'formatted_phone_number' | 'photos'
 >): ReactElement {
-  function formatPhoneNumber(phoneNumber: string): string {
-    const segments = phoneNumber.split('-');
-    if (segments.length > 1) {
-      const areaCode = segments[0];
-      const kebab = segments.slice(1).join('-');
-      return `(${areaCode}) ${kebab}`;
-    }
-    return phoneNumber;
-  }
+  // TODO: https://promopal.atlassian.net/browse/PP-81
+  const { state } = usePromotionsList();
 
   return (
     <Row>
@@ -48,13 +43,10 @@ export default function Body({
             title="Hours"
             details={opening_hours?.weekday_text.join('\r\n') ?? 'No available hours found'}
           />
-          <Section
-            title="Phone"
-            details={formatPhoneNumber(formatted_phone_number ?? 'No phone number found')}
-          />
+          <Section title="Phone" details={formatted_phone_number ?? 'No phone number found'} />
         </TabPane>
         <TabPane tab="Promotions" key="2" className="restaurant-tab-content">
-          Promotions
+          <PromotionsTab promotions={state.data} />
         </TabPane>
         <TabPane tab="Photos" key="3" className="restaurant-tab-content">
           <PhotosTab photos={photos} />

@@ -21,7 +21,9 @@ class GooglePlacesService {
   getRestaurantDetails(restaurantId: string): Promise<Place> {
     // if mapping already contains this restaurantId, return the place
     const existingPlace = this.currRestaurants.get(restaurantId);
-    if (existingPlace) return Promise.resolve(existingPlace);
+    if (existingPlace) {
+      return Promise.resolve(existingPlace);
+    }
 
     return axios
       .get(Routes.RESTAURANTS.RESTAURANT_DETAILS(restaurantId))
@@ -40,8 +42,12 @@ class GooglePlacesService {
    * @param restaurantId the id of the restaurant
    * */
   async getRestaurantPhoto(restaurantId: string): Promise<PlacePhoto[]> {
-    const place = await this.getRestaurantDetails(restaurantId);
-    return place.photos ?? [];
+    try {
+      const place = await this.getRestaurantDetails(restaurantId);
+      return place.photos ?? [];
+    } catch (e) {
+      return [];
+    }
   }
 
   /**
