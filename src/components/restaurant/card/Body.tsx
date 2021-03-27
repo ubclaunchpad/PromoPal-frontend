@@ -1,6 +1,6 @@
 import './Body.css';
 
-import { Place } from '@googlemaps/google-maps-services-js';
+import { OpeningHours, PlacePhoto } from '@googlemaps/google-maps-services-js';
 import { Col, Row, Tabs, Typography } from 'antd';
 import React, { ReactElement } from 'react';
 
@@ -22,15 +22,14 @@ function Section({ title, details }: { title: string; details: string }): ReactE
   );
 }
 
-export default function Body({
-  formatted_address,
-  opening_hours,
-  formatted_phone_number,
-  photos,
-}: Pick<
-  Place,
-  'formatted_address' | 'opening_hours' | 'formatted_phone_number' | 'photos'
->): ReactElement {
+interface Props {
+  formattedAddress: string | undefined;
+  formattedPhoneNumber: string | undefined;
+  openingHours: OpeningHours | undefined;
+  photos: PlacePhoto[] | undefined;
+}
+
+export default function Body(props: Props): ReactElement {
   // TODO: https://promopal.atlassian.net/browse/PP-81
   const { state } = usePromotionsList();
 
@@ -38,18 +37,18 @@ export default function Body({
     <Row>
       <Tabs className="restaurant-tabs" defaultActiveKey="1" size="small">
         <TabPane tab="Info" key="1" className="restaurant-tab-content">
-          <Section title="Address" details={formatted_address ?? 'No address found'} />
+          <Section title="Address" details={props.formattedAddress ?? 'No address found'} />
           <Section
             title="Hours"
-            details={opening_hours?.weekday_text.join('\r\n') ?? 'No available hours found'}
+            details={props.openingHours?.weekday_text.join('\r\n') ?? 'No available hours found'}
           />
-          <Section title="Phone" details={formatted_phone_number ?? 'No phone number found'} />
+          <Section title="Phone" details={props.formattedPhoneNumber ?? 'No phone number found'} />
         </TabPane>
         <TabPane tab="Promotions" key="2" className="restaurant-tab-content">
           <PromotionsTab promotions={state.data} />
         </TabPane>
         <TabPane tab="Photos" key="3" className="restaurant-tab-content">
-          <PhotosTab photos={photos} />
+          <PhotosTab photos={props.photos} />
         </TabPane>
       </Tabs>
     </Row>

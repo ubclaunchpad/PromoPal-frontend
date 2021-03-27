@@ -1,6 +1,8 @@
 import { Place } from '@googlemaps/google-maps-services-js';
 import { Dispatch } from 'react';
 
+import { Restaurant } from '../../types/promotion';
+
 export enum DispatchAction {
   // Hide restaurant card
   HIDE_CARD,
@@ -23,6 +25,16 @@ export type Context = {
 };
 
 /**
+ * @type Payload
+ * The type of the payload parameter in the dispatch call.
+ *
+ * @property restaurant - An object with properties of the restaurant
+ */
+export type Payload = {
+  restaurant: Place & Restaurant;
+};
+
+/**
  * @type DispatchParams
  * The parameters and their types for the dispatch call (for updating state).
  *
@@ -31,7 +43,7 @@ export type Context = {
  */
 export type DispatchParams = {
   type: DispatchAction;
-  payload?: unknown;
+  payload?: Payload;
 };
 
 /**
@@ -40,10 +52,8 @@ export type DispatchParams = {
  *
  * @property showCard - Whether or not the card is currently being shown
  * @property restaurant - The last selected restaurant
- * @property restaurantId - The id of the last selected restaurant
  */
 export type State = {
   showCard: boolean;
-  restaurant: Place;
-  restaurantId: string;
+  restaurant: Place & Restaurant;
 };

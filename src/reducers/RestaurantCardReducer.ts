@@ -1,6 +1,7 @@
 import { Place } from '@googlemaps/google-maps-services-js';
 
-import { DispatchAction, DispatchParams, State } from '../contexts/RestaurantCardContext';
+import { DispatchAction, DispatchParams, Payload, State } from '../contexts/RestaurantCardContext';
+import { Restaurant } from '../types/promotion';
 
 /**
  * @function restaurantCardReducer Reducer for managing state of restaurant card.
@@ -16,11 +17,10 @@ export function restaurantCardReducer(state: State, { type, payload }: DispatchP
      * Shows the restaurant card.
      */
     case DispatchAction.SHOW_CARD: {
-      const { restaurantId, restaurant } = payload as { restaurantId: string; restaurant: Place };
+      const { restaurant } = payload as Payload;
       nextState = {
         ...nextState,
-        restaurantId,
-        restaurant: restaurant ?? state.restaurant,
+        restaurant,
         showCard: true,
       };
       break;
@@ -31,7 +31,7 @@ export function restaurantCardReducer(state: State, { type, payload }: DispatchP
     case DispatchAction.HIDE_CARD:
       nextState = {
         ...nextState,
-        restaurant: {} as Place,
+        restaurant: {} as Place & Restaurant,
         showCard: false,
       };
       break;
@@ -47,9 +47,9 @@ export function restaurantCardReducer(state: State, { type, payload }: DispatchP
      * - matching restaurant results in an error
      */
     case DispatchAction.TOGGLE_CARD: {
-      const { restaurantId } = payload as { restaurantId: string; restaurant: Place };
+      const { restaurant } = payload as Payload;
       const isOpeningRestaurantCard = !state.showCard;
-      const isNewRestaurant = state.showCard && state.restaurantId !== restaurantId;
+      const isNewRestaurant = state.showCard && state.restaurant.id !== restaurant.id;
 
       let dispatchParams: DispatchParams;
       if (isNewRestaurant || isOpeningRestaurantCard) {

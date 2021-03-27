@@ -16,7 +16,7 @@ import {
   getRestaurant,
   sortPromotions,
 } from '../services/PromotionService';
-import { Promotion } from '../types/promotion';
+import { Promotion, Restaurant } from '../types/promotion';
 
 const styles: { [identifier: string]: CSSProperties } = {
   container: {
@@ -47,12 +47,17 @@ export default function PromotionList({
    * On click, retrieves the associated restaurant details and shows the restaurant card.
    */
   const onClickHandler = useCallback(
-    (restaurantId: string) => {
-      getRestaurant(restaurantId)
+    (promoRestaurant: Restaurant) => {
+      getRestaurant(promoRestaurant.id)
         .then((restaurant: Place) => {
           restaurantDispatch({
             type: RestaurantDispatch.TOGGLE_CARD,
-            payload: { restaurantId, restaurant },
+            payload: {
+              restaurant: {
+                ...restaurant,
+                ...promoRestaurant,
+              },
+            },
           });
         })
         .catch(() => restaurantDispatch({ type: RestaurantDispatch.HIDE_CARD }));
@@ -103,7 +108,7 @@ export default function PromotionList({
         <PromotionCard
           key={promotion.id}
           promotion={promotion}
-          onClick={() => onClickHandler(promotion.restaurant.id)}
+          onClick={() => onClickHandler(promotion.restaurant)}
         />
       ))}
     </div>
