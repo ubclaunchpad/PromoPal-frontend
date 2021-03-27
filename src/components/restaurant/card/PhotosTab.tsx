@@ -29,7 +29,7 @@ export default function PhotosTab(props: Props): ReactElement {
 
       if (url && title) {
         caption = (
-          <a target="_blank" href={url}>
+          <a target="_blank" rel="noopener noreferrer" href={url}>
             {title}
           </a>
         );
