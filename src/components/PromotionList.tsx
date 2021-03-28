@@ -1,5 +1,13 @@
 import { Place } from '@googlemaps/google-maps-services-js';
-import React, { CSSProperties, ReactElement, useCallback, useEffect, useState } from 'react';
+import { Pagination } from 'antd';
+import React, {
+  CSSProperties,
+  ReactElement,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import PromotionCard from '../components/promotion/PromotionCard';
 import {
@@ -19,28 +27,48 @@ import {
 import UserService from '../services/UserService';
 import { Promotion, Restaurant } from '../types/promotion';
 
+const PAGE_SIZE = 10;
+
 const styles: { [identifier: string]: CSSProperties } = {
   container: {
     backgroundColor: '#FFEDDC',
     padding: 15,
-    paddingBottom: 0,
     overflow: 'auto',
+    scrollBehavior: 'smooth',
+    textAlign: 'center',
   },
 };
 
-export default function PromotionList({
-  dimensions: { width, height },
-}: {
+/**
+ * Selects the promotions that should be displayed on the current page.
+ *
+ * @param promotions - All promotions
+ * @param page - The current page
+ */
+function getPage(promotions: Promotion[], page: number): Promotion[] {
+  const start = (page - 1) * PAGE_SIZE;
+  const end = Math.min(page * PAGE_SIZE, promotions.length);
+  return promotions.slice(start, end);
+}
+
+interface Props {
   dimensions: { width: string; height: string };
-}): ReactElement {
+  pageNum: number;
+  onPageChange: (pageNum: number) => void;
+}
+
+export default function PromotionList(props: Props): ReactElement {
+  const container = useRef<HTMLDivElement>(null);
+
   const [promotions, setPromotions] = useState<Promotion[]>([]);
+  const [promotionsToDisplay, setPromotionsToDisplay] = useState<Promotion[]>([]);
 
   const { state: promotionsState, dispatch: promotionsDispatch } = usePromotionsList();
   const { dispatch: restaurantDispatch } = useRestaurantCard();
 
   const containerStyles = {
-    height,
-    width,
+    height: props.dimensions.height,
+    width: props.dimensions.width,
     ...styles.container,
   };
 
@@ -91,6 +119,33 @@ export default function PromotionList({
   );
 
   /**
+   * When the page is changed, updates the currently displayed promotions.
+   *
+   * @param page - The current page number
+   */
+  const onPageChange = (page: number): void => {
+    if (container?.current) {
+      container.current.scrollTop = 0;
+    }
+
+    props.onPageChange(page);
+
+    // Timeout to allow scrolling to complete
+    setTimeout(() => {
+      const promotionsToDisplay = getPage(promotions, page);
+      setPromotionsToDisplay(promotionsToDisplay);
+    }, 250);
+  };
+
+  /**
+   * On initial render, display promotions for current page.
+   */
+  useEffect(() => {
+    const promotionsToDisplay = getPage(promotions, props.pageNum);
+    setPromotionsToDisplay(promotionsToDisplay);
+  }, [promotions, props.pageNum]);
+
+  /**
    * This hook is run everytime the promotionsState changes. This function sorts and filters the promotions
    * according to the `filter` and `sort` keys so that this component is displaying the appropriate list.
    */
@@ -128,8 +183,8 @@ export default function PromotionList({
   }, [promotionsDispatch, promotionsState.searchQuery]);
 
   return (
-    <div style={containerStyles}>
-      {promotions.map((promotion: Promotion) => (
+    <div style={containerStyles} ref={container}>
+      {promotionsToDisplay.map((promotion) => (
         <PromotionCard
           key={promotion.id}
           id={promotion.id}
@@ -149,6 +204,13 @@ export default function PromotionList({
           onCardClick={() => onClickHandler(promotion.restaurant)}
         />
       ))}
+      <Pagination
+        size="small"
+        defaultCurrent={1}
+        current={props.pageNum}
+        onChange={onPageChange}
+        total={promotions.length}
+      />
     </div>
   );
 }
