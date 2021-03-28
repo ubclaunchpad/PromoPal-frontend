@@ -1,3 +1,5 @@
+import { Place } from '@googlemaps/google-maps-services-js';
+
 import { Promotion } from './promotion';
 import { User } from './user';
 
@@ -11,6 +13,10 @@ export interface ApiError {
 
 // Promotions
 export type PromotionsResponse = ApiResponse<Promotion[]>;
+
+// Restaurants
+export type RestaurantDetailsResponse = ApiResponse<Place>;
+export type RestaurantPromotionsResponse = ApiResponse<Promotion[]>;
 
 // Users
 export type UploadedPromotionsResponse = ApiResponse<User>;

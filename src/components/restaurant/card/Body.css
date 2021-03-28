@@ -79,6 +79,19 @@
   padding-bottom: 10px;
 }
 
+.restaurant-section h3 {
+  color: #333;
+  font-size: 0.9rem;
+  font-weight: bold;
+  margin-bottom: 0px;
+}
+
+.restaurant-section p {
+  color: #6e798c;
+  font-size: 0.8rem;
+  margin-bottom: 0px;
+}
+
 .restaurant-section-details {
   white-space: pre-line;
 }

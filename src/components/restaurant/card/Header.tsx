@@ -1,12 +1,7 @@
 import './Header.css';
 
-import { CloseCircleOutlined } from '@ant-design/icons';
-import { Button, Col, Rate, Row, Typography } from 'antd';
+import { Button, Rate, Row } from 'antd';
 import React, { ReactElement } from 'react';
-
-import { DispatchAction, useRestaurantCard } from '../../../contexts/RestaurantCardContext';
-
-const { Text, Title } = Typography;
 
 interface Props {
   // cuisine: string; // todo: this should use a promotions cuisine https://promopal.atlassian.net/browse/PP-91
@@ -18,52 +13,67 @@ interface Props {
 }
 
 export default function Header(props: Props): ReactElement {
-  const { dispatch } = useRestaurantCard();
+  /**
+   * Returns a string that displays the priceLevel in number of dollar signs.
+   *
+   * @param priceLevel - The price level of the restaurant
+   */
+  const formatPriceLevel = (priceLevel: number | undefined): string => {
+    if (priceLevel === undefined) {
+      return '$';
+    }
+    let formattedPriceLevel = '';
+    for (let i = 0; i < priceLevel; i++) {
+      formattedPriceLevel += '$';
+    }
+    return formattedPriceLevel;
+  };
 
-  const HeaderTitle = () => (
-    <Row>
-      <Col span={22}>
-        <Title level={3} className="restaurant-name">
-          {props.name}
-        </Title>
-      </Col>
-      <Col span={2}>
-        <CloseCircleOutlined
-          className="close-card"
-          onClick={() => dispatch({ type: DispatchAction.HIDE_CARD })}
-        />
-      </Col>
-    </Row>
-  );
+  /**
+   * Returns the restaurant rating rounded to the nearest half-star.
+   *
+   * @param rating - The restaurant rating
+   */
+  const normalizeRating = (rating: number | undefined): number => {
+    if (rating === undefined) {
+      return 0;
+    }
+    return Math.round(rating * 2) / 2;
+  };
+
+  const separator = <p className="restaurant-details-text">&#8226;</p>;
 
   const Buttons = () => (
-    <Row align="middle" className="action-buttons" justify="space-between">
+    <Row className="action-buttons restaurant-card-header-component">
       <Button className="action-button">
         <a href={props.website}>Website</a>
       </Button>
-      <Button className="action-button">
-        {/* TODO: update link */}
+      {/* <Button className="action-button">
         <a href="/">Directions</a>
       </Button>
       <Button className="action-button">
-        {/* TODO: update link */}
         <a href="/">Call</a>
-      </Button>
+      </Button> */}
     </Row>
   );
 
   return (
-    <Col className="restaurant-card-container">
-      <HeaderTitle />
-      <Row>
-        <Rate allowHalf={true} disabled={true} className="rating" defaultValue={props.rating} />
+    <>
+      <Row className="restaurant-card-header-component">
+        <Rate
+          allowHalf={true}
+          disabled={true}
+          className="rating"
+          defaultValue={normalizeRating(props.rating)}
+        />
       </Row>
-      <Row>
-        {/*<Text className="restaurant-details-text">{props.cuisine}</Text>*/}
-        <Text className="restaurant-details-text">{props.priceLevel}</Text>
-        <Text className="restaurant-details-text">{props.distance}m</Text>
+      <Row className="restaurant-card-header-component">
+        {/*<p className="restaurant-details-text">{props.cuisine}</p>*/}
+        <p className="restaurant-details-text">{formatPriceLevel(props.priceLevel)}</p>
+        {separator}
+        <p className="restaurant-details-text">{props.distance}m</p>
       </Row>
       <Buttons />
-    </Col>
+    </>
   );
 }

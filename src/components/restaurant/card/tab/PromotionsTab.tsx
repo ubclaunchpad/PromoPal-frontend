@@ -2,8 +2,9 @@ import './PromotionsTab.css';
 
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { Col, Row, Tabs } from 'antd';
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 
+import RestaurantService from '../../../../services/RestaurantService';
 import { Promotion } from '../../../../types/promotion';
 import { formatTime } from '../../../../utils/time';
 
@@ -14,16 +15,18 @@ interface DayToPromotions {
 }
 
 interface Props {
-  promotions: Promotion[];
+  restaurantId: string;
 }
 
 export default function PromotionsTab(props: Props): ReactElement {
+  const [promotions, setPromotions] = useState<Promotion[]>([]);
+
   /**
    * Orders the (day, promotions) tuples from Sunday to Saturday.
    */
   const getOrderedEntries = () => {
     const order = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const pairs = Object.entries(mapPromotionsToDays(props.promotions));
+    const pairs = Object.entries(mapPromotionsToDays(promotions));
     return pairs.sort(([a], [b]) => order.indexOf(a) - order.indexOf(b));
   };
 
@@ -33,12 +36,21 @@ export default function PromotionsTab(props: Props): ReactElement {
    * @param promotions - The list of promotions to sort
    */
   const mapPromotionsToDays = (promotions: Promotion[]): DayToPromotions => {
-    const daysToPromotions: DayToPromotions = {};
+    const daysToPromotions: DayToPromotions = {
+      Sun: [],
+      Mon: [],
+      Tue: [],
+      Wed: [],
+      Thu: [],
+      Fri: [],
+      Sat: [],
+    };
+
     promotions.forEach((promotion) => {
       promotion.schedules.forEach(({ dayOfWeek }) => {
         const abbreviation =
           dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.slice(1, 3).toLowerCase();
-        const promos = daysToPromotions[abbreviation] || [];
+        const promos = daysToPromotions[abbreviation];
         promos.push(promotion);
         daysToPromotions[abbreviation] = promos;
       });
@@ -46,28 +58,41 @@ export default function PromotionsTab(props: Props): ReactElement {
     return daysToPromotions;
   };
 
+  /**
+   * Fetches restaurant's promotions.
+   */
+  useEffect(() => {
+    RestaurantService.getRestaurantPromotions(props.restaurantId)
+      .then((promotions: Promotion[]) => setPromotions(promotions))
+      .catch(() => setPromotions([]));
+  }, [props.restaurantId]);
+
   return (
     <Tabs className="tab-promotions" defaultActiveKey="Sun" size="small">
       {getOrderedEntries().map(([day, promotions]) => (
         <TabPane tab={day} key={day}>
-          {promotions.map((promotion) => (
-            <Row className="promotion-info">
-              <Col span={2}>
-                <ClockCircleOutlined className="clock-icon" />
-              </Col>
-              <Col span={22}>
-                <div className="schedules">
-                  {promotion.schedules.map(({ startTime, endTime }) => (
-                    <p className="schedules-time">{formatTime(startTime, endTime)}</p>
-                  ))}
-                  <p className="description">{promotion.description}</p>
-                  <div className="expiration-date">
-                    <p>{`Expires ${new Date(promotion.expirationDate).toDateString()}`}</p>
+          {promotions.length > 0 ? (
+            promotions.map((promotion) => (
+              <Row className="promotion-info">
+                <Col span={2}>
+                  <ClockCircleOutlined className="clock-icon" />
+                </Col>
+                <Col span={22}>
+                  <div className="schedules">
+                    {promotion.schedules.map(({ startTime, endTime }) => (
+                      <p className="schedules-time">{formatTime(startTime, endTime)}</p>
+                    ))}
+                    <p className="description">{promotion.description}</p>
+                    <div className="expiration-date">
+                      <p>{`Expires ${new Date(promotion.expirationDate).toDateString()}`}</p>
+                    </div>
                   </div>
-                </div>
-              </Col>
-            </Row>
-          ))}
+                </Col>
+              </Row>
+            ))
+          ) : (
+            <p className="schedules schedules-empty">No promotions for this day!</p>
+          )}
         </TabPane>
       ))}
     </Tabs>

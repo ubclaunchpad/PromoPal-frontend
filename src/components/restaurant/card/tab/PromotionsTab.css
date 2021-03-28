@@ -17,14 +17,8 @@
 }
 
 /* Promotion expiration date */
-.promotion-info .expiration-date {
+.promotion-info .expiration-date p {
   font-weight: bold;
-}
-
-/* Promotion schedule */
-.promotion-info .schedules {
-  color: #8b8888;
-  font-size: 0.7rem;
 }
 
 /* Time */
@@ -35,6 +29,22 @@
 /* Promotions tab */
 .tab-promotions {
   margin-bottom: 10px;
+}
+
+/* Promotions tab paragraph text */
+.tab-promotions p {
+  margin-bottom: 0;
+}
+
+/* Promotions schedules text */
+.tab-promotions .schedules {
+  color: #8b8888;
+  font-size: 0.8rem;
+}
+
+/* Promotions empty schedules text */
+.tab-promotions .schedules-empty {
+  text-align: center;
 }
 
 /* Promotions tab content */
