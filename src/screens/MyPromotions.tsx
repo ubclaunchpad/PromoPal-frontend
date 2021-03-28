@@ -181,8 +181,9 @@ export default function MyPromotions(): ReactElement {
               description={promotion.description}
               image={promotion.image}
               name={promotion.name}
-              placeId={promotion.placeId}
-              restaurantName={promotion.restaurantName}
+              placeId={promotion.restaurant.id}
+              // TODO: https://promopal.atlassian.net/browse/PP-96
+              restaurantName=""
               savedByUser={promotion.isSavedByUser}
               schedules={promotion.schedules}
               onDeleteButtonClick={() => onDeleteButtonClick(promotion)}

@@ -1,3 +1,4 @@
+import { Place } from '@googlemaps/google-maps-services-js';
 import React, { CSSProperties, ReactElement, useCallback, useEffect, useState } from 'react';
 
 import PromotionCard from '../components/promotion/PromotionCard';
@@ -16,8 +17,7 @@ import {
   sortPromotions,
 } from '../services/PromotionService';
 import UserService from '../services/UserService';
-import { Promotion } from '../types/promotion';
-import { Restaurant } from '../types/restaurant';
+import { Promotion, Restaurant } from '../types/promotion';
 
 const styles: { [identifier: string]: CSSProperties } = {
   container: {
@@ -49,12 +49,17 @@ export default function PromotionList({
    * On click, retrieves the associated restaurant details and shows the restaurant card.
    */
   const onClickHandler = useCallback(
-    (placeId: string) => {
-      getRestaurant(placeId)
-        .then((restaurant: Restaurant) => {
+    (promoRestaurant: Restaurant) => {
+      getRestaurant(promoRestaurant.id)
+        .then((restaurant: Place) => {
           restaurantDispatch({
             type: RestaurantDispatch.TOGGLE_CARD,
-            payload: { placeId, restaurant },
+            payload: {
+              restaurant: {
+                ...restaurant,
+                ...promoRestaurant,
+              },
+            },
           });
         })
         .catch(() => restaurantDispatch({ type: RestaurantDispatch.HIDE_CARD }));
@@ -135,12 +140,13 @@ export default function PromotionList({
           description={promotion.description}
           image={promotion.image}
           name={promotion.name}
-          placeId={promotion.placeId}
-          restaurantName={promotion.restaurantName}
+          placeId={promotion.restaurant.id}
+          // TODO: https://promopal.atlassian.net/browse/PP-96
+          restaurantName=""
           savedByUser={promotion.isSavedByUser}
           schedules={promotion.schedules}
           onSaveButtonClick={() => onSaveButtonClick(promotion.id)}
-          onCardClick={() => onClickHandler(promotion.placeId)}
+          onCardClick={() => onClickHandler(promotion.restaurant)}
         />
       ))}
     </div>

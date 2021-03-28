@@ -19,4 +19,7 @@ export default {
     UNSAVE_PROMOTION: (userId: string, promotionId: string): string =>
       `/users/${userId}/savedPromotions/${promotionId}`,
   },
+  RESTAURANTS: {
+    RESTAURANT_DETAILS: (id: string): string => `/restaurants/${id}/restaurantDetails`,
+  },
 };
