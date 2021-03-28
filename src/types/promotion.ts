@@ -14,7 +14,9 @@ export interface Promotion {
   discount: Discount;
   expirationDate: string;
   image: PromotionImage;
-  liked: boolean;
+  isSavedByUser: boolean;
+  lat: number;
+  lon: number;
   name: string;
   promotionType: string;
   restaurant: Restaurant;

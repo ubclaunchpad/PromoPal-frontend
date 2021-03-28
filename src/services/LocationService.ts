@@ -58,8 +58,8 @@ class GeolocationPositionService extends LocationService<GeolocationPosition> {
   public async getCurrentLocation(): Promise<GeolocationPosition> {
     return new Promise((resolve, reject) => {
       if (navigator.geolocation) {
-        const onSuccess = (position: GeolocationPosition) => resolve(position);
-        const onError = (error: GeolocationPositionError) => reject(error);
+        const onSuccess = (position: GeolocationPosition): void => resolve(position);
+        const onError = (error: GeolocationPositionError): void => reject(error);
         navigator.geolocation.getCurrentPosition(onSuccess, onError, { timeout: 3000 });
       } else {
         resolve(this.defaultLocation);
@@ -94,13 +94,13 @@ class LatLngService extends LocationService<LatLng> {
   public async getCurrentLocation(): Promise<LatLng> {
     return new Promise((resolve, reject) => {
       if (navigator.geolocation) {
-        const onSuccess = (position: GeolocationPosition) => {
+        const onSuccess = (position: GeolocationPosition): void => {
           const {
             coords: { latitude, longitude },
           } = position;
           return resolve(new google.maps.LatLng(latitude, longitude));
         };
-        const onError = (error: GeolocationPositionError) => reject(error);
+        const onError = (error: GeolocationPositionError): void => reject(error);
         navigator.geolocation.getCurrentPosition(onSuccess, onError, { timeout: 3000 });
       } else {
         resolve(this.defaultLocation);

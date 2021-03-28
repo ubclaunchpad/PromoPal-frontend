@@ -20,7 +20,7 @@ interface Props {
 export default function Header(props: Props): ReactElement {
   const { dispatch } = useRestaurantCard();
 
-  const HeaderTitle = () => (
+  const HeaderTitle = (): ReactElement => (
     <Row>
       <Col span={22}>
         <Title level={3} className="restaurant-name">
@@ -36,7 +36,7 @@ export default function Header(props: Props): ReactElement {
     </Row>
   );
 
-  const Buttons = () => (
+  const Buttons = (): ReactElement => (
     <Row align="middle" className="action-buttons" justify="space-between">
       <Button className="action-button">
         <a href={props.website}>Website</a>

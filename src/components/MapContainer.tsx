@@ -26,7 +26,7 @@ function MapContainer({
    */
   const initializeMarkers = useCallback(
     (map: google.maps.Map | null) => {
-      const onClickHandler = (promoRestaurant: Restaurant) => {
+      const onClickHandler = (promoRestaurant: Restaurant): void => {
         getRestaurant(promoRestaurant.id)
           .then((restaurant: Place) => {
             restaurantDispatch({
