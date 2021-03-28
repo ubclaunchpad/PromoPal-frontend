@@ -62,7 +62,7 @@ export default function AccountDetails(props: Props): ReactElement {
    *
    * @param values - The updated values on the BE
    */
-  const onSubmitForm = (values: { [label: string]: string | undefined }) => {
+  const onSubmitForm = (values: { [label: string]: string | undefined }): void => {
     const inputFields = ['firstName', 'lastName', 'username', 'email'];
     form.validateFields(inputFields);
 
@@ -77,7 +77,7 @@ export default function AccountDetails(props: Props): ReactElement {
     );
     if (Object.keys(updatedValues).length > 0) {
       // TODO: https://promopal.atlassian.net/browse/PP-80
-      return UserService.updateUser(updatedValues);
+      UserService.updateUser(updatedValues);
     }
   };
 

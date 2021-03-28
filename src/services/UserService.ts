@@ -1,6 +1,13 @@
 import axios, { AxiosResponse } from 'axios';
 
-import { GetUserResponse, UpdateUserResponse, UploadedPromotionsResponse } from '../types/api';
+import {
+  GetUserResponse,
+  SavePromotion,
+  SavePromotionResponse,
+  UnsavePromotionResponse,
+  UpdateUserResponse,
+  UploadedPromotionsResponse,
+} from '../types/api';
 import { Promotion } from '../types/promotion';
 import { User } from '../types/user';
 import { isError } from '../utils/api';
@@ -10,16 +17,20 @@ class UserService {
   private userId: string;
 
   public constructor() {
-    this.userId = '8f8fc016-5bb2-4906-ad88-68932c438665';
+    this.userId = 'abdf0d76-2d5f-4b4c-9f6f-2d669a56b766';
+  }
+
+  public getUserId(): string {
+    return this.userId;
   }
 
   /**
    * Fetches the uploaded promotions of the currently logged in user.
    */
   public async getUploadedPromotions(): Promise<Promotion[]> {
-    const url = Routes.USERS.UPLOADED_PROMOTIONS(this.userId);
+    const endpoint = Routes.USERS.UPLOADED_PROMOTIONS(this.userId);
     return axios
-      .get(url)
+      .get(endpoint)
       .then(({ data }: AxiosResponse<UploadedPromotionsResponse>) => {
         if (isError<UploadedPromotionsResponse>(data)) {
           return Promise.reject(data);
@@ -38,6 +49,42 @@ class UserService {
       .get(url)
       .then(({ data }: AxiosResponse<GetUserResponse>) => {
         if (isError<GetUserResponse>(data)) {
+          return Promise.reject(data);
+        }
+        return Promise.resolve(data);
+      })
+      .catch((err: Error) => Promise.reject(err));
+  }
+
+  /**
+   * Sets the promotion as saved for the current user.
+   *
+   * @param promotionId - The id of the promotion to save
+   */
+  public async savePromotion(promotionId: string): Promise<SavePromotion> {
+    const endpoint = Routes.USERS.SAVE_PROMOTION(this.userId, promotionId);
+    return axios
+      .post(endpoint)
+      .then(({ data }: AxiosResponse<SavePromotionResponse>) => {
+        if (isError<SavePromotionResponse>(data)) {
+          return Promise.reject(data);
+        }
+        return Promise.resolve(data);
+      })
+      .catch((err: Error) => Promise.reject(err));
+  }
+
+  /**
+   * Sets the promotion as unsaved for the current user.
+   *
+   * @param promotionId - The id of the promotion to unsave
+   */
+  public async unsavePromotion(promotionId: string): Promise<UnsavePromotionResponse> {
+    const endpoint = Routes.USERS.UNSAVE_PROMOTION(this.userId, promotionId);
+    return axios
+      .delete(endpoint)
+      .then(({ data }: AxiosResponse<UnsavePromotionResponse>) => {
+        if (isError<UnsavePromotionResponse>(data)) {
           return Promise.reject(data);
         }
         return Promise.resolve(data);

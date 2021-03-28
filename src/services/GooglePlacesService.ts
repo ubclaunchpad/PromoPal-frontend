@@ -1,183 +1,71 @@
+import { Place, PlacePhoto } from '@googlemaps/google-maps-services-js';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 
-import { RestaurantDetails } from '../types/restaurant';
-import { RestaurantInfo } from '../types/RestaurantInfo';
+import Routes from '../utils/routes';
 
-/* eslint-disable  @typescript-eslint/no-explicit-any */
 class GooglePlacesService {
-  // maintains a mapping of restaurant placeIDs with associated restaurant details (see types)
-  private currRestaurants: Map<string, RestaurantDetails>;
+  /**
+   * Mapping of restaurant id's with associated place details
+   * * Each restaurant is associated with a unique placeId.
+   */
+  private currRestaurants: Map<string, Place>;
 
   constructor() {
     this.currRestaurants = new Map();
   }
 
-  // gets the placeID, lat and lon associated with restaurant
-  // for restaurants with multiple locations, verified with string "includes" with user-inputted location
-  public getRestaurantInfo(
-    restaurantName: string,
-    restaurantLocation: string
-  ): Promise<RestaurantInfo> {
-    const dataURI: string = encodeURIComponent(restaurantName);
-    let responseData: any[];
-
-    return axios
-      .get('https://maps.googleapis.com/maps/api/place/findplacefromtext/json?', {
-        params: {
-          input: dataURI,
-          inputtype: 'textquery',
-          fields: 'place_id,formatted_address,geometry',
-          key: process.env.REACT_APP_GOOGLE_PLACES_API_KEY,
-        },
-      })
-      .then((response: AxiosResponse) => {
-        responseData = response.data?.candidates;
-        let matchingRestaurant;
-
-        if (responseData.length === 1) {
-          matchingRestaurant = responseData[0];
-        } else {
-          // handles situation where there are multiple restaurants with given restaurant name
-          // todo: incorporate autocomplete feature - https://github.com/ubclaunchpad/foodies/issues/96
-          for (const currPlace of responseData) {
-            if (currPlace.formatted_address.includes(restaurantLocation)) {
-              matchingRestaurant = currPlace;
-              break;
-            }
-          }
-        }
-
-        if (matchingRestaurant) {
-          const restaurant: RestaurantInfo = {
-            placeID: matchingRestaurant.place_id,
-            lat: matchingRestaurant.geometry?.location?.lat,
-            lon: matchingRestaurant.geometry?.location?.lng,
-          };
-          return Promise.resolve(restaurant);
-        }
-
-        return Promise.reject('No restaurant location matched search');
-      })
-      .catch((err: AxiosError) => {
-        return Promise.reject(err);
-      });
-  }
-
-  // gets all restaurant details for certain placeID
-  public getRestaurantDetails(
-    placeID: string,
-    handleNotFoundError?: (invalidPlaceID: string) => Promise<RestaurantDetails>
-  ): Promise<RestaurantDetails> {
-    // if mapping already contains this placeID, return value
-    if (this.currRestaurants.has(placeID)) {
-      const restaurantDetails = this.currRestaurants.get(placeID) as RestaurantDetails;
-      return Promise.resolve(restaurantDetails);
+  /**
+   * Gets all restaurant details for certain restaurant
+   * @param restaurantId the id of the restaurant
+   */
+  getRestaurantDetails(restaurantId: string): Promise<Place> {
+    // if mapping already contains this restaurantId, return the place
+    const existingPlace = this.currRestaurants.get(restaurantId);
+    if (existingPlace) {
+      return Promise.resolve(existingPlace);
     }
 
     return axios
-      .get('https://maps.googleapis.com/maps/api/place/details/json?', {
-        params: {
-          place_id: placeID,
-          fields:
-            'url,formatted_phone_number,opening_hours,website,review,photos,business_status,' +
-            'formatted_address,geometry,name,price_level,rating,user_ratings_total',
-          key: process.env.REACT_APP_GOOGLE_PLACES_API_KEY,
-        },
-      })
-      .then((response: AxiosResponse) => {
-        const restaurantData = response.data;
-        const restaurantResults = restaurantData?.result;
-
-        // check if placeID is valid
-        if (restaurantData?.status === 'NOT_FOUND') {
-          return handleNotFoundError
-            ? handleNotFoundError(placeID)
-            : this.refreshPlaceIDAndGetDetails(placeID);
-        }
-
-        const restaurant: RestaurantDetails = {
-          name: restaurantResults.name,
-          priceLevel: restaurantResults.price_level,
-          rating: restaurantResults.rating,
-          totalRating: restaurantResults.user_ratings_total,
-          mapUrl: restaurantResults.url,
-          phoneNumber: restaurantResults.formatted_phone_number,
-          openingHours: restaurantResults.opening_hours,
-          website: restaurantResults.website,
-          reviews: restaurantResults.reviews,
-          photos: restaurantResults.photos,
-          business_status: restaurantResults.business_status,
-          address: restaurantResults.formatted_address,
-          lat: restaurantResults.geometry?.location?.lat,
-          lon: restaurantResults.geometry?.location?.lng,
-        };
-
-        this.currRestaurants.set(placeID, restaurant);
-        return Promise.resolve(restaurant);
+      .get(Routes.RESTAURANTS.RESTAURANT_DETAILS(restaurantId))
+      .then((response: AxiosResponse<Place>) => {
+        const place = response.data;
+        this.currRestaurants.set(restaurantId, place);
+        return Promise.resolve(place);
       })
       .catch((err: AxiosError) => {
         return Promise.reject(err);
       });
   }
 
-  // refreshes the invalid placeID, may also result in NOT_FOUND error
-  // refreshing occurs by specifying only the place_id as a field (no other fields allowed)
-  private refreshPlaceID(placeID: string): Promise<string> {
-    return axios
-      .get('https://maps.googleapis.com/maps/api/place/details/json?', {
-        params: {
-          place_id: placeID,
-          fields: 'place_id',
-          key: process.env.REACT_APP_GOOGLE_PLACES_API_KEY,
-        },
-      })
-      .then((response: AxiosResponse) => {
-        const data = response.data;
-
-        if (data?.status === 'NOT_FOUND') {
-          return Promise.reject(new Error('NOT_FOUND ERROR FOR ' + placeID));
-        }
-
-        const newPlaceID = data.result?.place_id;
-        return Promise.resolve(newPlaceID);
-      })
-      .catch((err: AxiosError) => {
-        return Promise.reject(err);
-      });
+  /**
+   * Gets photos for a restaurant
+   * @param restaurantId the id of the restaurant
+   * */
+  async getRestaurantPhoto(restaurantId: string): Promise<PlacePhoto[]> {
+    try {
+      const place = await this.getRestaurantDetails(restaurantId);
+      return place.photos ?? [];
+    } catch (e) {
+      return [];
+    }
   }
 
-  // gets photos for certain placeID
-  public getRestaurantPhoto(photoReference: string): Promise<HTMLImageElement> {
-    return axios
-      .get('https://maps.googleapis.com/maps/api/place/photo?', {
-        params: {
-          photoreference: photoReference,
-          maxheight: 500, //todo: may need to adjust based on FE and restrictions
-          key: process.env.REACT_APP_GOOGLE_PLACES_API_KEY,
-        },
-      })
-      .then((response: AxiosResponse) => {
-        const result: HTMLImageElement = response.data;
-        return Promise.resolve(result);
-      })
-      .catch((err: AxiosError) => {
-        return Promise.reject(err);
-      });
-  }
-
-  // helper function used to refresh placeID and call getRestaurantDetails again for NOT_FOUND error
-  private refreshPlaceIDAndGetDetails(placeID: string): Promise<RestaurantDetails> {
-    return this.refreshPlaceID(placeID)
-      .then((newPlaceID: string) => {
-        const handleNotFoundError = (invalidPlaceID: string) => {
-          return Promise.reject(new Error('NOT_FOUND ERROR FOR ' + invalidPlaceID));
-        };
-        return this.getRestaurantDetails(newPlaceID, handleNotFoundError);
-      })
-      .catch((err: AxiosError) => {
-        return Promise.reject(err);
-      });
+  /**
+   * Constructs and returns the url for a restaurant photo.
+   * Note: retrieves the photo with the largest max width/height for the best quality.
+   *
+   * @param photo the restaurant photo
+   */
+  getRestaurantPhotoUrl({ photo_reference }: PlacePhoto): string {
+    const baseUrl = 'https://maps.googleapis.com/maps/api/place/photo?';
+    const queryParams = new URLSearchParams({
+      maxheight: '1600',
+      maxwidth: '1600',
+      photoreference: photo_reference,
+      key: process.env.REACT_APP_GOOGLE_PHOTOS_PUBLIC_API_KEY as string,
+    });
+    return baseUrl + queryParams.toString();
   }
 }
 
-export { GooglePlacesService };
+export default new GooglePlacesService();

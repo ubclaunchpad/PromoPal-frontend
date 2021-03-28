@@ -1,3 +1,4 @@
+import { Place } from '@googlemaps/google-maps-services-js';
 import React, { CSSProperties, ReactElement, useCallback, useEffect, useState } from 'react';
 
 import PromotionCard from '../components/promotion/PromotionCard';
@@ -15,8 +16,8 @@ import {
   getRestaurant,
   sortPromotions,
 } from '../services/PromotionService';
-import { Promotion } from '../types/promotion';
-import { Restaurant } from '../types/restaurant';
+import UserService from '../services/UserService';
+import { Promotion, Restaurant } from '../types/promotion';
 
 const styles: { [identifier: string]: CSSProperties } = {
   container: {
@@ -44,20 +45,49 @@ export default function PromotionList({
   };
 
   /**
+   * This hook is run everytime the promotionsListState changes. This function sorts and filters the promotions
    * On click, retrieves the associated restaurant details and shows the restaurant card.
    */
   const onClickHandler = useCallback(
-    (placeId: string) => {
-      getRestaurant(placeId)
-        .then((restaurant: Restaurant) => {
+    (promoRestaurant: Restaurant) => {
+      getRestaurant(promoRestaurant.id)
+        .then((restaurant: Place) => {
           restaurantDispatch({
             type: RestaurantDispatch.TOGGLE_CARD,
-            payload: { placeId, restaurant },
+            payload: {
+              restaurant: {
+                ...restaurant,
+                ...promoRestaurant,
+              },
+            },
           });
         })
         .catch(() => restaurantDispatch({ type: RestaurantDispatch.HIDE_CARD }));
     },
     [restaurantDispatch]
+  );
+
+  /**
+   * If the user has not saved the promotion, save the promotion. Otherwise, delete it from their saved promotions.
+   */
+  const onSaveButtonClick = useCallback(
+    (promotionId: string) => {
+      const promos = [...promotions];
+      const promotion = promos.find(({ id }) => id === promotionId);
+      if (promotion) {
+        if (promotion.isSavedByUser) {
+          promotion.isSavedByUser = false;
+          return UserService.unsavePromotion(promotionId)
+            .then(() => setPromotions(promos))
+            .catch(() => null);
+        }
+        promotion.isSavedByUser = true;
+        return UserService.savePromotion(promotionId)
+          .then(() => setPromotions(promos))
+          .catch(() => null);
+      }
+    },
+    [promotions, setPromotions]
   );
 
   /**
@@ -102,8 +132,21 @@ export default function PromotionList({
       {promotions.map((promotion: Promotion) => (
         <PromotionCard
           key={promotion.id}
-          promotion={promotion}
-          onClick={() => onClickHandler(promotion.placeId)}
+          id={promotion.id}
+          boldDescription={promotion.boldDescription}
+          boldName={promotion.boldName}
+          dateAdded={promotion.dateAdded}
+          expirationDate={promotion.expirationDate}
+          description={promotion.description}
+          image={promotion.image}
+          isSavedByUser={promotion.isSavedByUser}
+          name={promotion.name}
+          placeId={promotion.restaurant.id}
+          // TODO: https://promopal.atlassian.net/browse/PP-96
+          restaurantName=""
+          schedules={promotion.schedules}
+          onSaveButtonClick={() => onSaveButtonClick(promotion.id)}
+          onCardClick={() => onClickHandler(promotion.restaurant)}
         />
       ))}
     </div>

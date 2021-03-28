@@ -1,4 +1,47 @@
-/* Hover: link colour */
 button.ant-btn:hover {
   color: #333;
+}
+
+.action-buttons {
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+
+.action-buttons .action-button {
+  border: 1px solid #ffc529;
+  border-radius: 20px;
+  box-shadow: 0 4px 4px 0 #40333333;
+  font-size: 0.9em;
+  font-weight: bold;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.close-card {
+  font-size: 1.5em;
+  color: '#6E798C';
+  float: right;
+}
+
+.rating {
+  font-size: 1em;
+  padding: 0px;
+}
+
+.restaurant-card-container {
+  margin: 20px;
+  margin-bottom: 0px;
+}
+
+.restaurant-details-text {
+  color: #6e798c;
+  font-weight: bold;
+  margin-right: 20px;
+  margin-top: 10px;
+  font-size: 0.9em;
+}
+
+.restaurant-name {
+  font-family: 'AbeeZee';
+  margin: 0px;
 }
