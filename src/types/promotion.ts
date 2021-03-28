@@ -1,4 +1,4 @@
-import { RestaurantDetails } from './restaurant';
+import { User } from './user';
 
 export enum Sort {
   Default = 'DEFAULT',
@@ -16,14 +16,12 @@ export interface Promotion {
   discount: Discount;
   expirationDate: string;
   image: PromotionImage;
+  isSavedByUser: boolean;
   lat: number;
   lon: number;
-  liked: boolean;
   name: string;
-  placeId: string;
   promotionType: string;
-  restaurant: RestaurantDetails;
-  restaurantName: string;
+  restaurant: Restaurant;
   schedules: Schedule[];
   user: User;
   boldDescription?: string;
@@ -39,15 +37,6 @@ export interface PromotionDTO {
   expirationDate?: Promotion['expirationDate'];
   promotionType?: Promotion['promotionType'];
   searchQuery?: string;
-}
-
-export interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  password: string;
-  username: string;
 }
 
 export interface Discount {
@@ -66,6 +55,13 @@ export interface Schedule {
   endTime: string;
   startTime: string;
   isRecurring: boolean;
+}
+
+export interface Restaurant {
+  id: string;
+  placeId: string;
+  lat: number;
+  lon: number;
 }
 
 export interface FilterOptions {

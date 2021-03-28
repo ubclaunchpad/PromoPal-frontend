@@ -1,3 +1,4 @@
+import { Place } from '@googlemaps/google-maps-services-js';
 import { Pagination } from 'antd';
 import React, {
   CSSProperties,
@@ -23,8 +24,8 @@ import {
   getRestaurant,
   sortPromotions,
 } from '../services/PromotionService';
-import { Promotion } from '../types/promotion';
-import { Restaurant } from '../types/restaurant';
+import UserService from '../services/UserService';
+import { Promotion, Restaurant } from '../types/promotion';
 
 const PAGE_SIZE = 10;
 
@@ -44,7 +45,7 @@ const styles: { [identifier: string]: CSSProperties } = {
  * @param promotions - All promotions
  * @param page - The current page
  */
-function getPage(promotions: Promotion[], page: number) {
+function getPage(promotions: Promotion[], page: number): Promotion[] {
   const start = (page - 1) * PAGE_SIZE;
   const end = Math.min(page * PAGE_SIZE, promotions.length);
   return promotions.slice(start, end);
@@ -72,15 +73,21 @@ export default function PromotionList(props: Props): ReactElement {
   };
 
   /**
+   * This hook is run everytime the promotionsListState changes. This function sorts and filters the promotions
    * On click, retrieves the associated restaurant details and shows the restaurant card.
    */
   const onClickHandler = useCallback(
-    (placeId: string) => {
-      getRestaurant(placeId)
-        .then((restaurant: Restaurant) => {
+    (promoRestaurant: Restaurant) => {
+      getRestaurant(promoRestaurant.id)
+        .then((restaurant: Place) => {
           restaurantDispatch({
             type: RestaurantDispatch.TOGGLE_CARD,
-            payload: { placeId, restaurant },
+            payload: {
+              restaurant: {
+                ...restaurant,
+                ...promoRestaurant,
+              },
+            },
           });
         })
         .catch(() => restaurantDispatch({ type: RestaurantDispatch.HIDE_CARD }));
@@ -89,11 +96,34 @@ export default function PromotionList(props: Props): ReactElement {
   );
 
   /**
+   * If the user has not saved the promotion, save the promotion. Otherwise, delete it from their saved promotions.
+   */
+  const onSaveButtonClick = useCallback(
+    (promotionId: string) => {
+      const promos = [...promotions];
+      const promotion = promos.find(({ id }) => id === promotionId);
+      if (promotion) {
+        if (promotion.isSavedByUser) {
+          promotion.isSavedByUser = false;
+          return UserService.unsavePromotion(promotionId)
+            .then(() => setPromotions(promos))
+            .catch(() => null);
+        }
+        promotion.isSavedByUser = true;
+        return UserService.savePromotion(promotionId)
+          .then(() => setPromotions(promos))
+          .catch(() => null);
+      }
+    },
+    [promotions, setPromotions]
+  );
+
+  /**
    * When the page is changed, updates the currently displayed promotions.
    *
    * @param page - The current page number
    */
-  const onPageChange = (page: number) => {
+  const onPageChange = (page: number): void => {
     if (container?.current) {
       container.current.scrollTop = 0;
     }
@@ -157,8 +187,21 @@ export default function PromotionList(props: Props): ReactElement {
       {promotionsToDisplay.map((promotion) => (
         <PromotionCard
           key={promotion.id}
-          promotion={promotion}
-          onClick={() => onClickHandler(promotion.placeId)}
+          id={promotion.id}
+          boldDescription={promotion.boldDescription}
+          boldName={promotion.boldName}
+          dateAdded={promotion.dateAdded}
+          expirationDate={promotion.expirationDate}
+          description={promotion.description}
+          image={promotion.image}
+          isSavedByUser={promotion.isSavedByUser}
+          name={promotion.name}
+          placeId={promotion.restaurant.id}
+          // TODO: https://promopal.atlassian.net/browse/PP-96
+          restaurantName=""
+          schedules={promotion.schedules}
+          onSaveButtonClick={() => onSaveButtonClick(promotion.id)}
+          onCardClick={() => onClickHandler(promotion.restaurant)}
         />
       ))}
       <Pagination

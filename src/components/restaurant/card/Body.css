@@ -42,3 +42,55 @@
   height: 0;
   width: 0;
 }
+
+.photo-container {
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.photo-container img {
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.photo-caption {
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+}
+
+.photo-caption a {
+  color: grey;
+  font-size: 0.75rem;
+  text-decoration: underline;
+}
+
+.photos-tab {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.restaurant-section {
+  padding-bottom: 10px;
+}
+
+.restaurant-section-details {
+  white-space: pre-line;
+}
+
+.restaurant-tabs {
+  width: 100%;
+}
+
+.restaurant-tab-content {
+  flex: inherit;
+  margin: 10px 20px;
+  max-height: 350px;
+  overflow-y: scroll;
+  word-break: break-word;
+}

@@ -6,5 +6,5 @@ export interface User {
   firstName: string;
   lastName: string;
   uploadedPromotions: Promotion[];
-  userName: string;
+  username: string;
 }

@@ -16,8 +16,8 @@ const styles: { [identifier: string]: CSSProperties } = {
   },
 };
 
-export default function ChangePassword(): ReactElement {
-  const handleClick = () => {
+export default function ResetPassword(): ReactElement {
+  const handleClick = (): void => {
     // TODO: reset password in firebase
     alert('Click');
   };
