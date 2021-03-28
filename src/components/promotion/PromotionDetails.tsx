@@ -55,9 +55,9 @@ interface Props {
   description: string;
   expirationDate: string;
   id: string;
+  isSavedByUser: boolean;
   name: string;
   restaurantName: string;
-  savedByUser: boolean;
   schedules: Schedule[];
 
   onSaveButtonClick: () => void;
@@ -101,7 +101,7 @@ export default function PromotionDetails(props: Props): ReactElement {
       <Button
         type="link"
         icon={
-          props.savedByUser ? (
+          props.isSavedByUser ? (
             <HeartFilled className="heart-icon-filled" style={styles.heart} />
           ) : (
             <HeartOutlined className="heart-icon-outlined" style={styles.heart} />

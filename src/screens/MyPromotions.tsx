@@ -180,11 +180,11 @@ export default function MyPromotions(): ReactElement {
               expirationDate={promotion.expirationDate}
               description={promotion.description}
               image={promotion.image}
+              isSavedByUser={promotion.isSavedByUser}
               name={promotion.name}
               placeId={promotion.restaurant.id}
               // TODO: https://promopal.atlassian.net/browse/PP-96
               restaurantName=""
-              savedByUser={promotion.isSavedByUser}
               schedules={promotion.schedules}
               onDeleteButtonClick={() => onDeleteButtonClick(promotion)}
               onSaveButtonClick={() => onSaveButtonClick(promotion.id)}

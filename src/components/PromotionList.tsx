@@ -139,11 +139,11 @@ export default function PromotionList({
           expirationDate={promotion.expirationDate}
           description={promotion.description}
           image={promotion.image}
+          isSavedByUser={promotion.isSavedByUser}
           name={promotion.name}
           placeId={promotion.restaurant.id}
           // TODO: https://promopal.atlassian.net/browse/PP-96
           restaurantName=""
-          savedByUser={promotion.isSavedByUser}
           schedules={promotion.schedules}
           onSaveButtonClick={() => onSaveButtonClick(promotion.id)}
           onCardClick={() => onClickHandler(promotion.restaurant)}

@@ -29,10 +29,10 @@ interface Props {
   expirationDate: string;
   id: string;
   image: PromotionImageType;
+  isSavedByUser: boolean;
   name: string;
   placeId: string;
   restaurantName: string;
-  savedByUser: boolean;
   schedules: Schedule[];
 
   onSaveButtonClick: () => void;
@@ -57,7 +57,7 @@ export default function PromotionCard(props: Props): ReactElement {
         id={props.id}
         name={props.name}
         restaurantName={props.restaurantName}
-        savedByUser={props.savedByUser}
+        isSavedByUser={props.isSavedByUser}
         schedules={props.schedules}
         onDeleteButtonClick={props.onDeleteButtonClick}
         onSaveButtonClick={props.onSaveButtonClick}
