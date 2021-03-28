@@ -13,11 +13,13 @@ export default {
   SAVED_PROMOTIONS: 'saved_promotions',
   SCHEDULES: 'schedules',
   USERS: {
-    UPLOADED_PROMOTIONS: (userId: string): string => `/users/${userId}/uploadedPromotions/`,
+    GET: (userId: string): string => `/users/${userId}`,
     SAVE_PROMOTION: (userId: string, promotionId: string): string =>
       `/users/${userId}/savedPromotions/${promotionId}`,
     UNSAVE_PROMOTION: (userId: string, promotionId: string): string =>
       `/users/${userId}/savedPromotions/${promotionId}`,
+    UPDATE: (userId: string): string => `/users/${userId}`,
+    UPLOADED_PROMOTIONS: (userId: string): string => `/users/${userId}/uploadedPromotions`,
   },
   RESTAURANTS: {
     RESTAURANT_DETAILS: (id: string): string => `/restaurants/${id}/restaurantDetails`,

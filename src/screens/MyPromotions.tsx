@@ -164,7 +164,9 @@ export default function MyPromotions(): ReactElement {
    * On initial render, retrieves the user's uploaded promotions.
    */
   useEffect(() => {
-    getUploadedPromotions();
+    UserService.getUploadedPromotions()
+      .then((promotions: Promotion[]) => setUploadedPromotions(promotions))
+      .catch(() => setUploadedPromotions([]));
   }, []);
 
   const renderUploadedPromotions = (): ReactElement => {
