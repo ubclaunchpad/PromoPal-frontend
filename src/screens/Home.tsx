@@ -189,6 +189,7 @@ export default function Home(): ReactElement {
           <RestaurantCard
             formattedAddress={restaurant.formatted_address}
             formattedPhoneNumber={restaurant.formatted_phone_number}
+            isNotFound={Object.keys(restaurant).length === 0}
             latitude={restaurant.lat}
             longitude={restaurant.lon}
             openingHours={restaurant.opening_hours}
@@ -196,6 +197,7 @@ export default function Home(): ReactElement {
             priceLevel={restaurant.price_level}
             name={restaurant.name}
             rating={restaurant.rating}
+            restaurantId={restaurant.id}
             website={restaurant.website}
           />
         )}

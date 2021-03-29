@@ -1,7 +1,6 @@
 import { Place, PlacePhoto } from '@googlemaps/google-maps-services-js';
-import axios, { AxiosError, AxiosResponse } from 'axios';
 
-import Routes from '../utils/routes';
+import RestaurantService from '../services/RestaurantService';
 
 class GooglePlacesService {
   /**
@@ -25,16 +24,12 @@ class GooglePlacesService {
       return Promise.resolve(existingPlace);
     }
 
-    return axios
-      .get(Routes.RESTAURANTS.RESTAURANT_DETAILS(restaurantId))
-      .then((response: AxiosResponse<Place>) => {
-        const place = response.data;
+    return RestaurantService.getRestaurantDetails(restaurantId)
+      .then((place: Place) => {
         this.currRestaurants.set(restaurantId, place);
         return Promise.resolve(place);
       })
-      .catch((err: AxiosError) => {
-        return Promise.reject(err);
-      });
+      .catch((err: Error) => Promise.reject(err));
   }
 
   /**

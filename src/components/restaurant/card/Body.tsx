@@ -1,23 +1,19 @@
 import './Body.css';
 
 import { OpeningHours, PlacePhoto } from '@googlemaps/google-maps-services-js';
-import { Col, Row, Tabs, Typography } from 'antd';
+import { Col, Row, Tabs } from 'antd';
 import React, { ReactElement } from 'react';
 
-import { usePromotionsList } from '../../../contexts/PromotionsListContext';
 import PhotosTab from './PhotosTab';
 import PromotionsTab from './tab/PromotionsTab';
 
 const { TabPane } = Tabs;
-const { Text } = Typography;
 
 function Section({ title, details }: { title: string; details: string }): ReactElement {
   return (
     <Col className="restaurant-section" span={24}>
-      <Row>
-        <Text strong>{title}:</Text>
-      </Row>
-      <Row className="restaurant-section-details">{details}</Row>
+      <h3>{title}:</h3>
+      <p className="restaurant-section-details">{details}</p>
     </Col>
   );
 }
@@ -27,12 +23,10 @@ interface Props {
   formattedPhoneNumber: string | undefined;
   openingHours: OpeningHours | undefined;
   photos: PlacePhoto[] | undefined;
+  restaurantId: string;
 }
 
 export default function Body(props: Props): ReactElement {
-  // TODO: https://promopal.atlassian.net/browse/PP-81
-  const { state } = usePromotionsList();
-
   return (
     <Row>
       <Tabs className="restaurant-tabs" defaultActiveKey="1" size="small">
@@ -45,7 +39,7 @@ export default function Body(props: Props): ReactElement {
           <Section title="Phone" details={props.formattedPhoneNumber ?? 'No phone number found'} />
         </TabPane>
         <TabPane tab="Promotions" key="2" className="restaurant-tab-content">
-          <PromotionsTab promotions={state.data} />
+          <PromotionsTab restaurantId={props.restaurantId} />
         </TabPane>
         <TabPane tab="Photos" key="3" className="restaurant-tab-content">
           <PhotosTab photos={props.photos} />

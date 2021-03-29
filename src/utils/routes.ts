@@ -23,5 +23,6 @@ export default {
   },
   RESTAURANTS: {
     RESTAURANT_DETAILS: (id: string): string => `/restaurants/${id}/restaurantDetails`,
+    RESTAURANT_PROMOTIONS: (id: string): string => `/restaurants/${id}/promotions`,
   },
 };

@@ -1,33 +1,19 @@
-import { OpeningHours, PlacePhoto } from '@googlemaps/google-maps-services-js';
-import { Col } from 'antd';
-import React, { CSSProperties, ReactElement, useEffect, useState } from 'react';
+import './RestaurantCard.css';
 
+import { CloseCircleOutlined } from '@ant-design/icons';
+import { OpeningHours, PlacePhoto } from '@googlemaps/google-maps-services-js';
+import { Col, Row } from 'antd';
+import React, { ReactElement, useEffect, useState } from 'react';
+
+import { DispatchAction, useRestaurantCard } from '../../contexts/RestaurantCardContext';
 import LocationService, { LatLng } from '../../services/LocationService';
 import Body from './card/Body';
 import Header from './card/Header';
 
-const styles: { [identifier: string]: CSSProperties } = {
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 15,
-    boxShadow: '0 4px 4px 0 #40333333',
-    padding: 0,
-    width: 350,
-    zIndex: 10,
-  },
-  container: {
-    display: 'flex',
-    flexFlow: 'column',
-    marginTop: 60,
-    position: 'fixed',
-    width: '100%',
-    zIndex: 10,
-  },
-};
-
 interface Props {
   formattedAddress: string | undefined;
   formattedPhoneNumber: string | undefined;
+  isNotFound: boolean;
   latitude: number;
   longitude: number;
   openingHours: OpeningHours | undefined;
@@ -35,11 +21,14 @@ interface Props {
   priceLevel: number | undefined;
   name: string | undefined;
   rating: number | undefined;
+  restaurantId: string;
   website: string | undefined;
 }
 
 export default function RestaurantCard(props: Props): ReactElement {
   const [distance, setDistance] = useState<number>(0);
+
+  const { dispatch } = useRestaurantCard();
 
   const containerPadding = '15px';
 
@@ -66,14 +55,38 @@ export default function RestaurantCard(props: Props): ReactElement {
       });
   };
 
-  return (
-    <div style={styles.container}>
-      <Col
-        style={{
-          ...styles.card,
-          left: `calc(65% - ${containerPadding} - ${styles.card.width}px)`,
-        }}
-      >
+  const restaurantNotFoundCard = (): ReactElement => {
+    return (
+      <Row className="restaurant-card-header-component">
+        <Col span={22}>
+          <h2 className="restaurant-card-title restaurant-card-title-empty">
+            Sorry, this restaurant could not be found!
+          </h2>
+        </Col>
+        <Col span={2}>
+          <CloseCircleOutlined
+            className="close-card"
+            onClick={() => dispatch({ type: DispatchAction.HIDE_CARD })}
+          />
+        </Col>
+      </Row>
+    );
+  };
+
+  const restaurantCard = (): ReactElement => {
+    return (
+      <>
+        <Row className="restaurant-card-header-component">
+          <Col span={22}>
+            <h2 className="restaurant-card-title">{props.name}</h2>
+          </Col>
+          <Col span={2}>
+            <CloseCircleOutlined
+              className="close-card"
+              onClick={() => dispatch({ type: DispatchAction.HIDE_CARD })}
+            />
+          </Col>
+        </Row>
         <Header
           // cuisine={
           //   'Italian'
@@ -89,9 +102,18 @@ export default function RestaurantCard(props: Props): ReactElement {
         <Body
           formattedAddress={props.formattedAddress}
           openingHours={props.openingHours}
+          restaurantId={props.restaurantId}
           formattedPhoneNumber={props.formattedPhoneNumber}
           photos={props.photos}
         />
+      </>
+    );
+  };
+
+  return (
+    <div className="restaurant-card-container">
+      <Col className="restaurant-card" style={{ left: `calc(65% - ${containerPadding} - 350px)` }}>
+        {props.isNotFound ? restaurantNotFoundCard() : restaurantCard()}
       </Col>
     </div>
   );

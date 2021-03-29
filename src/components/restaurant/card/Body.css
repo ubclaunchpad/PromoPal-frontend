@@ -17,6 +17,11 @@
   margin-right: 0px;
 }
 
+/* Tab bar button margin */
+.ant-tabs-nav-wrap .ant-tabs-nav-list .ant-tabs-tab + .ant-tabs-tab {
+  margin: 0px;
+}
+
 /* Active tab bar */
 .ant-tabs-nav-list .ant-tabs-tab.ant-tabs-tab-active {
   background-color: #fac15e;
@@ -77,6 +82,19 @@
 
 .restaurant-section {
   padding-bottom: 10px;
+}
+
+.restaurant-section h3 {
+  color: #333;
+  font-size: 0.9rem;
+  font-weight: bold;
+  margin-bottom: 0px;
+}
+
+.restaurant-section p {
+  color: #6e798c;
+  font-size: 0.8rem;
+  margin-bottom: 0px;
 }
 
 .restaurant-section-details {
