@@ -91,7 +91,7 @@ export default function DropdownSelect({ text, options }: DropdownType): ReactEl
     });
   }, [dispatch]);
 
-  const dropdownOptions = () => (
+  const dropdownOptions = (): ReactElement => (
     <Col style={styles.menu}>
       <Group name={text} defaultValue={0}>
         {options.map(({ action, description, text }, index) => (

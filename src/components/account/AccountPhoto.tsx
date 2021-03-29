@@ -20,7 +20,7 @@ const styles: { [identifier: string]: CSSProperties } = {
 };
 
 export default function AccountPhoto(): ReactElement {
-  const handleClick = () => {
+  const handleClick = (): void => {
     alert('Click');
   };
 

@@ -12,11 +12,27 @@ export interface ApiError {
 }
 
 // Promotions
-export type PromotionsResponse = ApiResponse<Promotion[]>;
+
+export type DeletePromotionsResponse = ApiResponse<string>;
+export type GetPromotionsResponse = ApiResponse<Promotion[]>;
 
 // Restaurants
 export type RestaurantDetailsResponse = ApiResponse<Place>;
 export type RestaurantPromotionsResponse = ApiResponse<Promotion[]>;
 
 // Users
+export interface SavePromotion {
+  promotionId: string;
+  userId: string;
+}
+
+export interface UnsavePromotion {
+  promotionId: string;
+  userId: string;
+}
+
+export type GetUserResponse = ApiResponse<User>;
+export type SavePromotionResponse = ApiResponse<SavePromotion>;
+export type UnsavePromotionResponse = ApiResponse<UnsavePromotion>;
+export type UpdateUserResponse = ApiResponse<string>;
 export type UploadedPromotionsResponse = ApiResponse<User>;

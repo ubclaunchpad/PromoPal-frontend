@@ -10,6 +10,11 @@ import { formatTime } from '../../../../utils/time';
 
 const { TabPane } = Tabs;
 
+/**
+ * The order of the days of the week.
+ */
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
 interface DayToPromotions {
   [day: string]: Promotion[];
 }
@@ -20,15 +25,6 @@ interface Props {
 
 export default function PromotionsTab(props: Props): ReactElement {
   const [promotions, setPromotions] = useState<Promotion[]>([]);
-
-  /**
-   * Orders the (day, promotions) tuples from Sunday to Saturday.
-   */
-  const getOrderedEntries = () => {
-    const order = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const pairs = Object.entries(mapPromotionsToDays(promotions));
-    return pairs.sort(([a], [b]) => order.indexOf(a) - order.indexOf(b));
-  };
 
   /**
    * Produces an object that maps days to the promotions that occur on those days.
@@ -45,7 +41,6 @@ export default function PromotionsTab(props: Props): ReactElement {
       Fri: [],
       Sat: [],
     };
-
     promotions.forEach((promotion) => {
       promotion.schedules.forEach(({ dayOfWeek }) => {
         const abbreviation =
@@ -69,32 +64,35 @@ export default function PromotionsTab(props: Props): ReactElement {
 
   return (
     <Tabs className="tab-promotions" defaultActiveKey="Sun" size="small">
-      {getOrderedEntries().map(([day, promotions]) => (
-        <TabPane tab={day} key={day}>
-          {promotions.length > 0 ? (
-            promotions.map((promotion) => (
-              <Row className="promotion-info">
-                <Col span={2}>
-                  <ClockCircleOutlined className="clock-icon" />
-                </Col>
-                <Col span={22}>
-                  <div className="schedules">
-                    {promotion.schedules.map(({ startTime, endTime }) => (
-                      <p className="schedules-time">{formatTime(startTime, endTime)}</p>
-                    ))}
-                    <p className="description">{promotion.description}</p>
-                    <div className="expiration-date">
-                      <p>{`Expires ${new Date(promotion.expirationDate).toDateString()}`}</p>
+      {DAYS.map((day) => {
+        const restaurantPromotions = mapPromotionsToDays(promotions)[day];
+        return (
+          <TabPane tab={day} key={day}>
+            {restaurantPromotions.length > 0 ? (
+              restaurantPromotions.map((promotion) => (
+                <Row className="promotion-info">
+                  <Col span={2}>
+                    <ClockCircleOutlined className="clock-icon" />
+                  </Col>
+                  <Col span={22}>
+                    <div className="schedules">
+                      {promotion.schedules.map(({ startTime, endTime }) => (
+                        <p className="schedules-time">{formatTime(startTime, endTime)}</p>
+                      ))}
+                      <p className="description">{promotion.description}</p>
+                      <div className="expiration-date">
+                        <p>{`Expires ${new Date(promotion.expirationDate).toDateString()}`}</p>
+                      </div>
                     </div>
-                  </div>
-                </Col>
-              </Row>
-            ))
-          ) : (
-            <p className="schedules schedules-empty">No promotions for this day!</p>
-          )}
-        </TabPane>
-      ))}
+                  </Col>
+                </Row>
+              ))
+            ) : (
+              <p className="schedules schedules-empty">No promotions for this day!</p>
+            )}
+          </TabPane>
+        );
+      })}
     </Tabs>
   );
 }

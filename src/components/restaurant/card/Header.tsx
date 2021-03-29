@@ -43,7 +43,7 @@ export default function Header(props: Props): ReactElement {
 
   const separator = <p className="restaurant-details-text">&#8226;</p>;
 
-  const Buttons = () => (
+  const Buttons = (): ReactElement => (
     <Row className="action-buttons restaurant-card-header-component">
       <Button className="action-button">
         <a href={props.website}>Website</a>

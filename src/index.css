@@ -13,6 +13,12 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
+:root {
+  /* COLORS */
+  --black: #333333;
+  --red: #ef2323;
+}
+
 #root {
   height: 100%;
   width: 100%;

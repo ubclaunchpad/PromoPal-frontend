@@ -16,7 +16,7 @@ const styles: { [identifier: string]: CSSProperties } = {
 export default function UploadPromoButton(): ReactElement {
   const history = useHistory();
 
-  function handleClick() {
+  function handleClick(): void {
     history.push('/promotion/upload');
   }
 

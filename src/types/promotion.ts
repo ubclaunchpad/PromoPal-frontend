@@ -1,3 +1,5 @@
+import { User } from './user';
+
 export enum Sort {
   Default = 'DEFAULT',
   Distance = 'DISTANCE',
@@ -14,7 +16,9 @@ export interface Promotion {
   discount: Discount;
   expirationDate: string;
   image: PromotionImage;
-  liked: boolean;
+  isSavedByUser: boolean;
+  lat: number;
+  lon: number;
   name: string;
   promotionType: string;
   restaurant: Restaurant;
@@ -33,15 +37,6 @@ export interface PromotionDTO {
   expirationDate?: Promotion['expirationDate'];
   promotionType?: Promotion['promotionType'];
   searchQuery?: string;
-}
-
-export interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  password: string;
-  username: string;
 }
 
 export interface Discount {
