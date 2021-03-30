@@ -14,14 +14,14 @@ import { isError } from '../utils/api';
 import Routes from '../utils/routes';
 
 class UserService {
-  private userId: string;
+  private _userId: string;
 
   public constructor() {
-    this.userId = 'abdf0d76-2d5f-4b4c-9f6f-2d669a56b766';
+    this._userId = '8f8fc016-5bb2-4906-ad88-68932c438665';
   }
 
-  public getUserId(): string {
-    return this.userId;
+  public get userId(): string {
+    return this._userId;
   }
 
   /**

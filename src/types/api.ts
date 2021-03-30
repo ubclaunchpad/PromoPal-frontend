@@ -11,10 +11,13 @@ export interface ApiError {
   message: string[];
 }
 
-// Promotions
+// Enums
+export type EnumResponse = ApiResponse<string[]>;
 
-export type DeletePromotionsResponse = ApiResponse<string>;
+// Promotions
 export type GetPromotionsResponse = ApiResponse<Promotion[]>;
+export type DeletePromotionsResponse = ApiResponse<string>;
+export type PostPromotionsResponse = ApiResponse<void>;
 
 // Restaurants
 export type RestaurantDetailsResponse = ApiResponse<Place>;
