@@ -1,6 +1,7 @@
 import { Place } from '@googlemaps/google-maps-services-js';
 import axios, { AxiosResponse } from 'axios';
 
+import LocationService from '../services/LocationService';
 import UserService from '../services/UserService';
 import {
   DeletePromotionsResponse,
@@ -30,11 +31,10 @@ export async function getPromotions(query?: GetPromotionDTO[]): Promise<Promotio
   if (query && query.length > 0) {
     endpoint += '?';
     query.forEach((param: GetPromotionDTO, index: number) => {
-      const [key] = Object.keys(param);
-      const [value] = Object.values(param);
-
-      // First query param is not prefixed by an ampersand
-      endpoint += `${index > 0 ? '&' : ''}${key}=${value}`;
+      Object.entries(param).forEach(([key, value], paramIdx) => {
+        // First query param is not prefixed by an ampersand
+        endpoint += `${index + paramIdx > 0 ? '&' : ''}${key}=${value}`;
+      });
     });
   }
 
@@ -90,11 +90,13 @@ export async function getRestaurant(restaurantId: string): Promise<Place> {
 }
 
 /**
- * Returns the subset of all promotions which satisfy at least one filter key in the `filters` parameter.
+ * Returns the subset of all promotions which satisfy at least one filter key in the `filters` parameter
+ * and sort them by the `sort` parameter.
  *
  * @param filters - An object specifying the keys and the values to filter the promotions by
+ * @param sort - A string representing the key to sort the promotions by
  */
-export function filterPromotions(filters: FilterOptions): Promise<Promotion[]> {
+export async function queryPromotions(filters: FilterOptions, sort?: Sort): Promise<Promotion[]> {
   const { cuisine, dayOfWeek, discountType, promotionType } = filters;
 
   const promotionQueryDTO: Record<string, string>[] = [];
@@ -116,42 +118,17 @@ export function filterPromotions(filters: FilterOptions): Promise<Promotion[]> {
     promotionType.forEach((promotionType: string) => promotionQueryDTO.push({ promotionType }));
   }
 
-  return getPromotions(promotionQueryDTO);
-}
-
-/**
- * Sorts the given of list of promotions by the given key.
- *
- * @param arr - The list of promotions to sort
- * @param key - The key which to sort the promotions by
- */
-export function sortPromotions(arr: Promotion[], key: Sort): Promotion[] {
-  let promotions = [...arr];
-  switch (key) {
-    case Sort.Distance:
-      promotions = sortByDistance(promotions);
-      break;
-    case Sort.MostPopular:
-      promotions = sortByPopularity(promotions);
-      break;
-    case Sort.Rating:
-      promotions = sortByRating(promotions);
-      break;
+  if (sort) {
+    const queryParams: { [paramKey: string]: string } = { sort };
+    if (sort === Sort.Distance) {
+      const {
+        coords: { latitude, longitude },
+      } = await LocationService.GeolocationPosition.getCurrentLocation();
+      queryParams.lat = `${latitude}`;
+      queryParams.lon = `${longitude}`;
+    }
+    promotionQueryDTO.push(queryParams);
   }
-  return promotions;
-}
 
-// TODO: see https://github.com/ubclaunchpad/foodies/issues/99
-function sortByDistance(promotions: Promotion[]): Promotion[] {
-  return promotions;
-}
-
-// TODO: see https://github.com/ubclaunchpad/foodies/issues/99
-function sortByPopularity(promotions: Promotion[]): Promotion[] {
-  return promotions;
-}
-
-// TODO: see https://github.com/ubclaunchpad/foodies/issues/99
-function sortByRating(promotions: Promotion[]): Promotion[] {
-  return promotions;
+  return getPromotions(promotionQueryDTO);
 }

@@ -18,12 +18,7 @@ import {
   DispatchAction as RestaurantDispatch,
   useRestaurantCard,
 } from '../contexts/RestaurantCardContext';
-import {
-  filterPromotions,
-  getPromotions,
-  getRestaurant,
-  sortPromotions,
-} from '../services/PromotionService';
+import * as PromotionService from '../services/PromotionService';
 import UserService from '../services/UserService';
 import { Promotion, Restaurant } from '../types/promotion';
 
@@ -78,7 +73,7 @@ export default function PromotionList(props: Props): ReactElement {
    */
   const onClickHandler = useCallback(
     (promoRestaurant: Restaurant) => {
-      getRestaurant(promoRestaurant.id)
+      PromotionService.getRestaurant(promoRestaurant.id)
         .then((restaurant: Place) => {
           restaurantDispatch({
             type: RestaurantDispatch.TOGGLE_CARD,
@@ -151,17 +146,15 @@ export default function PromotionList(props: Props): ReactElement {
    */
   useEffect(() => {
     promotionsDispatch({ type: PromotionsDispatch.DATA_LOADING });
-    filterPromotions(promotionsState.filter)
-      .then((filteredPromotions: Promotion[]) =>
-        sortPromotions(filteredPromotions, promotionsState.sort)
-      )
-      .then((sortedPromotions: Promotion[]) => {
+
+    PromotionService.queryPromotions(promotionsState.filter, promotionsState.sort)
+      .then((promotions: Promotion[]) => {
         promotionsDispatch({ type: PromotionsDispatch.DATA_SUCCESS });
 
         // If search bar contains keyword, reset it. This is only minimal behaviour and a temporary workaround, needs work with PP-68
         promotionsDispatch({ type: PromotionsDispatch.RESET_SEARCH_QUERY });
 
-        setPromotions(sortedPromotions);
+        setPromotions(promotions);
       })
       .catch(() => {
         promotionsDispatch({ type: PromotionsDispatch.DATA_FAILURE });
@@ -175,7 +168,11 @@ export default function PromotionList(props: Props): ReactElement {
   useEffect(() => {
     if (promotionsState.searchQuery) {
       promotionsDispatch({ type: PromotionsDispatch.DATA_LOADING });
-      getPromotions([{ searchQuery: promotionsState.searchQuery }]).then((promotions) => {
+      PromotionService.getPromotions([
+        {
+          searchQuery: promotionsState.searchQuery,
+        },
+      ]).then((promotions) => {
         promotionsDispatch({ type: PromotionsDispatch.DATA_SUCCESS });
         setPromotions(promotions);
       });

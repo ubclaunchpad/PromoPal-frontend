@@ -62,6 +62,7 @@ export default function Home(): ReactElement {
     {
       text: 'Sort',
       type: DropdownType.Radio,
+      defaultValue: 'Distance',
       options: [
         {
           action: () =>
@@ -76,7 +77,7 @@ export default function Home(): ReactElement {
           action: () =>
             dispatch({
               type: DispatchAction.SORT,
-              payload: { sort: Sort.MostPopular },
+              payload: { sort: Sort.Popularity },
             }),
           text: 'Most Popular',
           description: 'Deals with the most number of saves from other users.',
@@ -85,9 +86,9 @@ export default function Home(): ReactElement {
           action: () =>
             dispatch({
               type: DispatchAction.SORT,
-              payload: { sort: Sort.Rating },
+              payload: { sort: Sort.Recency },
             }),
-          text: 'Rating',
+          text: 'Most Recent',
           description: 'Newest uploaded deals will be shown first.',
         },
       ],
