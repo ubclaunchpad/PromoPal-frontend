@@ -3,8 +3,18 @@ import axios, { AxiosResponse } from 'axios';
 
 import LocationService from '../services/LocationService';
 import UserService from '../services/UserService';
-import { DeletePromotionsResponse, GetPromotionsResponse } from '../types/api';
-import { FilterOptions, Promotion, PromotionDTO, Sort } from '../types/promotion';
+import {
+  DeletePromotionsResponse,
+  GetPromotionsResponse,
+  PostPromotionsResponse,
+} from '../types/api';
+import {
+  FilterOptions,
+  GetPromotionDTO,
+  PostPromotionDTO,
+  Promotion,
+  Sort,
+} from '../types/promotion';
 import { isError } from '../utils/api';
 import Routes from '../utils/routes';
 import GooglePlacesService from './GooglePlacesService';
@@ -15,12 +25,12 @@ import GooglePlacesService from './GooglePlacesService';
  *
  * @param query [optional] - An array of objects with key-value pairs for the query parameters
  */
-export async function getPromotions(query?: PromotionDTO[]): Promise<Promotion[]> {
-  const userId = UserService.getUserId();
+export async function getPromotions(query?: GetPromotionDTO[]): Promise<Promotion[]> {
+  const userId = UserService.userId;
   let endpoint = Routes.PROMOTIONS.GET(userId);
   if (query && query.length > 0) {
     endpoint += '?';
-    query.forEach((param: PromotionDTO, index: number) => {
+    query.forEach((param: GetPromotionDTO, index: number) => {
       Object.entries(param).forEach(([key, value], paramIdx) => {
         // First query param is not prefixed by an ampersand
         endpoint += `${index + paramIdx > 0 ? '&' : ''}${key}=${value}`;
@@ -50,6 +60,24 @@ export async function deletePromotion(id: string): Promise<void> {
     .delete(endpoint)
     .then(({ data }: AxiosResponse<DeletePromotionsResponse>) => {
       if (isError<DeletePromotionsResponse>(data)) {
+        return Promise.reject(data);
+      }
+      return Promise.resolve();
+    })
+    .catch((err: Error) => Promise.reject(err));
+}
+
+/**
+ * Creates a new promotion.
+ *
+ * @param promotionDTO - An object containing the fields of the promotion
+ */
+export async function postPromotion(promotionDTO: PostPromotionDTO): Promise<void> {
+  const url = Routes.PROMOTIONS.POST;
+  return axios
+    .post(url, promotionDTO)
+    .then(({ data }: AxiosResponse<PostPromotionsResponse>) => {
+      if (isError<PostPromotionsResponse>(data)) {
         return Promise.reject(data);
       }
       return Promise.resolve();

@@ -9,9 +9,10 @@ export default {
   PROMOTIONS: {
     GET: (userId: string): string => `/promotions/?userId=${userId}`,
     DELETE: (promotionId: string): string => `/promotions/${promotionId}`,
+    POST: '/promotions',
   },
   SAVED_PROMOTIONS: 'saved_promotions',
-  SCHEDULES: 'schedules',
+  SCHEDULES: '/schedules',
   USERS: {
     GET: (userId: string): string => `/users/${userId}`,
     SAVE_PROMOTION: (userId: string, promotionId: string): string =>

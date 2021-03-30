@@ -31,7 +31,7 @@ export interface Promotion {
   rank?: number;
 }
 
-export interface PromotionDTO {
+export interface GetPromotionDTO {
   cuisine?: Promotion['cuisine'] | Array<Promotion['cuisine']>;
   dayOfWeek?: Schedule['dayOfWeek'];
   discountType?: Discount['discountType'];
@@ -41,8 +41,21 @@ export interface PromotionDTO {
   searchQuery?: string;
 }
 
+export interface PostPromotionDTO {
+  cuisine: Promotion['cuisine'];
+  description: Promotion['description'];
+  discount: Promotion['discount'];
+  expirationDate: Promotion['expirationDate'];
+  placeId: Restaurant['id'];
+  name: Promotion['name'];
+  promotionType: Promotion['promotionType'];
+  restaurantAddress: string;
+  schedules: Promotion['schedules'];
+  startDate: string;
+  userId: User['id'];
+}
+
 export interface Discount {
-  id: string;
   discountValue: number;
   discountType: string;
 }
@@ -52,7 +65,6 @@ export interface PromotionImage {
 }
 
 export interface Schedule {
-  id: string;
   dayOfWeek: Day;
   endTime: string;
   startTime: string;

@@ -1,4 +1,4 @@
-import '../index.css';
+import '../index.less';
 
 import { Checkbox, Col, Row } from 'antd';
 import React, { CSSProperties, ReactElement, useCallback, useEffect, useState } from 'react';

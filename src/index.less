@@ -1,16 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=ABeeZee&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+// Import default Ant Design styles
+@import '~antd/lib/style/themes/default';
+@import '~antd/dist/antd';
+
+// Import modifications to Ant Design theme
+@import './theme';
 
 body {
   margin: 0;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Poppins', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow: hidden;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  overflow: scroll;
 }
 
 :root {
@@ -43,9 +46,9 @@ code {
   display: inline;
   margin: 0;
   padding: 0;
-}
 
-.link-button:hover,
-.link-button:focus {
-  text-decoration: none;
+  &:focus,
+  &:hover {
+    text-decoration: none;
+  }
 }
