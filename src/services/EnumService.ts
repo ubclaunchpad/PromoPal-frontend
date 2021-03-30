@@ -50,7 +50,7 @@ class EnumService {
     return this._promotionTypes;
   }
 
-  public load() {
+  public load(): void {
     endpoints.forEach(({ endpoint, name }) => {
       this.getEnum(endpoint)
         .then((options) => {

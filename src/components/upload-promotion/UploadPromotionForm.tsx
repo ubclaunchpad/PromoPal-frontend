@@ -67,7 +67,7 @@ export default function UploadPromotionForm(): ReactElement {
    *
    * @param values - The values entered in the form
    */
-  const onFinish = (values: unknown) => {
+  const onFinish = (values: unknown): void => {
     const getSchedules = (): Schedule[] => {
       return Object.entries(times).map(([day, times]) => {
         return {
@@ -142,7 +142,7 @@ export default function UploadPromotionForm(): ReactElement {
     _: unknown,
     dateStrings: string[],
     { range }: { range: 'start' | 'end' }
-  ) => {
+  ): void => {
     const [start, end] = dateStrings;
     const updatedDates = datesEffective;
     if (range === 'start') {
@@ -159,7 +159,7 @@ export default function UploadPromotionForm(): ReactElement {
    *
    * @param event - The checkbox change event
    */
-  const onDaySelected = ({ target: { checked, value } }: CheckboxChangeEvent) => {
+  const onDaySelected = ({ target: { checked, value } }: CheckboxChangeEvent): void => {
     // Update map of days to times
     const updatedTimes = { ...times };
     if (checked) {
@@ -203,7 +203,7 @@ export default function UploadPromotionForm(): ReactElement {
    * @param day - The day which this time corresponds to
    * @param time - The moment object reprsenting the time selected
    */
-  const onTimeChange = (type: 'start' | 'end', day: string, time: unknown) => {
+  const onTimeChange = (type: 'start' | 'end', day: string, time: unknown): void => {
     const momentObject = time as moment.Moment;
     if (day in times) {
       const updatedTimes = { ...times };
@@ -218,7 +218,7 @@ export default function UploadPromotionForm(): ReactElement {
    * @param placeId - The placeId of the chosen restaurant
    * @param restaurantAddress - The address of the chosen restaurant
    */
-  const onSelectRestaurant = (placeId: string, restaurantAddress: string) => {
+  const onSelectRestaurant = (placeId: string, restaurantAddress: string): void => {
     form.setFieldsValue({ restaurant: placeId, restaurantAddress });
   };
 
@@ -226,7 +226,7 @@ export default function UploadPromotionForm(): ReactElement {
    * Handler to be called when the user types in the text input. The restaurant and address are set to empty strings,
    * which fails form validation and forces the user to select a restaurant from one of the autocomplete options.
    */
-  const onChangeRestaurant = () => {
+  const onChangeRestaurant = (): void => {
     form.setFieldsValue({ restaurant: '', restaurantAddress: '' });
   };
 
@@ -379,7 +379,7 @@ export default function UploadPromotionForm(): ReactElement {
       </Form.Item>
 
       <Form.Item>
-        <Row justify="center">
+        <Row justify="center" className="submit-upload-promotion-form">
           <Button htmlType="submit" size="large" text="Submit" />
         </Row>
       </Form.Item>

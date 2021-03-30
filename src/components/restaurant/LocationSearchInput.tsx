@@ -39,7 +39,7 @@ export default function LocationSearchInput(props: Props): ReactElement {
    *
    * @param value - A stringified JSON object with two keys: `description` and `placeId`
    */
-  const handleSelect = (value: string) => {
+  const handleSelect = (value: string): void => {
     const { description, placeId } = JSON.parse(value);
 
     // Sets value to be the text displayed on the option selected
@@ -59,7 +59,7 @@ export default function LocationSearchInput(props: Props): ReactElement {
    *
    * @param value - The input text
    */
-  const handleChange = (value: string) => {
+  const handleChange = (value: string): void => {
     // Sets value of text input
     setValue(value);
 

@@ -18,7 +18,7 @@ export default function Router(): ReactElement {
         <Switch>
           {/* Switches to "My Account" after login */}
           <Route path="/account">{loggedIn ? <MyAccount /> : <Login />}</Route>
-          <Route path="/promotion">
+          <Route path="/promotion" exact={true}>
             <MyPromotions />
           </Route>
           <Route path="/promotion/upload">

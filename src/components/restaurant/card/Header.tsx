@@ -1,117 +1,79 @@
 import './Header.css';
 
-import { CloseCircleOutlined } from '@ant-design/icons';
-import { Button, Col, Rate, Row, Typography } from 'antd';
-import React, { CSSProperties, ReactElement } from 'react';
+import { Button, Rate, Row } from 'antd';
+import React, { ReactElement } from 'react';
 
-import { DispatchAction, useRestaurantCard } from '../../../contexts/RestaurantCardContext';
-import { Restaurant } from '../../../types/restaurant';
+interface Props {
+  // cuisine: string; // todo: this should use a promotions cuisine https://promopal.atlassian.net/browse/PP-91
+  distance: number;
+  name: string | undefined;
+  priceLevel: number | undefined;
+  rating: number | undefined;
+  website: string | undefined;
+}
 
-const { Text, Title } = Typography;
+export default function Header(props: Props): ReactElement {
+  /**
+   * Returns a string that displays the priceLevel in number of dollar signs.
+   *
+   * @param priceLevel - The price level of the restaurant
+   */
+  const formatPriceLevel = (priceLevel: number | undefined): string => {
+    if (priceLevel === undefined) {
+      return '$';
+    }
+    let formattedPriceLevel = '';
+    for (let i = 0; i < priceLevel; i++) {
+      formattedPriceLevel += '$';
+    }
+    return formattedPriceLevel;
+  };
 
-const styles: { [identifier: string]: CSSProperties } = {
-  buttons: {
-    paddingBottom: 10,
-    paddingTop: 10,
-  },
-  button: {
-    border: '1px solid #FFC529',
-    borderRadius: 20,
-    boxShadow: '0 4px 4px 0 #40333333',
-    fontSize: '0.9em',
-    fontWeight: 'bold',
-    paddingLeft: 8,
-    paddingRight: 8,
-  },
-  closeModal: {
-    fontSize: '1.5em',
-    color: '#6E798C',
-    float: 'right',
-  },
-  container: {
-    margin: 20,
-    marginBottom: 0,
-  },
-  detailsText: {
-    fontWeight: 'bold',
-    marginRight: 20,
-    marginTop: 10,
-    fontSize: '0.9em',
-    color: '#6E798C',
-  },
-  rating: {
-    fontSize: '1em',
-    padding: 0,
-  },
-  restaurantName: {
-    fontFamily: 'ABeeZee',
-    margin: 0,
-  },
-};
+  /**
+   * Returns the restaurant rating rounded to the nearest half-star.
+   *
+   * @param rating - The restaurant rating
+   */
+  const normalizeRating = (rating: number | undefined): number => {
+    if (rating === undefined) {
+      return 0;
+    }
+    return Math.round(rating * 2) / 2;
+  };
 
-export default function Header({
-  cuisine,
-  distance,
-  name,
-  priceLevel,
-  rating,
-  website,
-}: Pick<
-  Restaurant,
-  'cuisine' | 'distance' | 'name' | 'priceLevel' | 'rating' | 'website'
->): ReactElement {
-  const { dispatch } = useRestaurantCard();
+  const separator = <p className="restaurant-details-text">&#8226;</p>;
 
-  const HeaderTitle = () => (
-    <Row>
-      <Col span={22}>
-        <Title level={3} style={styles.restaurantName}>
-          {name}
-        </Title>
-      </Col>
-      <Col span={2}>
-        <CloseCircleOutlined
-          onClick={() => dispatch({ type: DispatchAction.HIDE_CARD })}
-          style={styles.closeModal}
-        />
-      </Col>
-    </Row>
-  );
-
-  const Buttons = () => (
-    <Row align="middle" justify="space-between" style={styles.buttons}>
-      <Button style={styles.button}>
-        <a style={styles.link} href={website}>
-          Website
-        </a>
+  const Buttons = (): ReactElement => (
+    <Row className="action-buttons restaurant-card-header-component">
+      <Button className="action-button">
+        <a href={props.website}>Website</a>
       </Button>
-      <Button style={styles.button}>
-        {/* TODO: update link */}
-        <a style={styles.link} href="/">
-          Directions
-        </a>
+      {/* <Button className="action-button">
+        <a href="/">Directions</a>
       </Button>
-      <Button style={styles.button}>
-        {/* TODO: update link */}
-        <a style={styles.link} href="/">
-          Call
-        </a>
-      </Button>
+      <Button className="action-button">
+        <a href="/">Call</a>
+      </Button> */}
     </Row>
   );
 
   return (
-    <Col style={styles.container}>
-      <HeaderTitle />
-      <Row>
-        <Rate allowHalf disabled defaultValue={rating} style={styles.rating} />
+    <>
+      <Row className="restaurant-card-header-component">
+        <Rate
+          allowHalf={true}
+          disabled={true}
+          className="rating"
+          defaultValue={normalizeRating(props.rating)}
+        />
       </Row>
-      <Row style={styles.details}>
-        <Text style={styles.detailsText}>{cuisine}</Text>
-        <Text style={styles.detailsText}>{priceLevel}</Text>
-        <Text style={styles.detailsText}>{distance}m</Text>
+      <Row className="restaurant-card-header-component">
+        {/*<p className="restaurant-details-text">{props.cuisine}</p>*/}
+        <p className="restaurant-details-text">{formatPriceLevel(props.priceLevel)}</p>
+        {separator}
+        <p className="restaurant-details-text">{props.distance}m</p>
       </Row>
       <Buttons />
-    </Col>
+    </>
   );
 }

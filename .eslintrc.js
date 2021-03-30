@@ -5,6 +5,7 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   rules: {
     quotes: ['error', 'single', { avoidEscape: true }],
+    '@typescript-eslint/explicit-function-return-type': ['error', { allowExpressions: true }],
     '@typescript-eslint/no-explicit-any': ['error', { ignoreRestArgs: true }],
     'import/first': 'error',
     'import/order': 'off',

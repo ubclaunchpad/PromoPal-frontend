@@ -1,6 +1,12 @@
+import { Place } from '@googlemaps/google-maps-services-js';
 import axios, { AxiosResponse } from 'axios';
 
-import { GetPromotionsResponse, PostPromotionsResponse } from '../types/api';
+import UserService from '../services/UserService';
+import {
+  DeletePromotionsResponse,
+  GetPromotionsResponse,
+  PostPromotionsResponse,
+} from '../types/api';
 import {
   FilterOptions,
   GetPromotionDTO,
@@ -8,9 +14,9 @@ import {
   Promotion,
   Sort,
 } from '../types/promotion';
-import { Restaurant } from '../types/restaurant';
 import { isError } from '../utils/api';
 import Routes from '../utils/routes';
+import GooglePlacesService from './GooglePlacesService';
 
 /**
  * Fetches entire list of promotions. If a query object is given, filters the promotions according to the given query.
@@ -19,7 +25,8 @@ import Routes from '../utils/routes';
  * @param query [optional] - An array of objects with key-value pairs for the query parameters
  */
 export async function getPromotions(query?: GetPromotionDTO[]): Promise<Promotion[]> {
-  let endpoint = Routes.PROMOTIONS.GET;
+  const userId = UserService.userId;
+  let endpoint = Routes.PROMOTIONS.GET(userId);
   if (query && query.length > 0) {
     endpoint += '?';
     query.forEach((param: GetPromotionDTO, index: number) => {
@@ -31,13 +38,31 @@ export async function getPromotions(query?: GetPromotionDTO[]): Promise<Promotio
     });
   }
 
-  return fetch(endpoint)
-    .then((response: Response) => response.json())
-    .then((response: GetPromotionsResponse) => {
-      if (isError<GetPromotionsResponse>(response)) {
-        return Promise.reject(response);
+  return axios
+    .get(endpoint)
+    .then(({ data }: AxiosResponse<GetPromotionsResponse>) => {
+      if (isError<GetPromotionsResponse>(data)) {
+        return Promise.reject(data);
       }
-      return Promise.resolve(response);
+      return Promise.resolve(data);
+    })
+    .catch((err: Error) => Promise.reject(err));
+}
+
+/**
+ * Deletes the promotion with the given id.
+ *
+ * @param id - The id of the promotion to delete
+ */
+export async function deletePromotion(id: string): Promise<void> {
+  const endpoint = Routes.PROMOTIONS.DELETE(id);
+  return axios
+    .delete(endpoint)
+    .then(({ data }: AxiosResponse<DeletePromotionsResponse>) => {
+      if (isError<DeletePromotionsResponse>(data)) {
+        return Promise.reject(data);
+      }
+      return Promise.resolve();
     })
     .catch((err: Error) => Promise.reject(err));
 }
@@ -60,26 +85,8 @@ export async function postPromotion(promotionDTO: PostPromotionDTO): Promise<voi
     .catch((err: Error) => Promise.reject(err));
 }
 
-export async function getRestaurant(id: string): Promise<Restaurant> {
-  // TODO: https://promopal.atlassian.net/browse/PP-25
-  return {
-    address: '1850 W 4th Ave, Vancouver, BC V6J 1M3',
-    business_status: '',
-    cuisine: 'Italian',
-    distance: 1500,
-    lat: 0,
-    lon: 0,
-    openingHours: {},
-    name: 'Trattoria',
-    phoneNumber: '604-732-1441',
-    photos: [],
-    priceLevel: '$$',
-    rating: 4.1,
-    totalRating: 100,
-    mapUrl: '',
-    reviews: [],
-    website: 'https://www.glowbalgroup.com/trattoria/trattoria-burnaby.html',
-  };
+export async function getRestaurant(restaurantId: string): Promise<Place> {
+  return GooglePlacesService.getRestaurantDetails(restaurantId);
 }
 
 /**
@@ -135,16 +142,16 @@ export function sortPromotions(arr: Promotion[], key: Sort): Promotion[] {
 }
 
 // TODO: see https://github.com/ubclaunchpad/foodies/issues/99
-function sortByDistance(promotions: Promotion[]) {
+function sortByDistance(promotions: Promotion[]): Promotion[] {
   return promotions;
 }
 
 // TODO: see https://github.com/ubclaunchpad/foodies/issues/99
-function sortByPopularity(promotions: Promotion[]) {
+function sortByPopularity(promotions: Promotion[]): Promotion[] {
   return promotions;
 }
 
 // TODO: see https://github.com/ubclaunchpad/foodies/issues/99
-function sortByRating(promotions: Promotion[]) {
+function sortByRating(promotions: Promotion[]): Promotion[] {
   return promotions;
 }

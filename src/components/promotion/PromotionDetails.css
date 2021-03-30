@@ -8,3 +8,28 @@
   text-overflow: ellipsis;
   word-break: break-all;
 }
+
+/* Heart icon (liked) */
+.promotion-details .heart-icon-filled {
+  color: var(--red);
+}
+
+/* Heart icon */
+.promotion-details .heart-icon-outlined {
+  color: var(--black);
+}
+
+/* Heart icon hover */
+.promotion-details .heart-icon-outlined:hover {
+  color: var(--red);
+}
+
+/* Delete icon */
+.promotion-details .trash-icon {
+  color: var(--black);
+}
+
+/* Delete icon hover */
+.promotion-details .trash-icon:hover {
+  color: var(--red);
+}
