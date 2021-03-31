@@ -1,10 +1,10 @@
 import { User } from './user';
 
 export enum Sort {
-  Default = 'DEFAULT',
-  Distance = 'DISTANCE',
-  MostPopular = 'MOST_POPULAR',
-  Rating = 'RATING',
+  Default = 'Distance',
+  Distance = 'Distance',
+  Popularity = 'Popularity',
+  Recency = 'Recency',
 }
 
 export interface Promotion {
@@ -14,6 +14,7 @@ export interface Promotion {
   dateAdded: string;
   description: string;
   discount: Discount;
+  distance: number;
   expirationDate: string;
   image: PromotionImage;
   isSavedByUser: boolean;
@@ -24,6 +25,7 @@ export interface Promotion {
   restaurant: Restaurant;
   schedules: Schedule[];
   user: User;
+  votes: number;
   boldDescription?: string;
   boldName?: string;
   rank?: number;
