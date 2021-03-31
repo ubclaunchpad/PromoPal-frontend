@@ -1,0 +1,36 @@
+@import '../../variables.less';
+
+.navigation-header {
+  align-items: center;
+  display: inline-flex;
+  justify-content: space-between;
+  padding: 10px;
+  width: 100%;
+
+  .logo {
+    margin-left: -20px;
+    margin-right: -20px;
+  }
+
+  .navigation-header-container {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    .navigation-menu {
+      align-items: center;
+      background-color: #fff;
+      border-bottom: 0px;
+      line-height: 1rem;
+
+      .navigation-menu-item {
+        color: @black;
+        line-height: 1.5rem;
+
+        & a:hover {
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}
