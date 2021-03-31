@@ -35,11 +35,11 @@ export default function NavigationBar(): ReactElement {
   });
 
   /**
-   * On initial load, set current key to be the page that the user is on.
+   * Sets current key to be the page that the user is on.
    */
   useEffect(() => {
     setCurrent(PathsToPages[location.pathname]);
-  }, []);
+  }, [location.pathname]);
 
   const loggedIn = false;
 
