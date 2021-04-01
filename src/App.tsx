@@ -8,6 +8,7 @@ import { FirebaseProvider } from './contexts/FirebaseContext';
 import { PromotionsListProvider } from './contexts/PromotionsListContext';
 import { RestaurantCardProvider } from './contexts/RestaurantCardContext';
 import Router from './Router';
+import EnumService from './services/EnumService';
 import GoogleMapsApiLoaderService from './services/GoogleMapsApiLoaderService';
 
 const styles: { [identifier: string]: CSSProperties } = {
@@ -32,16 +33,25 @@ function App(): ReactElement {
 
   /**
    * Loads dependencies on initial render.
-   * Displays a spinner for the minimum of either: (a) the duration of the loading period or (b) 2 seconds.
+   * Displays a spinner for the maximum of either: (a) the duration of the loading period or (b) ~2 seconds.
    */
   useEffect(() => {
     const start = Date.now();
-    GoogleMapsApiLoaderService.load().finally(() => {
+    loadDependencies().finally(() => {
       const minWaitTime = 2000;
       const msWaited = Date.now() - start;
       setTimeout(() => setIsLoading(false), Math.max(0, minWaitTime - msWaited));
     });
   }, []);
+
+  /**
+   * Loads the following:
+   * - Google Maps API
+   * - Enums from BE
+   */
+  const loadDependencies = (): Promise<void[]> => {
+    return Promise.all([GoogleMapsApiLoaderService.load(), EnumService.load()]);
+  };
 
   const indicator = <LoadingOutlined style={styles.spinnerIcon} spin />;
 

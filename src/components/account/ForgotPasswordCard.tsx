@@ -3,6 +3,7 @@ import { Button, Form, Input, Tooltip } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
 
 import { useFirebase } from '../../contexts/FirebaseContext';
+import { InputRules } from '../../types/rules';
 
 const styles: { [identifier: string]: CSSProperties } = {
   button: {
@@ -29,13 +30,13 @@ interface Props {
 export default function ForgotPasswordCard(props: Props): ReactElement {
   const firebase = useFirebase();
 
-  const onFinish = (data: { email: string }) => {
+  const onFinish = (data: { email: string }): void => {
     firebase.doPasswordReset(data.email);
     // TODO: https://promopal.atlassian.net/browse/PP-80
     alert('A password reset email has been sent if an account with the email exists');
   };
 
-  const onFinishFailed = () => {
+  const onFinishFailed = (): void => {
     // TODO: https://promopal.atlassian.net/browse/PP-80
     alert('Please submit the form after filling out all fields.');
   };
@@ -56,10 +57,7 @@ export default function ForgotPasswordCard(props: Props): ReactElement {
       <Form.Item
         style={styles.inputWrapper}
         name="email"
-        rules={[
-          { required: true, message: 'An email is required.' },
-          { type: 'email', message: 'The input is not a valid email.' },
-        ]}
+        rules={InputRules.email}
         hasFeedback={true}
       >
         <Input placeholder="Email" />

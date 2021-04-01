@@ -7,6 +7,7 @@ import Home from './screens/Home';
 import Login from './screens/Login';
 import MyAccount from './screens/MyAccount';
 import MyPromotions from './screens/MyPromotions';
+import UploadPromotion from './screens/UploadPromotion';
 
 export default function Router(): ReactElement {
   const authUser = useAuthUser();
@@ -16,10 +17,8 @@ export default function Router(): ReactElement {
         <NavigationBar />
         <Switch>
           <Route path="/account">{authUser ? <MyAccount /> : <Login />}</Route>
-          <Route path="/promotion">
-            <MyPromotions />
-          </Route>
-          <Route path="/promotion/upload">{/* <UploadPromotion /> */}</Route>
+          <Route path="/promotion">{authUser ? <MyPromotions /> : <Login />}</Route>
+          <Route path="/promotion/upload">{authUser ? <UploadPromotion /> : <Login />}</Route>
           <Route path="/">
             <Home />
           </Route>

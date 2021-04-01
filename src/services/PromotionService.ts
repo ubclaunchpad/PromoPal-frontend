@@ -1,8 +1,23 @@
-import { PromotionsResponse } from '../types/api';
-import { FilterOptions, Promotion, PromotionDTO, Sort } from '../types/promotion';
-import { Restaurant } from '../types/restaurant';
+import { Place } from '@googlemaps/google-maps-services-js';
+import axios, { AxiosResponse } from 'axios';
+
+import LocationService from '../services/LocationService';
+import UserService from '../services/UserService';
+import {
+  DeletePromotionsResponse,
+  GetPromotionsResponse,
+  PostPromotionsResponse,
+} from '../types/api';
+import {
+  FilterOptions,
+  GetPromotionDTO,
+  PostPromotionDTO,
+  Promotion,
+  Sort,
+} from '../types/promotion';
 import { isError } from '../utils/api';
 import Routes from '../utils/routes';
+import GooglePlacesService from './GooglePlacesService';
 
 /**
  * Fetches entire list of promotions. If a query object is given, filters the promotions according to the given query.
@@ -10,58 +25,78 @@ import Routes from '../utils/routes';
  *
  * @param query [optional] - An array of objects with key-value pairs for the query parameters
  */
-export async function getPromotions(query?: PromotionDTO[]): Promise<Promotion[]> {
-  let endpoint = Routes.PROMOTIONS;
+export async function getPromotions(query?: GetPromotionDTO[]): Promise<Promotion[]> {
+  const userId = UserService.userId;
+  let endpoint = Routes.PROMOTIONS.GET(userId);
   if (query && query.length > 0) {
     endpoint += '?';
-    query.forEach((param: PromotionDTO, index: number) => {
-      const [key] = Object.keys(param);
-      const [value] = Object.values(param);
-
-      // First query param is not prefixed by an ampersand
-      endpoint += `${index > 0 ? '&' : ''}${key}=${value}`;
+    query.forEach((param: GetPromotionDTO, index: number) => {
+      Object.entries(param).forEach(([key, value], paramIdx) => {
+        // First query param is not prefixed by an ampersand
+        endpoint += `${index + paramIdx > 0 ? '&' : ''}${key}=${value}`;
+      });
     });
   }
 
-  return fetch(endpoint)
-    .then((response: Response) => response.json())
-    .then((response: PromotionsResponse) => {
-      if (isError<PromotionsResponse>(response)) {
-        return Promise.reject(response);
+  return axios
+    .get(endpoint)
+    .then(({ data }: AxiosResponse<GetPromotionsResponse>) => {
+      if (isError<GetPromotionsResponse>(data)) {
+        return Promise.reject(data);
       }
-      return Promise.resolve(response);
+      return Promise.resolve(data);
     })
     .catch((err: Error) => Promise.reject(err));
 }
 
-export async function getRestaurant(id: string): Promise<Restaurant> {
-  // TODO: https://promopal.atlassian.net/browse/PP-25
-  return {
-    address: '1850 W 4th Ave, Vancouver, BC V6J 1M3',
-    business_status: '',
-    cuisine: 'Italian',
-    distance: 1500,
-    lat: 0,
-    lon: 0,
-    openingHours: {},
-    name: 'Trattoria',
-    phoneNumber: '604-732-1441',
-    photos: [],
-    priceLevel: '$$',
-    rating: 4.1,
-    totalRating: 100,
-    mapUrl: '',
-    reviews: [],
-    website: 'https://www.glowbalgroup.com/trattoria/trattoria-burnaby.html',
-  };
+/**
+ * Deletes the promotion with the given id.
+ *
+ * @param id - The id of the promotion to delete
+ */
+export async function deletePromotion(id: string): Promise<void> {
+  const endpoint = Routes.PROMOTIONS.DELETE(id);
+  return axios
+    .delete(endpoint)
+    .then(({ data }: AxiosResponse<DeletePromotionsResponse>) => {
+      if (isError<DeletePromotionsResponse>(data)) {
+        return Promise.reject(data);
+      }
+      return Promise.resolve();
+    })
+    .catch((err: Error) => Promise.reject(err));
 }
 
 /**
- * Returns the subset of all promotions which satisfy at least one filter key in the `filters` parameter.
+ * Creates a new promotion.
+ *
+ * @param promotionDTO - An object containing the fields of the promotion
+ */
+export async function postPromotion(promotionDTO: PostPromotionDTO): Promise<void> {
+  const url = Routes.PROMOTIONS.POST;
+  return axios
+    .post(url, promotionDTO)
+    .then(({ data }: AxiosResponse<PostPromotionsResponse>) => {
+      if (isError<PostPromotionsResponse>(data)) {
+        return Promise.reject(data);
+      }
+      return Promise.resolve();
+    })
+    .catch((err: Error) => Promise.reject(err));
+}
+
+export async function getRestaurant(restaurantId: string): Promise<Place> {
+  return GooglePlacesService.getRestaurantDetails(restaurantId);
+}
+
+/**
+ * Returns the subset of all promotions which satisfy at least one filter key in the `filters` parameter
+ * and sort them by the `sort` parameter.
  *
  * @param filters - An object specifying the keys and the values to filter the promotions by
+ * @param sort - A string representing the key to sort the promotions by
  */
-export function filterPromotions(filters: FilterOptions): Promise<Promotion[]> {
+export async function queryPromotions(filters: FilterOptions, sort?: Sort): Promise<Promotion[]> {
   const { cuisine, dayOfWeek, discountType, promotionType } = filters;
 
   const promotionQueryDTO: Record<string, string>[] = [];
@@ -83,42 +118,17 @@ export function filterPromotions(filters: FilterOptions): Promise<Promotion[]> {
     promotionType.forEach((promotionType: string) => promotionQueryDTO.push({ promotionType }));
   }
 
-  return getPromotions(promotionQueryDTO);
-}
-
-/**
- * Sorts the given of list of promotions by the given key.
- *
- * @param arr - The list of promotions to sort
- * @param key - The key which to sort the promotions by
- */
-export function sortPromotions(arr: Promotion[], key: Sort): Promotion[] {
-  let promotions = [...arr];
-  switch (key) {
-    case Sort.Distance:
-      promotions = sortByDistance(promotions);
-      break;
-    case Sort.MostPopular:
-      promotions = sortByPopularity(promotions);
-      break;
-    case Sort.Rating:
-      promotions = sortByRating(promotions);
-      break;
+  if (sort) {
+    const queryParams: { [paramKey: string]: string } = { sort };
+    if (sort === Sort.Distance) {
+      const {
+        coords: { latitude, longitude },
+      } = await LocationService.GeolocationPosition.getCurrentLocation();
+      queryParams.lat = `${latitude}`;
+      queryParams.lon = `${longitude}`;
+    }
+    promotionQueryDTO.push(queryParams);
   }
-  return promotions;
-}
 
-// TODO: see https://github.com/ubclaunchpad/foodies/issues/99
-function sortByDistance(promotions: Promotion[]) {
-  return promotions;
-}
-
-// TODO: see https://github.com/ubclaunchpad/foodies/issues/99
-function sortByPopularity(promotions: Promotion[]) {
-  return promotions;
-}
-
-// TODO: see https://github.com/ubclaunchpad/foodies/issues/99
-function sortByRating(promotions: Promotion[]) {
-  return promotions;
+  return getPromotions(promotionQueryDTO);
 }

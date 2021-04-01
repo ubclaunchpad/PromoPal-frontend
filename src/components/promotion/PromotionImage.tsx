@@ -1,8 +1,6 @@
 import { Skeleton } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
 
-import { PromotionImage as PromotionImageProps } from '../../types/promotion';
-
 const styles: { [identifier: string]: CSSProperties } = {
   image: {
     borderRadius: 15,
@@ -12,11 +10,17 @@ const styles: { [identifier: string]: CSSProperties } = {
   },
 };
 
-export default function PromotionImage({
+interface Props {
+  src?: string;
+}
+
+export default function PromotionImage(props: Props): ReactElement {
   // TODO: see https://github.com/ubclaunchpad/PromoPal-backend/issues/101
-  src = 'https://d1ralsognjng37.cloudfront.net/92a7b4fb-892c-47bb-b5bb-884c89c254a2.jpeg',
-}: PromotionImageProps): ReactElement {
+  const defaultSrc =
+    'https://d1ralsognjng37.cloudfront.net/92a7b4fb-892c-47bb-b5bb-884c89c254a2.jpeg';
+
+  const imageSrc = props.src || defaultSrc;
   return (
-    <div>{src?.length ? <img style={styles.image} src={src} alt="" /> : <Skeleton.Image />}</div>
+    <div>{imageSrc ? <img style={styles.image} src={imageSrc} alt="" /> : <Skeleton.Image />}</div>
   );
 }

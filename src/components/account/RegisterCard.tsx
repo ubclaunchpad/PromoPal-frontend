@@ -4,8 +4,9 @@ import React, { CSSProperties, ReactElement } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { useFirebase } from '../../contexts/FirebaseContext';
-import RegistrationService from '../../services/RegistrationService';
-import { RegistrationData } from '../../types/user';
+import UserService from '../../services/UserService';
+import { InputRules } from '../../types/rules';
+import { UserInputData } from '../../types/user';
 
 const styles: { [identifier: string]: CSSProperties } = {
   button: {
@@ -33,8 +34,8 @@ export default function RegisterCard(props: Props): ReactElement {
   const firebase = useFirebase();
   const history = useHistory();
 
-  const onFinish = (data: RegistrationData) => {
-    RegistrationService.register(firebase, data)
+  const onFinish = (data: UserInputData): void => {
+    UserService.registerUser(firebase, data)
       .then(() => {
         history.push('/');
       })
@@ -44,7 +45,7 @@ export default function RegisterCard(props: Props): ReactElement {
       });
   };
 
-  const onFinishFailed = () => {
+  const onFinishFailed = (): void => {
     // TODO: https://promopal.atlassian.net/browse/PP-80
     alert('Please submit the form after filling out all fields.');
   };
@@ -56,19 +57,19 @@ export default function RegisterCard(props: Props): ReactElement {
       </Tooltip>
       <h1>Create an account</h1>
       <p>Create an account to upload promotions and save deals you like.</p>
-      <Form.Item style={{ marginBottom: 0 }}>
+      <Form.Item style={{ marginBottom: 10 }}>
         <Form.Item
           name="firstName"
-          rules={[{ required: true, message: 'Please enter your first name.' }]}
-          style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
+          rules={InputRules.firstName}
+          style={{ display: 'inline-block', width: 'calc(50% - 6px)', marginRight: 6 }}
           hasFeedback={true}
         >
           <Input placeholder="First name" />
         </Form.Item>
         <Form.Item
           name="lastName"
-          rules={[{ required: true, message: 'Please enter your last name.' }]}
-          style={{ display: 'inline-block', width: 'calc(50% - 8px)', margin: '0 8px' }}
+          rules={InputRules.lastName}
+          style={{ display: 'inline-block', width: 'calc(50% - 6px)', marginLeft: 6 }}
           hasFeedback={true}
         >
           <Input placeholder="Last name" />
@@ -77,8 +78,8 @@ export default function RegisterCard(props: Props): ReactElement {
 
       <Form.Item
         style={styles.inputWrapper}
-        name="userName"
-        rules={[{ required: true, message: 'A username is required.' }]}
+        name="username"
+        rules={InputRules.username}
         hasFeedback={true}
       >
         <Input placeholder="Username" />
@@ -86,10 +87,7 @@ export default function RegisterCard(props: Props): ReactElement {
       <Form.Item
         style={styles.inputWrapper}
         name="email"
-        rules={[
-          { required: true, message: 'An email is required.' },
-          { type: 'email', message: 'The input is not a valid email.' },
-        ]}
+        rules={InputRules.email}
         hasFeedback={true}
       >
         <Input placeholder="Email" />
@@ -97,10 +95,7 @@ export default function RegisterCard(props: Props): ReactElement {
       <Form.Item
         style={styles.inputWrapper}
         name="password"
-        rules={[
-          { required: true, message: 'A password is required.' },
-          { min: 9, message: 'Passwords must be at least 9 characters.' },
-        ]}
+        rules={InputRules.password}
         hasFeedback={true}
       >
         <Input.Password placeholder="Password" />

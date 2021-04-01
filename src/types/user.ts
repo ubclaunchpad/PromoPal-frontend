@@ -6,13 +6,13 @@ export interface User {
   firstName: string;
   lastName: string;
   uploadedPromotions: Promotion[];
-  userName: string;
+  username: string;
 }
 
-export interface RegistrationData {
+export interface UserInputData {
   firstName: string;
   lastName: string;
-  userName: string;
+  username: string;
   email: string;
   password: string;
 }

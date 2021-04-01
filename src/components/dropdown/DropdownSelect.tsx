@@ -5,7 +5,7 @@ import { Col, Dropdown, Radio } from 'antd';
 import React, { CSSProperties, ReactElement, useCallback, useEffect, useState } from 'react';
 
 import { DispatchAction, useDropdown } from '../../contexts/DropdownContext';
-import { Dropdown as DropdownType, DropdownAction } from '../../types/dropdown';
+import { DropdownAction, DropdownOption } from '../../types/dropdown';
 
 const { Group } = Radio;
 
@@ -53,14 +53,19 @@ const styles: { [identifier: string]: CSSProperties } = {
   },
 };
 
+interface Props {
+  options: DropdownOption[];
+  text: string;
+
+  defaultValue?: string;
+}
+
 /**
  * @component DropdownSelect
  * This component should be used when the user should only be allowed to select up to 1 option.
  *
- * @param text The text to display on the dropdown button
- * @param options The list of options for this dropdown
  */
-export default function DropdownSelect({ text, options }: DropdownType): ReactElement {
+export default function DropdownSelect(props: Props): ReactElement {
   /**
    * The key of the currently selected option
    */
@@ -91,16 +96,16 @@ export default function DropdownSelect({ text, options }: DropdownType): ReactEl
     });
   }, [dispatch]);
 
-  const dropdownOptions = () => (
+  const dropdownOptions = (): ReactElement => (
     <Col style={styles.menu}>
-      <Group name={text} defaultValue={0}>
-        {options.map(({ action, description, text }, index) => (
+      <Group name={props.text} defaultValue={props.defaultValue}>
+        {props.options.map(({ action, description, text }, index) => (
           <Col
             className="dropdown-option-multi"
             key={index}
             style={{ height: description ? 50 : 30 }}
           >
-            <Radio style={styles.radio} value={index} onClick={() => onClickHandler(action, text)}>
+            <Radio style={styles.radio} value={text} onClick={() => onClickHandler(action, text)}>
               <Col
                 style={{
                   ...styles.option,
@@ -120,7 +125,7 @@ export default function DropdownSelect({ text, options }: DropdownType): ReactEl
   return (
     <Dropdown overlay={dropdownOptions}>
       <div style={dropdownButtonStyle}>
-        {text} <DownOutlined />
+        {props.text} <DownOutlined />
       </div>
     </Dropdown>
   );

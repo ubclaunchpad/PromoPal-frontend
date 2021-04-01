@@ -1,10 +1,10 @@
-import { RestaurantDetails } from './restaurant';
+import { User } from './user';
 
 export enum Sort {
-  Default = 'DEFAULT',
-  Distance = 'DISTANCE',
-  MostPopular = 'MOST_POPULAR',
-  Rating = 'RATING',
+  Default = 'Distance',
+  Distance = 'Distance',
+  Popularity = 'Popularity',
+  Recency = 'Recency',
 }
 
 export interface Promotion {
@@ -14,24 +14,24 @@ export interface Promotion {
   dateAdded: string;
   description: string;
   discount: Discount;
+  distance: number;
   expirationDate: string;
   image: PromotionImage;
+  isSavedByUser: boolean;
   lat: number;
   lon: number;
-  liked: boolean;
   name: string;
-  placeId: string;
   promotionType: string;
-  restaurant: RestaurantDetails;
-  restaurantName: string;
+  restaurant: Restaurant;
   schedules: Schedule[];
   user: User;
+  votes: number;
   boldDescription?: string;
   boldName?: string;
   rank?: number;
 }
 
-export interface PromotionDTO {
+export interface GetPromotionDTO {
   cuisine?: Promotion['cuisine'] | Array<Promotion['cuisine']>;
   dayOfWeek?: Schedule['dayOfWeek'];
   discountType?: Discount['discountType'];
@@ -41,17 +41,21 @@ export interface PromotionDTO {
   searchQuery?: string;
 }
 
-export interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  password: string;
-  username: string;
+export interface PostPromotionDTO {
+  cuisine: Promotion['cuisine'];
+  description: Promotion['description'];
+  discount: Promotion['discount'];
+  expirationDate: Promotion['expirationDate'];
+  placeId: Restaurant['id'];
+  name: Promotion['name'];
+  promotionType: Promotion['promotionType'];
+  restaurantAddress: string;
+  schedules: Promotion['schedules'];
+  startDate: string;
+  userId: User['id'];
 }
 
 export interface Discount {
-  id: string;
   discountValue: number;
   discountType: string;
 }
@@ -61,11 +65,17 @@ export interface PromotionImage {
 }
 
 export interface Schedule {
-  id: string;
   dayOfWeek: Day;
   endTime: string;
   startTime: string;
   isRecurring: boolean;
+}
+
+export interface Restaurant {
+  id: string;
+  placeId: string;
+  lat: number;
+  lon: number;
 }
 
 export interface FilterOptions {

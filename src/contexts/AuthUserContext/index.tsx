@@ -23,7 +23,7 @@ export function AuthUserProvider({
   const firebase = useFirebase();
 
   useEffect(() => {
-    firebase.auth.onAuthStateChanged((authUser: AuthUser | null) => {
+    firebase.getAuth().onAuthStateChanged((authUser: AuthUser | null) => {
       authUser ? setAuthUser(authUser) : setAuthUser(null);
     });
   });

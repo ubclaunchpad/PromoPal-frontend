@@ -3,6 +3,7 @@ import React, { CSSProperties, ReactElement } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { useFirebase } from '../../contexts/FirebaseContext';
+import { InputRules } from '../../types/rules';
 
 const styles: { [identifier: string]: CSSProperties } = {
   button: {
@@ -34,7 +35,7 @@ export default function LoginCard(props: Props): ReactElement {
   const firebase = useFirebase();
   const history = useHistory();
 
-  const onFinish = (data: { email: string; password: string; staySignedIn: boolean }) => {
+  const onFinish = (data: { email: string; password: string; staySignedIn: boolean }): void => {
     firebase
       .doSignInWithEmailAndPassword(data.email, data.password, data.staySignedIn)
       .then(() => {
@@ -46,7 +47,7 @@ export default function LoginCard(props: Props): ReactElement {
       });
   };
 
-  const onFinishFailed = () => {
+  const onFinishFailed = (): void => {
     // TODO: https://promopal.atlassian.net/browse/PP-80
     alert('Please submit the form after filling out all fields.');
   };
@@ -66,7 +67,7 @@ export default function LoginCard(props: Props): ReactElement {
         <Form.Item
           name="email"
           style={styles.inputWrapper}
-          rules={[{ required: true, message: 'Please input your email!' }]}
+          rules={InputRules.email}
           hasFeedback={true}
         >
           <Input placeholder="Email" />
@@ -74,7 +75,7 @@ export default function LoginCard(props: Props): ReactElement {
         <Form.Item
           name="password"
           style={styles.inputWrapper}
-          rules={[{ required: true, message: 'Please input your password!' }]}
+          rules={InputRules.password}
           hasFeedback={true}
         >
           <Input.Password placeholder="Password" />

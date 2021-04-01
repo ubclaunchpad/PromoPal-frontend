@@ -1,7 +1,10 @@
-import { Button, Menu } from 'antd';
-import React, { CSSProperties, ReactElement, useState } from 'react';
-import { Link } from 'react-router-dom';
+import './NavigationBar.less';
 
+import { Button, Menu } from 'antd';
+import React, { CSSProperties, ReactElement, useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+
+import { ReactComponent as Logo } from '../../assets/logo.svg';
 import { useAuthUser } from '../../contexts/AuthUserContext';
 import { useFirebase } from '../../contexts/FirebaseContext';
 import SearchBar from '../navigation/SearchBar';
@@ -12,63 +15,63 @@ enum Pages {
   UploadPromotion = 'UploadPromotion',
 }
 
-const styles: { [identifier: string]: CSSProperties } = {
-  header: {
-    alignItems: 'center',
-    display: 'inline-flex',
-    justifyContent: 'space-between',
-    padding: 10,
-    width: '100%',
-  },
-  logo: {
-    marginLeft: 10,
-    marginRight: 10,
-    marginTop: 0,
-    marginBottom: 0,
-  },
-  menu: {
-    backgroundColor: '#fff',
-    borderBottom: 0,
-  },
-  menuItem: {
-    borderBottom: 0,
-    color: 'black',
-  },
-  navigation: {
-    display: 'inline-flex',
-    verticalAlign: 'center',
-  },
+enum Paths {
+  Home = '/',
+  Account = '/account',
+  UploadPromotion = '/promotion/upload',
+}
+
+const PathsToPages: { [path: string]: Pages } = {
+  [Paths.Home]: Pages.Home,
+  [Paths.Account]: Pages.Account,
+  [Paths.UploadPromotion]: Pages.UploadPromotion,
 };
 
 export default function NavigationBar(): ReactElement {
+  const location: { pathname: string } = useLocation();
+
   const [current, setCurrent] = useState<Pages>(Pages.Home);
   const firebase = useFirebase();
   const authUser = useAuthUser();
 
   // TODO: isActive is not highlighting the active page when the browser back button is pressed
   const isActive = (key: Pages): CSSProperties => ({
-    ...styles.menuItem,
     fontWeight: current === key ? 'bold' : 'normal',
   });
 
+  /**
+   * Sets current key to be the page that the user is on.
+   */
+  useEffect(() => {
+    setCurrent(PathsToPages[location.pathname]);
+  }, [location.pathname]);
+
   return (
-    <header id="navigation-header" style={styles.header}>
-      <div style={styles.navigation}>
-        <h1 style={styles.logo}>Logo</h1>
+    <header id="navigation-header" className="navigation-header">
+      <div className="navigation-header-container">
+        <Logo title="PromoPal" className="logo" height={50} />
         <Menu
+          mode="horizontal"
+          className="navigation-menu"
           onClick={({ key }) => setCurrent(key as Pages)}
           selectedKeys={[current]}
-          mode="horizontal"
-          style={styles.menu}
         >
-          <Menu.Item key={Pages.Home} style={isActive(Pages.Home)}>
-            <Link to="/">Home</Link>
+          <Menu.Item key={Pages.Home} className="navigation-menu-item" style={isActive(Pages.Home)}>
+            <Link to={Paths.Home}>Home</Link>
           </Menu.Item>
-          <Menu.Item key={Pages.Account} style={isActive(Pages.Account)}>
-            <Link to="/account">{authUser ? 'My Account' : 'Login'}</Link>
+          <Menu.Item
+            key={Pages.Account}
+            className="navigation-menu-item"
+            style={isActive(Pages.Account)}
+          >
+            <Link to={Paths.Account}>{authUser ? 'My Account' : 'Login'}</Link>
           </Menu.Item>
-          <Menu.Item key={Pages.UploadPromotion} style={isActive(Pages.UploadPromotion)}>
-            <Link to="/promotion/upload">Upload Promotion</Link>
+          <Menu.Item
+            key={Pages.UploadPromotion}
+            className="navigation-menu-item"
+            style={isActive(Pages.UploadPromotion)}
+          >
+            <Link to={Paths.UploadPromotion}>Upload Promotion</Link>
           </Menu.Item>
         </Menu>
       </div>

@@ -12,7 +12,7 @@ const config = {
 };
 
 class Firebase {
-  auth: firebase.auth.Auth;
+  private auth: firebase.auth.Auth;
 
   constructor() {
     if (!firebase.apps.length) {
@@ -23,32 +23,43 @@ class Firebase {
     this.auth = firebase.auth();
   }
 
+  getAuth(): firebase.auth.Auth {
+    return this.auth;
+  }
+
   // *** Auth API ***
   // Creates a user and signs the user in
-  doCreateUserWithEmailAndPassword = (email: string, password: string) => {
+  doCreateUserWithEmailAndPassword(
+    email: string,
+    password: string
+  ): Promise<firebase.auth.UserCredential> {
     return this.auth.createUserWithEmailAndPassword(email, password);
-  };
+  }
 
-  doSignInWithEmailAndPassword = (email: string, password: string, staySignedIn: boolean) => {
+  doSignInWithEmailAndPassword(
+    email: string,
+    password: string,
+    staySignedIn: boolean
+  ): Promise<firebase.auth.UserCredential> {
     if (staySignedIn) {
       this.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     } else {
       this.auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
     }
     return this.auth.signInWithEmailAndPassword(email, password);
-  };
+  }
 
-  doSignOut = () => this.auth.signOut();
+  doSignOut = (): Promise<void> => this.auth.signOut();
 
-  doPasswordReset = (email: string) => {
+  doPasswordReset(email: string): void {
     // TODO: Hide 400 error when an account with the specified email does not exist
     this.auth.sendPasswordResetEmail(email).catch(() => {
       // This catch block is empty because the user should not know if
       // an account with the specified email exists
     });
-  };
+  }
 
-  doReauthenticateUser = (password: string) => {
+  doReauthenticateUser(password: string): Promise<firebase.auth.UserCredential> {
     const authUser = this.auth.currentUser;
     // TODO: Redirect to 404 page if a user or user email does not exist
     if (authUser === null) {
@@ -59,17 +70,31 @@ class Firebase {
     }
     const credential = firebase.auth.EmailAuthProvider.credential(authUser.email, password);
     return authUser.reauthenticateWithCredential(credential);
-  };
+  }
 
-  doPasswordUpdate = (oldPassword: string, newPassword: string) => {
+  doEmailUpdate(password: string, newEmail: string): Promise<void> {
+    return this.doReauthenticateUser(password)
+      .then(() => {
+        const authUser = this.auth.currentUser;
+        if (authUser?.email === newEmail) {
+          return;
+        }
+        return authUser?.updateEmail(newEmail);
+      })
+      .catch((err: Error) => {
+        return Promise.reject(err);
+      });
+  }
+
+  doPasswordUpdate(oldPassword: string, newPassword: string): Promise<void> {
     return this.doReauthenticateUser(oldPassword)
-      ?.then(() => {
+      .then(() => {
         return this.auth.currentUser?.updatePassword(newPassword);
       })
       .catch((err: Error) => {
         return Promise.reject(err);
       });
-  };
+  }
 }
 
 export default Firebase;
