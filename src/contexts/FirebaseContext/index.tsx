@@ -1,11 +1,11 @@
 import React, { createContext, ReactElement, useContext } from 'react';
 
-import Firebase from '../../services/FirebaseService';
-
+import FirebaseService from '../../services/FirebaseService';
+// TODO: do not need this provider/context anymore
 /**
  * Holds the most up-to-date context object.
  */
-const FirebaseContext = createContext<Firebase | null>(null);
+const FirebaseContext = createContext<FirebaseService | null>(null);
 
 /**
  * @component FirebaseProvider
@@ -18,13 +18,15 @@ export function FirebaseProvider({
 }: {
   children: ReactElement | ReactElement[];
 }): ReactElement {
-  return <FirebaseContext.Provider value={new Firebase()}>{children}</FirebaseContext.Provider>;
+  return (
+    <FirebaseContext.Provider value={new FirebaseService()}>{children}</FirebaseContext.Provider>
+  );
 }
 
 /**
  * Use this function to access the context object.
  */
-export function useFirebase(): Firebase {
+export function useFirebase(): FirebaseService {
   const context = useContext(FirebaseContext);
   if (!context) {
     throw new Error('Firebase does not exist');
