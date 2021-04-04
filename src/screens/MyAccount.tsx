@@ -33,6 +33,8 @@ export default function MyAccount(): ReactElement {
    * On initial render, gets the details of the currently logged in user.
    */
   useEffect(() => {
+    // todo: If you are logged in and refresh the page, UserService.userId is no longer remembered. We need
+    //  to have AuthUserContext somehow remember the id of the user even after refreshing
     UserService.getUser()
       .then((user: User) => setUser(user))
       .catch(() => setUser(defaultUser));

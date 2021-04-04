@@ -184,11 +184,26 @@ class UserService {
         data.password,
         data.staySignedIn
       );
-      // todo: configure rest of sign in workflow
-      return userCredential;
-    } catch (e) {
+      const idToken = await userCredential.user?.getIdToken();
+      if (!idToken || !userCredential.user?.uid) {
+        // TODO: handle errors more appropriately https://promopal.atlassian.net/browse/PP-38
+        return Promise.reject(new Error('Sorry we were unable to register you, please try again.'));
+      }
+
+      const url = Routes.USERS.GET_BY_FIREBASE_ID(userCredential.user.uid);
+      const response: AxiosResponse<User> = await axios.get(url, {
+        headers: {
+          authorization: idToken,
+        },
+      });
+      this._userId = response.data.id;
+      return Promise.resolve(userCredential);
+    } catch (error) {
       // TODO: handle errors more appropriately https://promopal.atlassian.net/browse/PP-38
-      return Promise.reject(e);
+      if (error.response?.data) {
+        return Promise.reject({ message: error.response.data });
+      }
+      return Promise.reject(error);
     }
   }
 }
