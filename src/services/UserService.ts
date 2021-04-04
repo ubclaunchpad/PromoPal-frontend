@@ -27,7 +27,8 @@ class UserService {
   /**
    * Fetches the uploaded promotions of the currently logged in user.
    */
-  public async getUploadedPromotions(): Promise<Promotion[]> {
+  public async getUploadedPromotions(firebaseService: FirebaseService): Promise<Promotion[]> {
+    firebaseService.getAuth().currentUser?.getIdToken();
     const endpoint = Routes.USERS.UPLOADED_PROMOTIONS(this.userId);
     return axios
       .get(endpoint)
@@ -43,7 +44,8 @@ class UserService {
   /**
    * Gets the details of the currently logged in user.
    */
-  public async getUser(): Promise<User> {
+  public async getUser(firebaseService: FirebaseService): Promise<User> {
+    firebaseService.getAuth().currentUser?.getIdToken();
     const url = Routes.USERS.GET(this.userId);
     return axios
       .get(url)
@@ -60,8 +62,13 @@ class UserService {
    * Sets the promotion as saved for the current user.
    *
    * @param promotionId - The id of the promotion to save
+   * @param firebaseService
    */
-  public async savePromotion(promotionId: string): Promise<SavePromotion> {
+  public async savePromotion(
+    promotionId: string,
+    firebaseService: FirebaseService
+  ): Promise<SavePromotion> {
+    firebaseService.getAuth().currentUser?.getIdToken();
     const endpoint = Routes.USERS.SAVE_PROMOTION(this.userId, promotionId);
     return axios
       .post(endpoint)
@@ -79,7 +86,11 @@ class UserService {
    *
    * @param promotionId - The id of the promotion to unsave
    */
-  public async unsavePromotion(promotionId: string): Promise<UnsavePromotionResponse> {
+  public async unsavePromotion(
+    promotionId: string,
+    firebaseService: FirebaseService
+  ): Promise<UnsavePromotionResponse> {
+    firebaseService.getAuth().currentUser?.getIdToken();
     const endpoint = Routes.USERS.UNSAVE_PROMOTION(this.userId, promotionId);
     return axios
       .delete(endpoint)
@@ -149,6 +160,7 @@ class UserService {
    * @param data - Data to update the user with
    */
   public async updateUser(firebaseService: FirebaseService, data: UserInputData): Promise<void> {
+    firebaseService.getAuth().currentUser?.getIdToken();
     return firebaseService.doEmailUpdate(data.password, data.email).then(() => {
       // Update user in BE
       const url = Routes.USERS.UPDATE(this.userId);
