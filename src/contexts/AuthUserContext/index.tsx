@@ -1,4 +1,5 @@
 import { User as AuthUser } from '@firebase/auth-types';
+import axios from 'axios';
 import React, { createContext, ReactElement, useContext, useEffect, useState } from 'react';
 
 import { useFirebase } from '../../contexts/FirebaseContext';
@@ -25,6 +26,17 @@ export function AuthUserProvider({
   useEffect(() => {
     firebase.getAuth().onAuthStateChanged((authUser: AuthUser | null) => {
       authUser ? setAuthUser(authUser) : setAuthUser(null);
+      if (authUser) {
+        axios.interceptors.request.use(
+          async (request) => {
+            request.headers.authorization = await authUser.getIdToken(true);
+            return request;
+          },
+          (error) => {
+            return Promise.reject(error);
+          }
+        );
+      }
     });
   });
 

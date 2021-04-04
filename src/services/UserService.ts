@@ -28,7 +28,6 @@ class UserService {
    * Fetches the uploaded promotions of the currently logged in user.
    */
   public async getUploadedPromotions(): Promise<Promotion[]> {
-    // todo FirebaseService.getAuth().currentUser?.getIdToken(true) and attach to req header for authorization
     const endpoint = Routes.USERS.UPLOADED_PROMOTIONS(this.userId);
     return axios
       .get(endpoint)
@@ -45,7 +44,6 @@ class UserService {
    * Gets the details of the currently logged in user.
    */
   public async getUser(): Promise<User> {
-    // todo FirebaseService.getAuth().currentUser?.getIdToken(true) and attach to req header for authorization
     const url = Routes.USERS.GET(this.userId);
     return axios
       .get(url)
@@ -64,7 +62,6 @@ class UserService {
    * @param promotionId - The id of the promotion to save
    */
   public async savePromotion(promotionId: string): Promise<SavePromotion> {
-    // todo FirebaseService.getAuth().currentUser?.getIdToken(true) and attach to req header for authorization
     const endpoint = Routes.USERS.SAVE_PROMOTION(this.userId, promotionId);
     return axios
       .post(endpoint)
@@ -83,7 +80,6 @@ class UserService {
    * @param promotionId - The id of the promotion to unsave
    */
   public async unsavePromotion(promotionId: string): Promise<UnsavePromotionResponse> {
-    // todo FirebaseService.getAuth().currentUser?.getIdToken(true) and attach to req header for authorization
     const endpoint = Routes.USERS.UNSAVE_PROMOTION(this.userId, promotionId);
     return axios
       .delete(endpoint)
@@ -110,41 +106,37 @@ class UserService {
         data.email,
         data.password
       );
-      const idToken = await userCredential.user?.getIdToken(true);
-      if (userCredential.user?.uid && idToken) {
-        const url = Routes.USERS.POST;
-        const postUserDTO: PostUserDTO = {
-          email: data.email,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          username: data.username,
-          firebaseId: userCredential.user?.uid,
-        };
+      const idToken = await userCredential.user?.getIdToken();
+      if (!userCredential.user?.uid || !idToken) {
+        // TODO: handle errors more appropriately https://promopal.atlassian.net/browse/PP-38
+        return Promise.reject(new Error('Sorry we were unable to register you, please try again.'));
+      }
+      const url = Routes.USERS.POST;
+      const postUserDTO: PostUserDTO = {
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        username: data.username,
+        firebaseId: userCredential.user?.uid,
+      };
+      try {
         const response: AxiosResponse<User> = await axios.post(url, postUserDTO, {
           headers: {
             authorization: idToken,
           },
         });
+        // todo: remove the field _userId, keeping it here temporarily so application still runs
         this._userId = response.data.id;
-        axios.interceptors.request.use(
-          (request) => {
-            request.headers.authorization = idToken;
-            return request;
-          },
-          (error) => {
-            return Promise.reject(error);
-          }
-        );
         return Promise.resolve();
-      } else {
-        // TODO: handle errors more appropriately https://promopal.atlassian.net/browse/PP-38
-        return Promise.reject(
-          new Error(
-            'Internal Server Error - Sorry we were unable to register you, please try again.'
-          )
-        );
+      } catch (e) {
+        // we were not able to create user successfully, delete user in firebase
+        await userCredential.user?.delete();
+        throw e;
       }
     } catch (error) {
+      if (error.response?.data) {
+        return Promise.reject({ message: error.response.data });
+      }
       return Promise.reject(error);
     }
   }
@@ -157,7 +149,6 @@ class UserService {
    * @param data - Data to update the user with
    */
   public async updateUser(firebaseService: FirebaseService, data: UserInputData): Promise<void> {
-    // todo FirebaseService.getAuth().currentUser?.getIdToken(true) and attach to req header for authorization
     return firebaseService.doEmailUpdate(data.password, data.email).then(() => {
       // Update user in BE
       const url = Routes.USERS.UPDATE(this.userId);
