@@ -1,6 +1,6 @@
 import './AccountDetails.css';
 
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, message } from 'antd';
 import React, { ReactElement } from 'react';
 
 import { useFirebase } from '../../contexts/FirebaseContext';
@@ -13,17 +13,18 @@ export default function ChangePassword(): ReactElement {
     firebase
       .doPasswordUpdate(data.oldPassword, data.newPassword)
       .then(() => {
-        // TODO: https://promopal.atlassian.net/browse/PP-80
-        alert('Your password was changed');
+        const successMessage = 'Your new password was saved successfully!';
+        message.success(successMessage, 5);
       })
-      .catch((err: Error) => {
-        alert(err.message);
+      .catch(() => {
+        const errorMessage = 'An error occurred! Please try again later.';
+        message.error(errorMessage, 5);
       });
   };
 
   const onFinishFailed = (): void => {
-    // TODO: https://promopal.atlassian.net/browse/PP-80
-    alert('Please submit the form after filling out all fields.');
+    const errorMessage = 'An error occurred! Please review the form to see what went wrong.';
+    message.error(errorMessage, 5);
   };
 
   return (

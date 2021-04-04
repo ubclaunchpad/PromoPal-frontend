@@ -1,6 +1,6 @@
 import './AccountDetails.css';
 
-import { Button, Col, Form, Input, Row } from 'antd';
+import { Button, Col, Form, Input, message, Row } from 'antd';
 import { Rule } from 'antd/lib/form';
 import React, { ReactElement } from 'react';
 
@@ -32,18 +32,18 @@ export default function AccountDetails(props: Props): ReactElement {
   const onFinish = (data: UserInputData): void => {
     UserService.updateUser(firebase, data)
       .then(() => {
-        // TODO: https://promopal.atlassian.net/browse/PP-80
-        alert('Your changes were saved.');
+        const successMessage = 'Your changes were saved successfully!';
+        message.success(successMessage, 5);
       })
-      .catch((err: Error) => {
-        // TODO: https://promopal.atlassian.net/browse/PP-80
-        alert(err.message);
+      .catch(() => {
+        const errorMessage = 'An error occurred! Please try again later.';
+        message.error(errorMessage, 5);
       });
   };
 
   const onFinishFailed = (): void => {
-    // TODO: https://promopal.atlassian.net/browse/PP-80
-    alert('Please submit the form after filling out all fields.');
+    const errorMessage = 'An error occurred! Please review the form to see what went wrong.';
+    message.error(errorMessage, 5);
   };
 
   function InputWrapper(inputProps: InputProps): ReactElement {

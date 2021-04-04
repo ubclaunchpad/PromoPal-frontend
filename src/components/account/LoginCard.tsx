@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, Input } from 'antd';
+import { Button, Checkbox, Form, Input, message } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
 import { useHistory } from 'react-router-dom';
 
@@ -40,16 +40,19 @@ export default function LoginCard(props: Props): ReactElement {
       .doSignInWithEmailAndPassword(data.email, data.password, data.staySignedIn)
       .then(() => {
         history.push('/');
+
+        const successMessage = 'Welcome back!';
+        message.success(successMessage, 5);
       })
-      .catch((err: Error) => {
-        // TODO: https://promopal.atlassian.net/browse/PP-80
-        alert(err.message);
+      .catch(() => {
+        const errorMessage = 'An error occurred! Please try again later.';
+        message.error(errorMessage, 5);
       });
   };
 
   const onFinishFailed = (): void => {
-    // TODO: https://promopal.atlassian.net/browse/PP-80
-    alert('Please submit the form after filling out all fields.');
+    const errorMessage = 'An error occurred! Please review the form to see what went wrong.';
+    message.error(errorMessage, 5);
   };
 
   return (

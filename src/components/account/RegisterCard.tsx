@@ -1,5 +1,5 @@
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Tooltip } from 'antd';
+import { Button, Form, Input, message, Tooltip } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
 import { useHistory } from 'react-router-dom';
 
@@ -38,16 +38,19 @@ export default function RegisterCard(props: Props): ReactElement {
     UserService.registerUser(firebase, data)
       .then(() => {
         history.push('/');
+
+        const successMessage = "Welcome aboard! We're excited to have you here.";
+        message.success(successMessage, 5);
       })
-      .catch((err: Error) => {
-        // TODO: https://promopal.atlassian.net/browse/PP-80
-        alert(err.message);
+      .catch(() => {
+        const errorMessage = 'An error occurred! Please try again later.';
+        message.error(errorMessage, 5);
       });
   };
 
   const onFinishFailed = (): void => {
-    // TODO: https://promopal.atlassian.net/browse/PP-80
-    alert('Please submit the form after filling out all fields.');
+    const errorMessage = 'An error occurred! Please review the form to see what went wrong.';
+    message.error(errorMessage, 5);
   };
 
   return (

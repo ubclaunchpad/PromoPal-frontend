@@ -1,5 +1,5 @@
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Tooltip } from 'antd';
+import { Button, Form, Input, message, Tooltip } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
 
 import { useFirebase } from '../../contexts/FirebaseContext';
@@ -32,13 +32,15 @@ export default function ForgotPasswordCard(props: Props): ReactElement {
 
   const onFinish = (data: { email: string }): void => {
     firebase.doPasswordReset(data.email);
-    // TODO: https://promopal.atlassian.net/browse/PP-80
-    alert('A password reset email has been sent if an account with the email exists');
+
+    const successMessage =
+      'A password reset email has been sent if an account with the email exists';
+    message.success(successMessage, 5);
   };
 
   const onFinishFailed = (): void => {
-    // TODO: https://promopal.atlassian.net/browse/PP-80
-    alert('Please submit the form after filling out all fields.');
+    const errorMessage = 'An error occurred! Please review the form to see what went wrong.';
+    message.error(errorMessage, 5);
   };
 
   return (
