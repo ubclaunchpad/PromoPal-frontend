@@ -1,18 +1,11 @@
+import './ForgotPasswordCard.less';
+
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message, Tooltip } from 'antd';
-import React, { CSSProperties, ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 
 import UserService from '../../services/UserService';
 import { InputRules } from '../../types/rules';
-
-const styles: { [identifier: string]: CSSProperties } = {
-  button: {
-    float: 'left',
-  },
-  inputWrapper: {
-    marginBottom: 15,
-  },
-};
 
 const layout = {
   labelCol: {
@@ -53,16 +46,11 @@ export default function ForgotPasswordCard(props: Props): ReactElement {
       </Tooltip>
       <h1>Reset your password</h1>
       <p>Please enter your email to reset your password.</p>
-      <Form.Item
-        style={styles.inputWrapper}
-        name="email"
-        rules={InputRules.email}
-        hasFeedback={true}
-      >
+      <Form.Item className="input-wrapper" name="email" rules={InputRules.email} hasFeedback={true}>
         <Input placeholder="Email" />
       </Form.Item>
       <Form.Item>
-        <Button className="button" style={styles.button} htmlType="submit">
+        <Button className="button reset-password-button" htmlType="submit">
           Reset my password
         </Button>
       </Form.Item>
