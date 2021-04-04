@@ -3,6 +3,7 @@ import React, { CSSProperties, ReactElement } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { useFirebase } from '../../contexts/FirebaseContext';
+import { FirebaseAuthError } from '../../types/firebase';
 import { InputRules } from '../../types/rules';
 
 const styles: { [identifier: string]: CSSProperties } = {
@@ -44,8 +45,18 @@ export default function LoginCard(props: Props): ReactElement {
         const successMessage = 'Welcome back!';
         message.success(successMessage, 5);
       })
-      .catch(() => {
-        const errorMessage = 'An error occurred! Please try again later.';
+      .catch((err: FirebaseAuthError) => {
+        let errorMessage = '';
+        if (err?.code === '400') {
+          if (err.message.startsWith('TOO_MANY_ATTEMPTS_TRY_LATER')) {
+            errorMessage = `Access to this account has been temporarily disabled due to many failed login attempts.
+              You can immediately restore it by resetting your password or you can try again later.`;
+          } else if (err.message.startsWith('INVALID_PASSWORD')) {
+            errorMessage = 'The password entered is incorrect. Please try again.';
+          }
+        } else {
+          errorMessage = 'An error occurred while attempting to log in! Please try again later.';
+        }
         message.error(errorMessage, 5);
       });
   };
@@ -78,7 +89,7 @@ export default function LoginCard(props: Props): ReactElement {
         <Form.Item
           name="password"
           style={styles.inputWrapper}
-          rules={InputRules.password}
+          rules={InputRules.loginPassword}
           hasFeedback={true}
         >
           <Input.Password placeholder="Password" />

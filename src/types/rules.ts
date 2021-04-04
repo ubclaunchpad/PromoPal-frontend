@@ -34,4 +34,5 @@ export const InputRules: { [name: string]: Rule[] } = {
     { required: true, message: 'Username is required!' },
     { whitespace: true, message: 'Username cannot be empty!' },
   ],
+  loginPassword: [{ required: true, message: 'Please input your password!' }],
 };
