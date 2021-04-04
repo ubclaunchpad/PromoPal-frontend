@@ -1,15 +1,8 @@
+import './RegisterCard.less';
+
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Tooltip } from 'antd';
-import React, { CSSProperties, ReactElement } from 'react';
-
-const styles: { [identifier: string]: CSSProperties } = {
-  button: {
-    float: 'left',
-  },
-  inputWrapper: {
-    marginBottom: 15,
-  },
-};
+import React, { ReactElement } from 'react';
 
 const layout = {
   labelCol: {
@@ -70,7 +63,7 @@ export default function RegisterCard(props: Props): ReactElement {
       </Form.Item>
 
       <Form.Item
-        style={styles.inputWrapper}
+        className="input-wrapper"
         name="username"
         rules={[{ required: true, message: 'A username is required.' }]}
         hasFeedback={true}
@@ -78,7 +71,7 @@ export default function RegisterCard(props: Props): ReactElement {
         <Input placeholder="Username" />
       </Form.Item>
       <Form.Item
-        style={styles.inputWrapper}
+        className="input-wrapper"
         name="email"
         rules={[
           { required: true, message: 'An email is required.' },
@@ -89,7 +82,7 @@ export default function RegisterCard(props: Props): ReactElement {
         <Input placeholder="Email" />
       </Form.Item>
       <Form.Item
-        style={styles.inputWrapper}
+        className="input-wrapper"
         name="password"
         rules={[
           { required: true, message: 'A password is required.' },
@@ -100,7 +93,7 @@ export default function RegisterCard(props: Props): ReactElement {
         <Input.Password placeholder="Password" />
       </Form.Item>
       <Form.Item
-        style={styles.inputWrapper}
+        className="input-wrapper"
         name="confirmPassword"
         dependencies={['password']}
         rules={[
@@ -122,7 +115,7 @@ export default function RegisterCard(props: Props): ReactElement {
         <Input.Password placeholder="Confirm Password" />
       </Form.Item>
       <Form.Item>
-        <Button className="button" style={styles.button} htmlType="submit">
+        <Button className="button register-button" htmlType="submit">
           Register
         </Button>
       </Form.Item>
