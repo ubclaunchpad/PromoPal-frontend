@@ -1,9 +1,8 @@
 import '../index.less';
 
-import { Checkbox, Col, Row } from 'antd';
+import { Button, Checkbox, Col, Row } from 'antd';
 import React, { CSSProperties, ReactElement, useCallback, useEffect, useState } from 'react';
 
-import UploadPromoButton from '../components/button/UploadPromoButton';
 import DropdownMenu from '../components/DropdownMenu';
 import DeleteModal from '../components/my-promotions/DeleteModal';
 import PromotionCard from '../components/promotion/PromotionCard';
@@ -75,6 +74,9 @@ const styles: { [identifier: string]: CSSProperties } = {
     paddingTop: 20,
     width: '100%',
   },
+  button: {
+    backgroundColor: '#FFC529',
+  },
   dropdownMenuContainer: {
     width: `${dropdownMenuWidth}%`,
   },
@@ -84,6 +86,10 @@ const styles: { [identifier: string]: CSSProperties } = {
   },
   promotions: {
     marginTop: 15,
+  },
+  text: {
+    color: 'black',
+    fontWeight: 'bold',
   },
   uploadPromoButtonContainer: {
     position: 'fixed',
@@ -127,6 +133,13 @@ export default function MyPromotions(): ReactElement {
    */
   const onDeleteCancel = (): void => {
     setIsModalVisible(false);
+  };
+
+  /**
+   * When a user clicks the upload promotion button.
+   */
+  const onUploadPromotionButtonClick = (): void => {
+    history.push('/promotion/upload');
   };
 
   /**
@@ -213,7 +226,14 @@ export default function MyPromotions(): ReactElement {
         </div>
         <div style={styles.promotions}>{renderUploadedPromotions()}</div>
         <div style={styles.uploadPromoButtonContainer}>
-          <UploadPromoButton />
+          <Button
+            size="large"
+            shape="round"
+            onClick={onUploadPromotionButtonClick}
+            style={styles.button}
+          >
+            <div style={styles.text}> Upload Promo </div>
+          </Button>
         </div>
       </div>
 
