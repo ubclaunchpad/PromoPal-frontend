@@ -2,6 +2,7 @@ import '../index.less';
 
 import { Button, Checkbox, Col, Row } from 'antd';
 import React, { CSSProperties, ReactElement, useCallback, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import DropdownMenu from '../components/DropdownMenu';
 import DeleteModal from '../components/modal/DeleteModal';
@@ -109,6 +110,7 @@ export default function MyPromotions(): ReactElement {
   const [uploadedPromotions, setUploadedPromotions] = useState<Promotion[]>([]);
 
   const authUser = useAuthUser();
+  const history = useHistory();
 
   /**
    * Fetches the user's uploaded promotions and sets them on this component.

@@ -1,45 +1,12 @@
-import './Dropdown.css';
+import './Dropdown.less';
 
 import { DownOutlined } from '@ant-design/icons';
-import { Checkbox, Col, Dropdown as DD, Row } from 'antd';
-import React, { CSSProperties, ReactElement, useCallback, useEffect, useState } from 'react';
+import { Checkbox, Col, Dropdown as AntDropdown, Row } from 'antd';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 
 import { DispatchAction, useDropdown } from '../../contexts/DropdownContext';
 import { Dropdown as DropdownType, DropdownAction } from '../../types/dropdown';
-
-const styles: { [identifier: string]: CSSProperties } = {
-  active: {
-    backgroundColor: '#FFC529',
-  },
-  button: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    boxShadow: '0 2px 10px 0px #1A333333',
-    color: 'black',
-    fontWeight: 'bold',
-    marginLeft: 10,
-    marginRight: 10,
-    padding: 8,
-    paddingLeft: 15,
-    paddingRight: 15,
-  },
-  checkbox: {
-    paddingLeft: 10,
-    width: '100%',
-  },
-  option: {
-    display: 'inline',
-    top: 0,
-  },
-  menu: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    maxHeight: '80vh',
-    overflow: 'scroll',
-    paddingTop: 15,
-    paddingBottom: 15,
-  },
-};
+import { className } from '../../utils/component';
 
 /**
  * @component DropdownMultiSelect
@@ -60,11 +27,6 @@ export default function DropdownMultiSelect({ text, options }: DropdownType): Re
   const [visible, setVisible] = useState<boolean>(false);
 
   const { dispatch } = useDropdown();
-
-  const dropdownButtonStyle = {
-    ...styles.button,
-    ...(selectedKeys.length > 0 && styles.active),
-  };
 
   /**
    * Adds or removes key to selectedKeys array and performs the given action
@@ -96,15 +58,15 @@ export default function DropdownMultiSelect({ text, options }: DropdownType): Re
   }, [dispatch]);
 
   const dropdownOptions = (
-    <Col style={styles.menu}>
+    <Col className="dropdown-menu">
       {options.map(({ action, text }, index) => (
         <Row className="dropdown-option-multi" align="middle" key={index}>
           <Checkbox
-            style={styles.checkbox}
+            className="dropdown-checkbox"
             onClick={() => onClickHandler(action, text)}
             checked={selectedKeys.includes(text)}
           >
-            <Col style={styles.option}>{text}</Col>
+            <Col className="dropdown-option">{text}</Col>
           </Checkbox>
         </Row>
       ))}
@@ -112,14 +74,19 @@ export default function DropdownMultiSelect({ text, options }: DropdownType): Re
   );
 
   return (
-    <DD
+    <AntDropdown
       overlay={dropdownOptions}
       onVisibleChange={(flag: boolean) => setVisible(flag)}
       visible={visible}
     >
-      <div style={dropdownButtonStyle}>
+      <div
+        className={className(
+          { 'dropdown-button--active': selectedKeys.length > 0 },
+          'dropdown-button'
+        )}
+      >
         {text} <DownOutlined />
       </div>
-    </DD>
+    </AntDropdown>
   );
 }
