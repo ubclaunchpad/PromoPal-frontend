@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 
 import Firebase from '../services/FirebaseService';
 import {
+  DeleteUserResponse,
   GetUserResponse,
   SavePromotion,
   SavePromotionResponse,
@@ -139,6 +140,22 @@ class UserService {
         })
         .catch((err: Error) => Promise.reject(err));
     });
+  }
+
+  public async deleteUser(firebase: Firebase): Promise<void> {
+    return firebase
+      .deleteUser()
+      .then(() => {
+        const url = Routes.USERS.DELETE(this.userId);
+        return axios.delete(url);
+      })
+      .then(({ data }: AxiosResponse<DeleteUserResponse>) => {
+        if (isError<DeleteUserResponse>(data)) {
+          return Promise.reject(data);
+        }
+        return Promise.resolve();
+      })
+      .catch((err: Error) => Promise.reject(err));
   }
 }
 

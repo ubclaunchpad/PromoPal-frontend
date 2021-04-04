@@ -95,6 +95,10 @@ class Firebase {
         return Promise.reject(err);
       });
   }
+
+  deleteUser(): Promise<void> {
+    return Promise.resolve(this.auth.currentUser?.delete());
+  }
 }
 
 export default Firebase;

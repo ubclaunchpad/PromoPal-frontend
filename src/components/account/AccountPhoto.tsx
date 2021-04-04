@@ -1,36 +1,33 @@
+import './AccountPhoto.less';
+
 import { UserOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import Avatar from 'antd/lib/avatar/avatar';
-import React, { CSSProperties, ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 
-const styles: { [identifier: string]: CSSProperties } = {
-  container: {
-    alignItems: 'center',
-    color: '#333',
-    display: 'flex',
-    flexDirection: 'column',
-    margin: 10,
-    paddingTop: 30,
-    paddingBottom: 30,
-  },
-  deleteAccount: {
-    marginTop: 10,
-    textDecoration: 'underline',
-  },
-};
+interface Props {
+  onDeleteUser: () => void;
+}
 
-export default function AccountPhoto(): ReactElement {
+export default function AccountPhoto(props: Props): ReactElement {
+  // TODO: https://promopal.atlassian.net/browse/PP-107
+  const showButton = false;
+
   const handleClick = (): void => {
     alert('Click');
   };
 
   return (
-    <div style={styles.container}>
+    <div className="account-photo-container">
       <Avatar size={128} icon={<UserOutlined />} />
-      <Button size="large" shape="round" onClick={handleClick} className="button">
-        Update Photo
+      {showButton && (
+        <Button size="large" shape="round" onClick={handleClick} className="button">
+          Update Photo
+        </Button>
+      )}
+      <Button className="delete-account" onClick={props.onDeleteUser}>
+        Delete Account
       </Button>
-      <p style={styles.deleteAccount}>Delete Account</p>
     </div>
   );
 }

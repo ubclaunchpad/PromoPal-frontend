@@ -14,6 +14,7 @@ export default {
   SAVED_PROMOTIONS: 'saved_promotions',
   SCHEDULES: '/schedules',
   USERS: {
+    DELETE: (userId: string): string => `/users/${userId}`,
     GET: (userId: string): string => `/users/${userId}`,
     SAVE_PROMOTION: (userId: string, promotionId: string): string =>
       `/users/${userId}/savedPromotions/${promotionId}`,
