@@ -1,17 +1,7 @@
-import { Button, Checkbox, Form, Input } from 'antd';
-import React, { CSSProperties, ReactElement } from 'react';
+import './LoginCard.less';
 
-const styles: { [identifier: string]: CSSProperties } = {
-  button: {
-    float: 'left',
-  },
-  forgot: {
-    marginLeft: 15,
-  },
-  inputWrapper: {
-    marginBottom: 15,
-  },
-};
+import { Button, Checkbox, Form, Input } from 'antd';
+import React, { ReactElement } from 'react';
 
 const layout = {
   labelCol: {
@@ -54,7 +44,7 @@ export default function LoginCard(props: Props): ReactElement {
         <p>Login to see your favourite deals and upload promotions.</p>
         <Form.Item
           name="email"
-          style={styles.inputWrapper}
+          className="input-wrapper"
           rules={[{ required: true, message: 'Please input your email!' }]}
           hasFeedback={true}
         >
@@ -62,7 +52,7 @@ export default function LoginCard(props: Props): ReactElement {
         </Form.Item>
         <Form.Item
           name="password"
-          style={styles.inputWrapper}
+          className="input-wrapper"
           rules={[{ required: true, message: 'Please input your password!' }]}
           hasFeedback={true}
         >
@@ -72,12 +62,11 @@ export default function LoginCard(props: Props): ReactElement {
           <Checkbox>Stay signed in</Checkbox>
         </Form.Item>
         <Form.Item>
-          <Button className="button" style={styles.button} htmlType="submit">
+          <Button className="button login-button" htmlType="submit">
             Login
           </Button>
           <button
-            className="link-button"
-            style={styles.forgot}
+            className="link-button forgot-password-button"
             onClick={props.onClickForgotPassword}
           >
             Forgot password?
@@ -89,8 +78,7 @@ export default function LoginCard(props: Props): ReactElement {
             size="large"
             shape="round"
             onClick={props.onClickRegister}
-            className="button"
-            style={styles.button}
+            className="button register-button"
           >
             Register here!
           </Button>
