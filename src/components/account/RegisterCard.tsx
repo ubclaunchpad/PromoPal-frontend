@@ -1,21 +1,14 @@
+import './RegisterCard.less';
+
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message, Tooltip } from 'antd';
-import React, { CSSProperties, ReactElement, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import UserService from '../../services/UserService';
 import { FirebaseAuthError } from '../../types/firebase';
 import { InputRules } from '../../types/rules';
 import { UserInput } from '../../types/user';
-
-const styles: { [identifier: string]: CSSProperties } = {
-  button: {
-    float: 'left',
-  },
-  inputWrapper: {
-    marginBottom: 15,
-  },
-};
 
 const layout = {
   labelCol: {
@@ -92,23 +85,18 @@ export default function RegisterCard(props: Props): ReactElement {
       </Form.Item>
 
       <Form.Item
-        style={styles.inputWrapper}
+        className="input-wrapper"
         name="username"
         rules={InputRules.username}
         hasFeedback={true}
       >
         <Input placeholder="Username" />
       </Form.Item>
-      <Form.Item
-        style={styles.inputWrapper}
-        name="email"
-        rules={InputRules.email}
-        hasFeedback={true}
-      >
+      <Form.Item className="input-wrapper" name="email" rules={InputRules.email} hasFeedback={true}>
         <Input placeholder="Email" />
       </Form.Item>
       <Form.Item
-        style={styles.inputWrapper}
+        className="input-wrapper"
         name="password"
         rules={InputRules.password}
         hasFeedback={true}
@@ -116,7 +104,7 @@ export default function RegisterCard(props: Props): ReactElement {
         <Input.Password placeholder="Password" />
       </Form.Item>
       <Form.Item
-        style={styles.inputWrapper}
+        className="input-wrapper"
         name="confirmPassword"
         dependencies={['password']}
         rules={[
@@ -138,7 +126,7 @@ export default function RegisterCard(props: Props): ReactElement {
         <Input.Password placeholder="Confirm Password" />
       </Form.Item>
       <Form.Item>
-        <Button className="button" style={styles.button} htmlType="submit" disabled={isDisabled}>
+        <Button className="button register-button" htmlType="submit" disabled={isDisabled}>
           Register
         </Button>
       </Form.Item>
