@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 
 import { useFirebase } from '../../contexts/FirebaseContext';
 import UserService from '../../services/UserService';
+import { FirebaseAuthError } from '../../types/firebase';
 import { InputRules } from '../../types/rules';
 import { UserInputData } from '../../types/user';
 
@@ -42,8 +43,17 @@ export default function RegisterCard(props: Props): ReactElement {
         const successMessage = "Welcome aboard! We're excited to have you here.";
         message.success(successMessage, 5);
       })
-      .catch(() => {
-        const errorMessage = 'An error occurred! Please try again later.';
+      .catch((err: FirebaseAuthError) => {
+        let errorMessage = '';
+        if (err?.code === '400') {
+          if (err.message.startsWith('EMAIL_EXISTS')) {
+            errorMessage =
+              'An account with this email already exists. Please try logging in with your credentials instead.';
+          }
+        } else {
+          errorMessage =
+            'An error occurred while attempting to register your account! Please try again later.';
+        }
         message.error(errorMessage, 5);
       });
   };
