@@ -1,22 +1,12 @@
+import './LoginCard.less';
+
 import { Button, Checkbox, Form, Input, message } from 'antd';
-import React, { CSSProperties, ReactElement, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import UserService from '../../services/UserService';
 import { FirebaseAuthError } from '../../types/firebase';
 import { InputRules } from '../../types/rules';
-
-const styles: { [identifier: string]: CSSProperties } = {
-  button: {
-    float: 'left',
-  },
-  forgot: {
-    marginLeft: 15,
-  },
-  inputWrapper: {
-    marginBottom: 15,
-  },
-};
 
 const layout = {
   labelCol: {
@@ -82,7 +72,7 @@ export default function LoginCard(props: Props): ReactElement {
         <p>Login to see your favourite deals and upload promotions.</p>
         <Form.Item
           name="email"
-          style={styles.inputWrapper}
+          className="input-wrapper"
           rules={InputRules.email}
           hasFeedback={true}
         >
@@ -90,7 +80,7 @@ export default function LoginCard(props: Props): ReactElement {
         </Form.Item>
         <Form.Item
           name="password"
-          style={styles.inputWrapper}
+          className="input-wrapper"
           rules={InputRules.loginPassword}
           hasFeedback={true}
         >
@@ -100,12 +90,11 @@ export default function LoginCard(props: Props): ReactElement {
           <Checkbox>Stay signed in</Checkbox>
         </Form.Item>
         <Form.Item>
-          <Button className="button" style={styles.button} htmlType="submit" disabled={isDisabled}>
+          <Button className="button login-button" htmlType="submit" disabled={isDisabled}>
             Login
           </Button>
           <button
-            className="link-button"
-            style={styles.forgot}
+            className="link-button forgot-password-button"
             onClick={props.onClickForgotPassword}
             disabled={isDisabled}
           >
@@ -118,8 +107,7 @@ export default function LoginCard(props: Props): ReactElement {
             size="large"
             shape="round"
             onClick={props.onClickRegister}
-            className="button"
-            style={styles.button}
+            className="button register-button"
             disabled={isDisabled}
           >
             Register here!
