@@ -1,4 +1,4 @@
-import './AccountDetails.css';
+import './ChangePassword.less';
 
 import { Button, Form, Input, message } from 'antd';
 import React, { ReactElement } from 'react';
@@ -26,7 +26,7 @@ export default function ChangePassword(): ReactElement {
   };
 
   return (
-    <div className="account-details-container">
+    <div className="change-password-container">
       <Form
         name="changePassword"
         initialValues={{ remember: true }}
