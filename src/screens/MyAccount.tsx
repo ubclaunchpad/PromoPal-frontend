@@ -4,6 +4,7 @@ import React, { CSSProperties, ReactElement, useEffect, useState } from 'react';
 import AccountDetails from '../components/account/AccountDetails';
 import AccountPhoto from '../components/account/AccountPhoto';
 import ChangePassword from '../components/account/ChangePassword';
+import { useFirebase } from '../contexts/FirebaseContext';
 import UserService from '../services/UserService';
 import { User } from '../types/user';
 
@@ -28,12 +29,15 @@ const styles: { [identifier: string]: CSSProperties } = {
 
 export default function MyAccount(): ReactElement {
   const [user, setUser] = useState<User>(defaultUser);
+  const firebase = useFirebase();
 
   /**
    * On initial render, gets the details of the currently logged in user.
    */
   useEffect(() => {
-    UserService.getUser()
+    // todo: If you are logged in and refresh the page, UserService.userId is no longer remembered. We need
+    //  to have AuthUserContext somehow remember the id of the user even after refreshing
+    UserService.getUser(firebase)
       .then((user: User) => setUser(user))
       .catch(() => setUser(defaultUser));
   }, []);

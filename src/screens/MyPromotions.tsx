@@ -7,6 +7,7 @@ import UploadPromoButton from '../components/button/UploadPromoButton';
 import DropdownMenu from '../components/DropdownMenu';
 import DeleteModal from '../components/my-promotions/DeleteModal';
 import PromotionCard from '../components/promotion/PromotionCard';
+import { useFirebase } from '../contexts/FirebaseContext';
 import * as PromotionService from '../services/PromotionService';
 import UserService from '../services/UserService';
 import { Dropdown, DropdownType } from '../types/dropdown';
@@ -100,12 +101,12 @@ export default function MyPromotions(): ReactElement {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [promotionToDelete, setPromotionToDelete] = useState<Promotion | null>(null);
   const [uploadedPromotions, setUploadedPromotions] = useState<Promotion[]>([]);
-
+  const firebase = useFirebase();
   /**
    * Fetches the user's uploaded promotions and sets them on this component.
    */
   const getUploadedPromotions = async (): Promise<void> => {
-    return UserService.getUploadedPromotions()
+    return UserService.getUploadedPromotions(firebase)
       .then((promotions: Promotion[]) => setUploadedPromotions(promotions))
       .catch(() => setUploadedPromotions([]));
   };
@@ -147,12 +148,12 @@ export default function MyPromotions(): ReactElement {
       if (promotion) {
         if (promotion.isSavedByUser) {
           promotion.isSavedByUser = false;
-          return UserService.unsavePromotion(promotionId)
+          return UserService.unsavePromotion(promotionId, firebase)
             .then(() => setUploadedPromotions(promotions))
             .catch(() => null);
         }
         promotion.isSavedByUser = true;
-        return UserService.savePromotion(promotionId)
+        return UserService.savePromotion(promotionId, firebase)
           .then(() => setUploadedPromotions(promotions))
           .catch(() => null);
       }
@@ -164,7 +165,7 @@ export default function MyPromotions(): ReactElement {
    * On initial render, retrieves the user's uploaded promotions.
    */
   useEffect(() => {
-    UserService.getUploadedPromotions()
+    UserService.getUploadedPromotions(firebase)
       .then((promotions: Promotion[]) => setUploadedPromotions(promotions))
       .catch(() => setUploadedPromotions([]));
   }, []);
