@@ -17,7 +17,8 @@ export default function ChangePassword(): ReactElement {
         message.success(successMessage, 5);
       })
       .catch(() => {
-        const errorMessage = 'An error occurred! Please try again later.';
+        const errorMessage =
+          'An error occurred while resetting your password! Please try again later.';
         message.error(errorMessage, 5);
       });
   };
