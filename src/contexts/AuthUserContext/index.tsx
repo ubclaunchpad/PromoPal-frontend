@@ -29,7 +29,7 @@ export function AuthUserProvider({
       if (authUser) {
         axios.interceptors.request.use(
           async (request) => {
-            request.headers.authorization = await authUser.getIdToken(true);
+            request.headers.authorization = await authUser.getIdToken();
             return request;
           },
           (error) => {
