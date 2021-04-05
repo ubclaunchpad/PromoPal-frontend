@@ -1,12 +1,13 @@
 import './NavigationBar.less';
 
 import { Button, Menu } from 'antd';
-import React, { CSSProperties, ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 import { ReactComponent as Logo } from '../../assets/logo.svg';
 import { useAuthUser } from '../../contexts/AuthUserContext';
 import UserService from '../../services/UserService';
+import { className } from '../../utils/component';
 import SearchBar from '../navigation/SearchBar';
 
 enum Pages {
@@ -36,11 +37,6 @@ export default function NavigationBar(): ReactElement {
   const [current, setCurrent] = useState<Pages>(Pages.Home);
   const authUser = useAuthUser();
 
-  // TODO: isActive is not highlighting the active page when the browser back button is pressed
-  const isActive = (key: Pages): CSSProperties => ({
-    fontWeight: current === key ? 'bold' : 'normal',
-  });
-
   /**
    * Sets current key to be the page that the user is on.
    */
@@ -58,27 +54,39 @@ export default function NavigationBar(): ReactElement {
           onClick={({ key }) => setCurrent(key as Pages)}
           selectedKeys={[current]}
         >
-          <Menu.Item key={Pages.Home} className="navigation-menu-item" style={isActive(Pages.Home)}>
+          <Menu.Item
+            key={Pages.Home}
+            className={className(
+              { 'navigation-menu-item--active': current === Pages.Home },
+              'navigation-menu-item'
+            )}
+          >
             <Link to={Paths.Home}>Home</Link>
           </Menu.Item>
           <Menu.Item
             key={Pages.Account}
-            className="navigation-menu-item"
-            style={isActive(Pages.Account)}
+            className={className(
+              { 'navigation-menu-item--active': current === Pages.Account },
+              'navigation-menu-item'
+            )}
           >
             <Link to={Paths.Account}>{authUser ? 'My Account' : 'Login'}</Link>
           </Menu.Item>
           <Menu.Item
             key={Pages.UploadPromotion}
-            className="navigation-menu-item"
-            style={isActive(Pages.UploadPromotion)}
+            className={className(
+              { 'navigation-menu-item--active': current === Pages.UploadPromotion },
+              'navigation-menu-item'
+            )}
           >
             <Link to={Paths.UploadPromotion}>Upload Promotion</Link>
           </Menu.Item>
           <Menu.Item
             key={Pages.MyPromotions}
-            className="navigation-menu-item"
-            style={isActive(Pages.MyPromotions)}
+            className={className(
+              { 'navigation-menu-item--active': current === Pages.MyPromotions },
+              'navigation-menu-item'
+            )}
           >
             <Link to={Paths.MyPromotions}>My Promotions</Link>
           </Menu.Item>

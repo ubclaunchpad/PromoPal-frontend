@@ -1,15 +1,45 @@
-.forgot-password-button {
-  margin-left: 15px;
-}
-
 .input-wrapper {
   margin-bottom: 15px;
 }
 
-.login-button {
-  float: left;
+.login-title {
+  margin-bottom: 0px;
 }
 
-.register-button {
-  float: left;
+.login-button-container .ant-form-item-control-input-content {
+  display: flex;
+  vertical-align: center;
+
+  .forgot-password-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    display: inline;
+    margin: 0;
+    margin-left: 15px;
+    padding: 0;
+
+    &:focus,
+    &:hover {
+      text-decoration: none;
+    }
+
+    &:active {
+      outline: none;
+    }
+  }
+
+  .login-button {
+    border-radius: 20px;
+    float: left;
+  }
+}
+
+.register-button-container {
+  margin-bottom: 0px;
+
+  .register-button {
+    float: left;
+  }
 }

@@ -34,7 +34,6 @@ function getPage(promotions: Promotion[], page: number): Promotion[] {
 }
 
 interface Props {
-  dimensions: { width: string; height: string };
   pageNum: number;
   onPageChange: (pageNum: number) => void;
 }
@@ -48,11 +47,6 @@ export default function PromotionList(props: Props): ReactElement {
   const { state: promotionsState, dispatch: promotionsDispatch } = usePromotionsList();
   const { dispatch: restaurantDispatch } = useRestaurantCard();
   const authUser = useAuthUser();
-
-  const containerStyles = {
-    height: props.dimensions.height,
-    width: props.dimensions.width,
-  };
 
   /**
    * This hook is run everytime the promotionsListState changes. This function sorts and filters the promotions
@@ -235,7 +229,7 @@ export default function PromotionList(props: Props): ReactElement {
   const indicator = <LoadingOutlined className="spinner-icon" spin />;
 
   return (
-    <div style={containerStyles} ref={container}>
+    <div className="promotion-list-container" ref={container}>
       {promotionsState.isLoading && !promotionsState.hasError && (
         <Spin className="spinner" indicator={indicator} />
       )}

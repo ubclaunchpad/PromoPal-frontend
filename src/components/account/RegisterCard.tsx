@@ -1,7 +1,7 @@
 import './RegisterCard.less';
 
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import { Button, Form, Input, message, Tooltip } from 'antd';
+import { Button, Col, Form, Input, message, Row, Tooltip } from 'antd';
 import React, { ReactElement, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
@@ -12,10 +12,10 @@ import { UserInput } from '../../types/user';
 
 const layout = {
   labelCol: {
-    span: 4,
+    span: 24,
   },
   wrapperCol: {
-    span: 8,
+    span: 24,
   },
 };
 
@@ -60,29 +60,25 @@ export default function RegisterCard(props: Props): ReactElement {
 
   return (
     <Form {...layout} name="registerCard" onFinish={onFinish} onFinishFailed={onFinishFailed}>
-      <Tooltip title="Back">
+      <Tooltip className="back-button" title="Back">
         <Button shape="circle" onClick={props.onClickBack} icon={<ArrowLeftOutlined />} />
       </Tooltip>
-      <h1>Create an account</h1>
+
+      <h1 className="register-account-title">Create an account</h1>
       <p>Create an account to upload promotions and save deals you like.</p>
-      <Form.Item style={{ marginBottom: 10 }}>
-        <Form.Item
-          name="firstName"
-          rules={InputRules.firstName}
-          style={{ display: 'inline-block', width: 'calc(50% - 6px)', marginRight: 6 }}
-          hasFeedback={true}
-        >
-          <Input placeholder="First name" />
-        </Form.Item>
-        <Form.Item
-          name="lastName"
-          rules={InputRules.lastName}
-          style={{ display: 'inline-block', width: 'calc(50% - 6px)', marginLeft: 6 }}
-          hasFeedback={true}
-        >
-          <Input placeholder="Last name" />
-        </Form.Item>
-      </Form.Item>
+
+      <Row gutter={6} style={{ marginBottom: 5 }}>
+        <Col span={12}>
+          <Form.Item name="firstname" rules={InputRules.firstName} hasFeedback={true}>
+            <Input placeholder="First name" />
+          </Form.Item>
+        </Col>
+        <Col span={12}>
+          <Form.Item name="lastname" rules={InputRules.lastName} hasFeedback={true}>
+            <Input placeholder="Last name" />
+          </Form.Item>
+        </Col>
+      </Row>
 
       <Form.Item
         className="input-wrapper"
@@ -92,9 +88,11 @@ export default function RegisterCard(props: Props): ReactElement {
       >
         <Input placeholder="Username" />
       </Form.Item>
+
       <Form.Item className="input-wrapper" name="email" rules={InputRules.email} hasFeedback={true}>
         <Input placeholder="Email" />
       </Form.Item>
+
       <Form.Item
         className="input-wrapper"
         name="password"
@@ -103,6 +101,7 @@ export default function RegisterCard(props: Props): ReactElement {
       >
         <Input.Password placeholder="Password" />
       </Form.Item>
+
       <Form.Item
         className="input-wrapper"
         name="confirmPassword"
@@ -125,7 +124,8 @@ export default function RegisterCard(props: Props): ReactElement {
       >
         <Input.Password placeholder="Confirm Password" />
       </Form.Item>
-      <Form.Item>
+
+      <Form.Item className="register-button-container">
         <Button className="button register-button" htmlType="submit" disabled={isDisabled}>
           Register
         </Button>

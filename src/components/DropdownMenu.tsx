@@ -1,3 +1,5 @@
+import './DropdownMenu.less';
+
 import { Col, Row, Typography } from 'antd';
 import React, { ReactElement, useCallback } from 'react';
 
@@ -46,7 +48,10 @@ export default function DropdownMenu({
   return (
     <Row
       id="dropdown-menu"
-      className={className({ 'dropdown-menu--shadow': !!shadow }, 'dropdown-menu')}
+      className={className(
+        { 'dropdown-menu-container--shadow': !!shadow },
+        'dropdown-menu-container'
+      )}
     >
       {dropdowns.map((dropdown, index) => (
         <Col key={index}>
