@@ -4,7 +4,7 @@ import { ClockCircleOutlined, DeleteOutlined, HeartFilled, HeartOutlined } from 
 import { Button, Col, Row, Typography } from 'antd';
 import { formatDistanceToNow } from 'date-fns';
 import parse from 'html-react-parser';
-import React, { CSSProperties, MouseEvent, ReactElement } from 'react';
+import React, { MouseEvent, ReactElement } from 'react';
 
 import { useAuthUser } from '../../contexts/AuthUserContext';
 import { Schedule, VoteState } from '../../types/promotion';
@@ -12,53 +12,6 @@ import { formatTime } from '../../utils/time';
 import Votes from './Votes';
 
 const { Title, Text } = Typography;
-
-const styles: { [identifier: string]: CSSProperties } = {
-  detailsContainer: {
-    paddingLeft: 10,
-    paddingRight: 10,
-    textAlign: 'left',
-    width: '100%',
-  },
-  footer: {
-    color: '#8B8888',
-    fontSize: '0.8em',
-    lineHeight: '1.2rem',
-  },
-  header: {
-    justifyContent: 'space-between',
-  },
-  heart: {
-    fontSize: '1.5em',
-  },
-  promotionName: {
-    fontSize: '1.5em',
-    fontWeight: 'normal',
-    marginBottom: 0,
-  },
-  rightHand: {
-    alignItems: 'center',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-  },
-  restaurantName: {
-    fontSize: '0.9em',
-    lineHeight: '0.9em',
-    textDecoration: 'underline',
-  },
-  schedule: {
-    color: '#8B8888',
-    fontSize: '0.9em',
-  },
-  scheduleContainer: {
-    paddingTop: 10,
-    paddingBottom: 10,
-  },
-  trashIcon: {
-    fontSize: '1.5em',
-  },
-};
 
 interface Props {
   dateAdded: string;
@@ -108,9 +61,9 @@ export default function PromotionDetails(props: Props): ReactElement {
       type="link"
       icon={
         props.isSavedByUser ? (
-          <HeartFilled className="heart-icon-filled" style={styles.heart} />
+          <HeartFilled className="heart-icon heart-icon-filled" />
         ) : (
-          <HeartOutlined className="heart-icon-outlined" style={styles.heart} />
+          <HeartOutlined className="heart-icon heart-icon-outlined" />
         )
       }
       onClick={onSaveHandler}
@@ -120,7 +73,7 @@ export default function PromotionDetails(props: Props): ReactElement {
   const deleteIcon = (
     <Button
       type="link"
-      icon={<DeleteOutlined className="trash-icon" style={styles.trashIcon} />}
+      icon={<DeleteOutlined className="trash-icon" />}
       onClick={props.onDeleteButtonClick}
     />
   );
@@ -128,7 +81,7 @@ export default function PromotionDetails(props: Props): ReactElement {
   const displaySchedules = (schedules: Schedule[]): ReactElement[] => {
     return schedules?.map(({ dayOfWeek, startTime, endTime }, index) => (
       <Row key={index}>
-        <Text style={styles.schedule}>
+        <Text className="schedules">
           {dayOfWeek}: {formatTime(startTime, endTime)}
         </Text>
       </Row>
@@ -136,15 +89,15 @@ export default function PromotionDetails(props: Props): ReactElement {
   };
 
   return (
-    <Row className="promotion-details" style={styles.detailsContainer} justify="space-between">
+    <Row className="promotion-details" justify="space-between">
       <Col span={authUser ? 22 : 24}>
-        <Row style={styles.header}>
-          <Title className="promotion-name" style={styles.promotionName}>
+        <Row>
+          <Title className="promotion-name">
             {props.boldName ? parse(props.boldName) : props.name}
           </Title>
         </Row>
         <Row>
-          <Title style={styles.restaurantName}>{props.restaurantName}</Title>
+          <Title className="restaurant-name">{props.restaurantName}</Title>
         </Row>
         <Row>
           <Text className="promotion-description">
@@ -152,25 +105,25 @@ export default function PromotionDetails(props: Props): ReactElement {
           </Text>
         </Row>
 
-        <Row style={styles.scheduleContainer}>
+        <Row className="schedule-container">
           <Col span={2}>
-            <ClockCircleOutlined style={styles.schedule} />
+            <ClockCircleOutlined className="schedule-clock" />
           </Col>
           <Col span={22}>{displaySchedules(props.schedules)}</Col>
         </Row>
 
         <Row>
-          <Text style={styles.footer}>
+          <Text className="footer-text">
             Expires<b>{` ${new Date(props.expirationDate).toDateString()}`}</b>
           </Text>
         </Row>
 
         <Row>
-          <Text style={styles.footer}>{promotionAge(props.dateAdded)}</Text>
+          <Text className="footer-text">{promotionAge(props.dateAdded)}</Text>
         </Row>
       </Col>
       {authUser && (
-        <Col span={2} style={styles.rightHand}>
+        <Col span={2}>
           <Votes
             votes={props.votes}
             voteState={props.voteState}
