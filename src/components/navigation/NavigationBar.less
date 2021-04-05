@@ -3,6 +3,7 @@
 .navigation-header {
   align-items: center;
   display: inline-flex;
+  height: auto;
   justify-content: space-between;
   padding: 10px;
   width: 100%;
@@ -25,7 +26,12 @@
 
       .navigation-menu-item {
         color: @black;
+        font-weight: normal;
         line-height: 1.5rem;
+
+        &.navigation-menu-item--active {
+          font-weight: bold;
+        }
 
         & a:hover {
           font-weight: bold;

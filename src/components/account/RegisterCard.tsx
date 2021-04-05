@@ -1,15 +1,15 @@
 import './RegisterCard.less';
 
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Tooltip } from 'antd';
+import { Button, Col, Form, Input, Row, Tooltip } from 'antd';
 import React, { ReactElement } from 'react';
 
 const layout = {
   labelCol: {
-    span: 4,
+    span: 24,
   },
   wrapperCol: {
-    span: 8,
+    span: 24,
   },
 };
 
@@ -38,29 +38,33 @@ export default function RegisterCard(props: Props): ReactElement {
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
     >
-      <Tooltip title="Back">
+      <Tooltip className="back-button" title="Back">
         <Button shape="circle" onClick={props.onClickBack} icon={<ArrowLeftOutlined />} />
       </Tooltip>
-      <h1>Create an account</h1>
+
+      <h1 className="register-account-title">Create an account</h1>
       <p>Create an account to upload promotions and save deals you like.</p>
-      <Form.Item style={{ marginBottom: 0 }}>
-        <Form.Item
-          name="firstname"
-          rules={[{ required: true, message: 'Please enter your first name.' }]}
-          style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
-          hasFeedback={true}
-        >
-          <Input placeholder="First name" />
-        </Form.Item>
-        <Form.Item
-          name="lastname"
-          rules={[{ required: true, message: 'Please enter your last name.' }]}
-          style={{ display: 'inline-block', width: 'calc(50% - 8px)', margin: '0 8px' }}
-          hasFeedback={true}
-        >
-          <Input placeholder="Last name" />
-        </Form.Item>
-      </Form.Item>
+
+      <Row gutter={6} style={{ marginBottom: 5 }}>
+        <Col span={12}>
+          <Form.Item
+            name="firstname"
+            rules={[{ required: true, message: 'Please enter your first name.' }]}
+            hasFeedback={true}
+          >
+            <Input placeholder="First name" />
+          </Form.Item>
+        </Col>
+        <Col span={12}>
+          <Form.Item
+            name="lastname"
+            rules={[{ required: true, message: 'Please enter your last name.' }]}
+            hasFeedback={true}
+          >
+            <Input placeholder="Last name" />
+          </Form.Item>
+        </Col>
+      </Row>
 
       <Form.Item
         className="input-wrapper"
@@ -70,6 +74,7 @@ export default function RegisterCard(props: Props): ReactElement {
       >
         <Input placeholder="Username" />
       </Form.Item>
+
       <Form.Item
         className="input-wrapper"
         name="email"
@@ -81,6 +86,7 @@ export default function RegisterCard(props: Props): ReactElement {
       >
         <Input placeholder="Email" />
       </Form.Item>
+
       <Form.Item
         className="input-wrapper"
         name="password"
@@ -92,6 +98,7 @@ export default function RegisterCard(props: Props): ReactElement {
       >
         <Input.Password placeholder="Password" />
       </Form.Item>
+
       <Form.Item
         className="input-wrapper"
         name="confirmPassword"
@@ -114,7 +121,8 @@ export default function RegisterCard(props: Props): ReactElement {
       >
         <Input.Password placeholder="Confirm Password" />
       </Form.Item>
-      <Form.Item>
+
+      <Form.Item className="register-button-container">
         <Button className="button register-button" htmlType="submit">
           Register
         </Button>

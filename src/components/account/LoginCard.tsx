@@ -5,10 +5,10 @@ import React, { ReactElement } from 'react';
 
 const layout = {
   labelCol: {
-    span: 4,
+    span: 24,
   },
   wrapperCol: {
-    span: 8,
+    span: 24,
   },
 };
 
@@ -31,59 +31,49 @@ export default function LoginCard(props: Props): ReactElement {
   };
 
   return (
-    <>
-      <Form
-        {...layout}
-        name="loginCard"
-        initialValues={{ remember: true }}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
-        requiredMark={false}
+    <Form
+      {...layout}
+      name="loginCard"
+      initialValues={{ remember: true }}
+      onFinish={onFinish}
+      onFinishFailed={onFinishFailed}
+      requiredMark={false}
+    >
+      <h1 className="login-title">Login</h1>
+      <p>Login to see your favourite deals and upload promotions.</p>
+      <Form.Item
+        name="email"
+        className="input-wrapper"
+        rules={[{ required: true, message: 'Please input your email!' }]}
+        hasFeedback={true}
       >
-        <h1>Login</h1>
-        <p>Login to see your favourite deals and upload promotions.</p>
-        <Form.Item
-          name="email"
-          className="input-wrapper"
-          rules={[{ required: true, message: 'Please input your email!' }]}
-          hasFeedback={true}
-        >
-          <Input placeholder="Email" />
-        </Form.Item>
-        <Form.Item
-          name="password"
-          className="input-wrapper"
-          rules={[{ required: true, message: 'Please input your password!' }]}
-          hasFeedback={true}
-        >
-          <Input.Password placeholder="Password" />
-        </Form.Item>
-        <Form.Item name="remember" valuePropName="checked">
-          <Checkbox>Stay signed in</Checkbox>
-        </Form.Item>
-        <Form.Item>
-          <Button className="button login-button" htmlType="submit">
-            Login
-          </Button>
-          <button
-            className="link-button forgot-password-button"
-            onClick={props.onClickForgotPassword}
-          >
-            Forgot password?
-          </button>
-        </Form.Item>
-        <Form.Item>
-          <p className="input-label">Don't have an account yet?</p>
-          <Button
-            size="large"
-            shape="round"
-            onClick={props.onClickRegister}
-            className="button register-button"
-          >
-            Register here!
-          </Button>
-        </Form.Item>
-      </Form>
-    </>
+        <Input placeholder="Email" />
+      </Form.Item>
+      <Form.Item
+        name="password"
+        className="input-wrapper"
+        rules={[{ required: true, message: 'Please input your password!' }]}
+        hasFeedback={true}
+      >
+        <Input.Password placeholder="Password" />
+      </Form.Item>
+      <Form.Item name="remember" valuePropName="checked">
+        <Checkbox>Stay signed in</Checkbox>
+      </Form.Item>
+      <Form.Item className="login-button-container">
+        <Button className="button login-button" htmlType="submit">
+          Login
+        </Button>
+        <button className="forgot-password-button" onClick={props.onClickForgotPassword}>
+          Forgot password?
+        </button>
+      </Form.Item>
+      <Form.Item className="register-button-container">
+        <p className="input-label">Don't have an account yet?</p>
+        <Button shape="round" onClick={props.onClickRegister} className="button register-button">
+          Register here!
+        </Button>
+      </Form.Item>
+    </Form>
   );
 }

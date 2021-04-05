@@ -1,7 +1,7 @@
 import { Button, Input } from 'antd';
 import React, { ReactElement } from 'react';
 
-export default function ResetPassword(): ReactElement {
+export default function ChangePassword(): ReactElement {
   const handleClick = (): void => {
     // TODO: reset password in firebase
     alert('Click');

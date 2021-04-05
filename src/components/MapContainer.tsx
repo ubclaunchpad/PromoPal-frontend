@@ -11,11 +11,7 @@ import LocationService, { GeolocationPosition } from '../services/LocationServic
 import { getRestaurant } from '../services/PromotionService';
 import { Restaurant } from '../types/promotion';
 
-function MapContainer({
-  dimensions,
-}: {
-  dimensions: { width: string; height: string };
-}): ReactElement {
+function MapContainer(): ReactElement {
   const mapElement = useRef<HTMLDivElement | null>(null);
 
   const { state: promotionsState } = usePromotionsList();
@@ -86,7 +82,7 @@ function MapContainer({
       });
   }, [createMap]);
 
-  return <div id="map-container" style={dimensions} ref={mapElement}></div>;
+  return <div id="map-container" style={{ width: '65vw' }} ref={mapElement}></div>;
 }
 
 export default MapContainer;

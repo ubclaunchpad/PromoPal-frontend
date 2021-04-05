@@ -6,10 +6,10 @@ import React, { ReactElement } from 'react';
 
 const layout = {
   labelCol: {
-    span: 4,
+    span: 24,
   },
   wrapperCol: {
-    span: 8,
+    span: 24,
   },
 };
 
@@ -38,10 +38,10 @@ export default function ForgotPasswordCard(props: Props): ReactElement {
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
     >
-      <Tooltip title="Back">
+      <Tooltip className="back-button" title="Back">
         <Button shape="circle" onClick={props.onClickBack} icon={<ArrowLeftOutlined />} />
       </Tooltip>
-      <h1>Reset your password</h1>
+      <h1 className="reset-password-title">Reset Password</h1>
       <p>Please enter your email to reset your password.</p>
       <Form.Item
         className="input-wrapper"
@@ -54,9 +54,9 @@ export default function ForgotPasswordCard(props: Props): ReactElement {
       >
         <Input placeholder="Email" />
       </Form.Item>
-      <Form.Item>
+      <Form.Item className="reset-password-button-container">
         <Button className="button reset-password-button" htmlType="submit">
-          Reset my password
+          Reset Password
         </Button>
       </Form.Item>
     </Form>

@@ -1,5 +1,5 @@
 import '../index.less';
-import '../MyPromotions.less';
+import './MyPromotions.less';
 
 import { Button, Checkbox, Col, Row } from 'antd';
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';

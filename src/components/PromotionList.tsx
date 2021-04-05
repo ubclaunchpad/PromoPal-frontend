@@ -32,7 +32,6 @@ function getPage(promotions: Promotion[], page: number): Promotion[] {
 }
 
 interface Props {
-  dimensions: { width: string; height: string };
   pageNum: number;
   onPageChange: (pageNum: number) => void;
 }
@@ -45,11 +44,6 @@ export default function PromotionList(props: Props): ReactElement {
 
   const { state: promotionsState, dispatch: promotionsDispatch } = usePromotionsList();
   const { dispatch: restaurantDispatch } = useRestaurantCard();
-
-  const containerStyles = {
-    height: props.dimensions.height,
-    width: props.dimensions.width,
-  };
 
   /**
    * This hook is run everytime the promotionsListState changes. This function sorts and filters the promotions
@@ -164,7 +158,7 @@ export default function PromotionList(props: Props): ReactElement {
   }, [promotionsDispatch, promotionsState.searchQuery]);
 
   return (
-    <div className="promotion-list-container" style={containerStyles} ref={container}>
+    <div className="promotion-list-container" ref={container}>
       {promotionsToDisplay.map((promotion) => (
         <PromotionCard
           key={promotion.id}
