@@ -1,14 +1,7 @@
-import { Skeleton } from 'antd';
-import React, { CSSProperties, ReactElement } from 'react';
+import './PromotionImage.less';
 
-const styles: { [identifier: string]: CSSProperties } = {
-  image: {
-    borderRadius: 15,
-    minHeight: '100%',
-    objectFit: 'cover',
-    width: 100,
-  },
-};
+import { Skeleton } from 'antd';
+import React, { ReactElement } from 'react';
 
 interface Props {
   src?: string;
@@ -21,6 +14,8 @@ export default function PromotionImage(props: Props): ReactElement {
 
   const imageSrc = props.src || defaultSrc;
   return (
-    <div>{imageSrc ? <img style={styles.image} src={imageSrc} alt="" /> : <Skeleton.Image />}</div>
+    <div>
+      {imageSrc ? <img className="promotion-image" src={imageSrc} alt="" /> : <Skeleton.Image />}
+    </div>
   );
 }
