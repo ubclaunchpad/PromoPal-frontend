@@ -1,5 +1,7 @@
+import './MyAccount.less';
+
 import { Col, Input, message, Row } from 'antd';
-import React, { ChangeEvent, CSSProperties, ReactElement, useState } from 'react';
+import React, { ChangeEvent, ReactElement, useState } from 'react';
 import { Redirect, useHistory } from 'react-router-dom';
 
 import AccountDetails from '../components/account/AccountDetails';
@@ -8,16 +10,6 @@ import ChangePassword from '../components/account/ChangePassword';
 import DeleteModal from '../components/modal/DeleteModal';
 import { useAuthUser } from '../contexts/AuthUserContext';
 import UserService from '../services/UserService';
-
-const styles: { [identifier: string]: CSSProperties } = {
-  body: {
-    backgroundColor: '#FFEDDC',
-    padding: 25,
-    width: '100vw',
-    height: '100vh',
-    display: 'inline-flex',
-  },
-};
 
 export default function MyAccount(): ReactElement {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
@@ -61,7 +53,7 @@ export default function MyAccount(): ReactElement {
     return <Redirect to="/account" />;
   }
   return (
-    <Row style={styles.body} justify="space-around">
+    <Row className="account-container" justify="space-around">
       <Col span={4}>
         <AccountPhoto onDeleteUser={() => setIsModalVisible(true)} />
       </Col>

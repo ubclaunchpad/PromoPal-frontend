@@ -1,7 +1,8 @@
 import '../index.less';
+import '../MyPromotions.less';
 
 import { Button, Checkbox, Col, Row } from 'antd';
-import React, { CSSProperties, ReactElement, useCallback, useEffect, useState } from 'react';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import DropdownMenu from '../components/DropdownMenu';
@@ -68,37 +69,6 @@ const dropdowns: Dropdown[] = [
 ];
 
 const dropdownMenuWidth = 30;
-const styles: { [identifier: string]: CSSProperties } = {
-  body: {
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 20,
-    paddingTop: 20,
-    width: '100%',
-  },
-  button: {
-    backgroundColor: '#FFC529',
-  },
-  dropdownMenuContainer: {
-    width: `${dropdownMenuWidth}%`,
-  },
-  checkBoxContainer: {
-    padding: 20,
-    width: `${100 - dropdownMenuWidth}%`,
-  },
-  promotions: {
-    marginTop: 15,
-  },
-  text: {
-    color: 'black',
-    fontWeight: 'bold',
-  },
-  uploadPromoButtonContainer: {
-    position: 'fixed',
-    bottom: 50,
-    right: 50,
-  },
-};
 
 const onChange = (): void => {
   /* stub */
@@ -293,27 +263,27 @@ export default function MyPromotions(): ReactElement {
 
   return (
     <>
-      <div style={styles.body}>
+      <div className="promotions-container">
         <h1>Uploaded by you</h1>
         <div style={{ display: 'inline-flex', width: '100%' }}>
-          <div style={styles.dropdownMenuContainer}>
+          <div style={{ width: dropdownMenuWidth }}>
             <DropdownMenu dropdowns={dropdowns} />
           </div>
-          <div style={styles.checkBoxContainer}>
+          <div className="checkbox-container" style={{ width: 100 - dropdownMenuWidth }}>
             <Checkbox onChange={onChange} style={{ float: 'right' }}>
               Show active deals only
             </Checkbox>
           </div>
         </div>
-        <div style={styles.promotions}>{renderUploadedPromotions()}</div>
-        <div style={styles.uploadPromoButtonContainer}>
+        <div className="uploaded-promotions">{renderUploadedPromotions()}</div>
+        <div className="upload-promotion-button-container">
           <Button
             size="large"
             shape="round"
+            className="upload-promotion-button"
             onClick={onUploadPromotionButtonClick}
-            style={styles.button}
           >
-            <div style={styles.text}> Upload Promo </div>
+            Upload Promo
           </Button>
         </div>
       </div>
