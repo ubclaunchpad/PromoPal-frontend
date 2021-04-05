@@ -1,13 +1,8 @@
+import './PromotionList.less';
+
 import { Place } from '@googlemaps/google-maps-services-js';
 import { Pagination } from 'antd';
-import React, {
-  CSSProperties,
-  ReactElement,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 
 import PromotionCard from '../components/promotion/PromotionCard';
 import {
@@ -23,16 +18,6 @@ import UserService from '../services/UserService';
 import { Promotion, Restaurant } from '../types/promotion';
 
 const PAGE_SIZE = 10;
-
-const styles: { [identifier: string]: CSSProperties } = {
-  container: {
-    backgroundColor: '#FFEDDC',
-    padding: 15,
-    overflow: 'auto',
-    scrollBehavior: 'smooth',
-    textAlign: 'center',
-  },
-};
 
 /**
  * Selects the promotions that should be displayed on the current page.
@@ -64,7 +49,6 @@ export default function PromotionList(props: Props): ReactElement {
   const containerStyles = {
     height: props.dimensions.height,
     width: props.dimensions.width,
-    ...styles.container,
   };
 
   /**
@@ -180,7 +164,7 @@ export default function PromotionList(props: Props): ReactElement {
   }, [promotionsDispatch, promotionsState.searchQuery]);
 
   return (
-    <div style={containerStyles} ref={container}>
+    <div className="promotion-list-container" style={containerStyles} ref={container}>
       {promotionsToDisplay.map((promotion) => (
         <PromotionCard
           key={promotion.id}
