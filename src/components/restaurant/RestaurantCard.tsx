@@ -1,4 +1,4 @@
-import './RestaurantCard.css';
+import './RestaurantCard.less';
 
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { OpeningHours, PlacePhoto } from '@googlemaps/google-maps-services-js';
