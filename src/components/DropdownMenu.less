@@ -1,0 +1,21 @@
+@import '../variables.less';
+
+.clear-all {
+  cursor: pointer;
+  font-size: 0.8em;
+  margin-left: 10px;
+  margin-right: 10px;
+  text-decoration: underline;
+}
+
+.dropdown-menu {
+  align-items: center;
+  padding-bottom: 20px;
+  position: relative;
+  width: 100%;
+  z-index: 1000;
+
+  &.dropdown-menu--shadow {
+    box-shadow: @shadow;
+  }
+}

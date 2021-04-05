@@ -1,32 +1,13 @@
 import { Col, Row, Typography } from 'antd';
-import React, { CSSProperties, ReactElement, useCallback } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 
 import { useDropdown } from '../contexts/DropdownContext';
 import { DispatchAction, usePromotionsList } from '../contexts/PromotionsListContext';
 import { Dropdown as DropdownType } from '../types/dropdown';
+import { className } from '../utils/component';
 import Dropdown from './dropdown/Dropdown';
 
 const { Text } = Typography;
-
-const styles: { [identifier: string]: CSSProperties } = {
-  clearAll: {
-    cursor: 'pointer',
-    fontSize: '0.8em',
-    marginLeft: 10,
-    marginRight: 10,
-    textDecoration: 'underline',
-  },
-  dropdownMenu: {
-    alignItems: 'center',
-    paddingBottom: 20,
-    position: 'relative',
-    width: '100%',
-    zIndex: 1000,
-  },
-  shadow: {
-    boxShadow: '0 4px 4px 0 #40333333',
-  },
-};
 
 function ClearAllButton(): ReactElement {
   const promotionsList = usePromotionsList();
@@ -41,7 +22,7 @@ function ClearAllButton(): ReactElement {
   }, [dropdown, promotionsList]);
 
   return (
-    <Col onClick={handleClearAll} style={styles.clearAll}>
+    <Col className="clear-all" onClick={handleClearAll}>
       <Text>Clear All</Text>
     </Col>
   );
@@ -62,13 +43,11 @@ export default function DropdownMenu({
   dropdowns: DropdownType[];
   shadow?: boolean;
 }): ReactElement {
-  const dropdownStyle = {
-    ...styles.dropdownMenu,
-    ...(shadow && styles.shadow),
-  };
-
   return (
-    <Row id="dropdown-menu" style={dropdownStyle}>
+    <Row
+      id="dropdown-menu"
+      className={className({ 'dropdown-menu--shadow': !!shadow }, 'dropdown-menu')}
+    >
       {dropdowns.map((dropdown, index) => (
         <Col key={index}>
           <Dropdown {...dropdown} />
