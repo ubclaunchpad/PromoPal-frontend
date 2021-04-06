@@ -305,7 +305,7 @@ export default function UploadPromotionForm(): ReactElement {
             rules={[
               {
                 required: true,
-                message: 'Please select a discount type!',
+                message: 'Please input a discount value!',
               },
             ]}
           >
