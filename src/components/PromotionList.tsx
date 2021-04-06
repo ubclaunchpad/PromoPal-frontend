@@ -1,5 +1,6 @@
+import { LoadingOutlined } from '@ant-design/icons';
 import { Place } from '@googlemaps/google-maps-services-js';
-import { Pagination, Space, Spin } from 'antd';
+import { Pagination, Spin } from 'antd';
 import React, {
   CSSProperties,
   ReactElement,
@@ -31,6 +32,16 @@ const styles: { [identifier: string]: CSSProperties } = {
     overflow: 'auto',
     scrollBehavior: 'smooth',
     textAlign: 'center',
+  },
+  spinner: {
+    alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    height: '100%',
+    width: '100%',
+  },
+  spinnerIcon: {
+    fontSize: '4em',
   },
 };
 
@@ -65,11 +76,6 @@ export default function PromotionList(props: Props): ReactElement {
     height: props.dimensions.height,
     width: props.dimensions.width,
     ...styles.container,
-  };
-
-  const loadingStyle: CSSProperties = {
-    top: '50%',
-    position: 'relative',
   };
 
   /**
@@ -182,12 +188,12 @@ export default function PromotionList(props: Props): ReactElement {
     }
   }, [promotionsDispatch, promotionsState.searchQuery]);
 
+  const indicator = <LoadingOutlined style={styles.spinnerIcon} spin />;
+
   return (
     <div style={containerStyles} ref={container}>
       {promotionsState.isLoading && !promotionsState.hasError && (
-        <Space style={loadingStyle} size="middle">
-          <Spin size="large" />
-        </Space>
+        <Spin indicator={indicator} style={styles.spinner} />
       )}
       {!promotionsState.isLoading &&
         !promotionsState.hasError &&
