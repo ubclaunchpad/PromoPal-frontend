@@ -20,9 +20,9 @@ import {
   DispatchAction as RestaurantDispatch,
   useRestaurantCard,
 } from '../contexts/RestaurantCardContext';
-import * as PromotionService from '../services/PromotionService';
+import PromotionService from '../services/PromotionService';
 import UserService from '../services/UserService';
-import { Promotion, Restaurant } from '../types/promotion';
+import { Promotion, Restaurant, VoteState } from '../types/promotion';
 
 const PAGE_SIZE = 10;
 
@@ -105,6 +105,8 @@ export default function PromotionList(props: Props): ReactElement {
 
   /**
    * If the user has not saved the promotion, save the promotion. Otherwise, delete it from their saved promotions.
+   *
+   * @param promotionId - The id of the promotion to save
    */
   const onSaveButtonClick = useCallback(
     (promotionId: string) => {
@@ -121,6 +123,70 @@ export default function PromotionList(props: Props): ReactElement {
         return UserService.savePromotion(promotionId, firebase)
           .then(() => setPromotions(promos))
           .catch(() => null);
+      }
+    },
+    [firebase, promotions, setPromotions]
+  );
+
+  /**
+   * If the user has not downvoted the promotion, downvote the promotion. Otherwise, set back to initial state.
+   *
+   * @param promotionId - The id of the promotion to downvote
+   */
+  const onDownvoteClick = useCallback(
+    (promotionId: string): void => {
+      const promos = [...promotions];
+      const promotion = promos.find(({ id }) => id === promotionId);
+      if (promotion) {
+        if (promotion.voteState === VoteState.DOWN) {
+          promotion.votes = promotion.votes + 1;
+          promotion.voteState = VoteState.INIT;
+          PromotionService.downvotePromotion(promotionId)
+            .then(() => setPromotions(promos))
+            .catch(() => null);
+        } else {
+          if (promotion.voteState === VoteState.UP) {
+            // Remove upvote
+            promotion.votes = promotion.votes - 1;
+          }
+          promotion.votes = promotion.votes - 1;
+          promotion.voteState = VoteState.DOWN;
+          PromotionService.downvotePromotion(promotionId)
+            .then(() => setPromotions(promos))
+            .catch(() => null);
+        }
+      }
+    },
+    [promotions, setPromotions]
+  );
+
+  /**
+   * If the user has not upvoted the promotion, upvote the promotion. Otherwise, set back to initial state.
+   *
+   * @param promotionId - The id of the promotion to upvote
+   */
+  const onUpvoteClick = useCallback(
+    (promotionId: string): void => {
+      const promos = [...promotions];
+      const promotion = promos.find(({ id }) => id === promotionId);
+      if (promotion) {
+        if (promotion.voteState === VoteState.UP) {
+          promotion.votes = promotion.votes - 1;
+          promotion.voteState = VoteState.INIT;
+          PromotionService.upvotePromotion(promotionId)
+            .then(() => setPromotions(promos))
+            .catch(() => null);
+        } else {
+          if (promotion.voteState === VoteState.DOWN) {
+            // Remove downvote
+            promotion.votes = promotion.votes + 1;
+          }
+          promotion.votes = promotion.votes + 1;
+          promotion.voteState = VoteState.UP;
+          PromotionService.upvotePromotion(promotionId)
+            .then(() => setPromotions(promos))
+            .catch(() => null);
+        }
       }
     },
     [promotions, setPromotions]
@@ -215,8 +281,12 @@ export default function PromotionList(props: Props): ReactElement {
             // TODO: https://promopal.atlassian.net/browse/PP-96
             restaurantName=""
             schedules={promotion.schedules}
-            onSaveButtonClick={() => onSaveButtonClick(promotion.id)}
+            votes={promotion.votes}
+            voteState={promotion.voteState}
             onCardClick={() => onClickHandler(promotion.restaurant)}
+            onDownvoteClick={() => onDownvoteClick(promotion.id)}
+            onSaveButtonClick={() => onSaveButtonClick(promotion.id)}
+            onUpvoteClick={() => onUpvoteClick(promotion.id)}
           />
         ))}
       {!promotionsState.isLoading && !promotionsState.hasError && (

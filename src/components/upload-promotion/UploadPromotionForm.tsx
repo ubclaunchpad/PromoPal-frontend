@@ -7,7 +7,7 @@ import React, { ReactElement, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import EnumService from '../../services/EnumService';
-import * as PromotionService from '../../services/PromotionService';
+import PromotionService from '../../services/PromotionService';
 import UserService from '../../services/UserService';
 import { Day, PostPromotionDTO, Schedule } from '../../types/promotion';
 import Button from '../button/Button';

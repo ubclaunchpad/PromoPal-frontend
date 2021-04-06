@@ -6,7 +6,7 @@ import { formatDistanceToNow } from 'date-fns';
 import parse from 'html-react-parser';
 import React, { CSSProperties, MouseEvent, ReactElement } from 'react';
 
-import { Schedule } from '../../types/promotion';
+import { Schedule, VoteState } from '../../types/promotion';
 import { formatTime } from '../../utils/time';
 import Votes from './Votes';
 
@@ -68,8 +68,12 @@ interface Props {
   name: string;
   restaurantName: string;
   schedules: Schedule[];
+  votes: number;
+  voteState: VoteState;
 
+  onDownvoteClick: () => void;
   onSaveButtonClick: () => void;
+  onUpvoteClick: () => void;
 
   boldName?: string;
   boldDescription?: string;
@@ -164,11 +168,10 @@ export default function PromotionDetails(props: Props): ReactElement {
       </Col>
       <Col span={2} style={styles.rightHand}>
         <Votes
-          userDownvoted={true}
-          userUpvoted={false}
-          numberOfVotes={2}
-          onDownvoteClick={() => null}
-          onUpvoteClick={() => null}
+          votes={props.votes}
+          voteState={props.voteState}
+          onDownvoteClick={props.onDownvoteClick}
+          onUpvoteClick={props.onUpvoteClick}
         />
         {likeIcon}
         {props.onDeleteButtonClick && deleteIcon}

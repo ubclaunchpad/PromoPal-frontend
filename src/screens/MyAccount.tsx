@@ -40,7 +40,7 @@ export default function MyAccount(): ReactElement {
     UserService.getUser(firebase)
       .then((user: User) => setUser(user))
       .catch(() => setUser(defaultUser));
-  }, []);
+  }, [firebase]);
 
   return (
     <Row style={styles.body} justify="space-around">

@@ -8,10 +8,10 @@ import DropdownMenu from '../components/DropdownMenu';
 import DeleteModal from '../components/my-promotions/DeleteModal';
 import PromotionCard from '../components/promotion/PromotionCard';
 import { useFirebase } from '../contexts/FirebaseContext';
-import * as PromotionService from '../services/PromotionService';
+import PromotionService from '../services/PromotionService';
 import UserService from '../services/UserService';
 import { Dropdown, DropdownType } from '../types/dropdown';
-import { Promotion } from '../types/promotion';
+import { Promotion, VoteState } from '../types/promotion';
 
 const dropdowns: Dropdown[] = [
   {
@@ -158,6 +158,70 @@ export default function MyPromotions(): ReactElement {
           .catch(() => null);
       }
     },
+    [firebase, uploadedPromotions, setUploadedPromotions]
+  );
+
+  /**
+   * If the user has not downvoted the promotion, downvote the promotion. Otherwise, set back to initial state.
+   *
+   * @param promotionId - The id of the promotion to downvote
+   */
+  const onDownvoteClick = useCallback(
+    (promotionId: string): void => {
+      const promos = [...uploadedPromotions];
+      const promotion = promos.find(({ id }) => id === promotionId);
+      if (promotion) {
+        if (promotion.voteState === VoteState.DOWN) {
+          promotion.votes = promotion.votes + 1;
+          promotion.voteState = VoteState.INIT;
+          PromotionService.downvotePromotion(promotionId)
+            .then(() => setUploadedPromotions(promos))
+            .catch(() => null);
+        } else {
+          if (promotion.voteState === VoteState.UP) {
+            // Remove upvote
+            promotion.votes = promotion.votes - 1;
+          }
+          promotion.votes = promotion.votes - 1;
+          promotion.voteState = VoteState.DOWN;
+          PromotionService.downvotePromotion(promotionId)
+            .then(() => setUploadedPromotions(promos))
+            .catch(() => null);
+        }
+      }
+    },
+    [uploadedPromotions, setUploadedPromotions]
+  );
+
+  /**
+   * If the user has not upvoted the promotion, upvote the promotion. Otherwise, set back to initial state.
+   *
+   * @param promotionId - The id of the promotion to upvote
+   */
+  const onUpvoteClick = useCallback(
+    (promotionId: string): void => {
+      const promos = [...uploadedPromotions];
+      const promotion = promos.find(({ id }) => id === promotionId);
+      if (promotion) {
+        if (promotion.voteState === VoteState.UP) {
+          promotion.votes = promotion.votes - 1;
+          promotion.voteState = promotion.voteState = VoteState.INIT;
+          PromotionService.upvotePromotion(promotionId)
+            .then(() => setUploadedPromotions(promos))
+            .catch(() => null);
+        } else {
+          if (promotion.voteState === VoteState.DOWN) {
+            // Remove downvote
+            promotion.votes = promotion.votes + 1;
+          }
+          promotion.votes = promotion.votes + 1;
+          promotion.voteState = promotion.voteState = VoteState.UP;
+          PromotionService.upvotePromotion(promotionId)
+            .then(() => setUploadedPromotions(promos))
+            .catch(() => null);
+        }
+      }
+    },
     [uploadedPromotions, setUploadedPromotions]
   );
 
@@ -168,7 +232,7 @@ export default function MyPromotions(): ReactElement {
     UserService.getUploadedPromotions(firebase)
       .then((promotions: Promotion[]) => setUploadedPromotions(promotions))
       .catch(() => setUploadedPromotions([]));
-  }, []);
+  }, [firebase]);
 
   const renderUploadedPromotions = (): ReactElement => {
     return (
@@ -189,8 +253,12 @@ export default function MyPromotions(): ReactElement {
               // TODO: https://promopal.atlassian.net/browse/PP-96
               restaurantName=""
               schedules={promotion.schedules}
+              votes={promotion.votes}
+              voteState={promotion.voteState}
               onDeleteButtonClick={() => onDeleteButtonClick(promotion)}
+              onDownvoteClick={() => onDownvoteClick(promotion.id)}
               onSaveButtonClick={() => onSaveButtonClick(promotion.id)}
+              onUpvoteClick={() => onUpvoteClick(promotion.id)}
             />
           </Col>
         ))}

@@ -8,7 +8,7 @@ import {
 } from '../contexts/RestaurantCardContext';
 import GooglePlacesApiLoaderService from '../services/GoogleMapsApiLoaderService';
 import LocationService, { GeolocationPosition } from '../services/LocationService';
-import { getRestaurant } from '../services/PromotionService';
+import PromotionService from '../services/PromotionService';
 import { Restaurant } from '../types/promotion';
 
 function MapContainer({
@@ -27,7 +27,7 @@ function MapContainer({
   const initializeMarkers = useCallback(
     (map: google.maps.Map | null) => {
       const onClickHandler = (promoRestaurant: Restaurant): void => {
-        getRestaurant(promoRestaurant.id)
+        PromotionService.getRestaurant(promoRestaurant.id)
           .then((restaurant: Place) => {
             restaurantDispatch({
               type: RestaurantDispatch.TOGGLE_CARD,

@@ -20,6 +20,10 @@ class UserService {
   // break existing behaviour
   private _userId = '';
 
+  public constructor() {
+    this._userId = '6d65bb73-1a3b-47e8-88c2-ca404c183977';
+  }
+
   public get userId(): string {
     return this._userId;
   }

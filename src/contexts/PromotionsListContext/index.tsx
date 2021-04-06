@@ -1,7 +1,7 @@
 import React, { createContext, ReactElement, useContext, useEffect, useReducer } from 'react';
 
 import { promotionsListReducer } from '../../reducers/PromotionsListReducer';
-import { getPromotions } from '../../services/PromotionService';
+import PromotionService from '../../services/PromotionService';
 import { FilterOptions, Promotion, Sort } from '../../types/promotion';
 import { Context, DispatchAction, DispatchParams, State } from './types';
 
@@ -50,7 +50,7 @@ export function PromotionsListProvider({
    */
   useEffect(() => {
     dispatch({ type: DispatchAction.DATA_LOADING });
-    getPromotions()
+    PromotionService.getPromotions()
       .then((promotions: Promotion[]) => {
         const payload = { promotions };
         dispatch({ type: DispatchAction.DATA_SUCCESS, payload });
