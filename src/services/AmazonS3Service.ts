@@ -69,7 +69,7 @@ class AmazonS3Service {
   }
 
   getImageUrl(promotionId: string): string {
-    return `https://promopal.s3-us-west-1.amazonaws.com/${promotionId}`
+    return `https://promopal.s3-us-west-1.amazonaws.com/${promotionId}`;
   }
 }
 
