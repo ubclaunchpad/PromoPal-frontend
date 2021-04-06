@@ -1,0 +1,44 @@
+@import '../../variables.less';
+
+.votes-container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+
+  .upvote-icon {
+    color: @gray;
+    font-size: 1.5rem;
+
+    &:hover {
+      color: @yellow;
+    }
+  }
+
+  .upvote-icon-filled {
+    &:hover {
+      color: @yellow;
+    }
+  }
+
+  .downvote-icon {
+    color: @gray;
+    font-size: 1.5rem;
+
+    &:hover {
+      color: @yellow;
+    }
+  }
+
+  .downvote-icon-filled {
+    &:hover {
+      color: @yellow;
+    }
+  }
+
+  .number-of-votes {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: @gray;
+    margin-bottom: 0;
+  }
+}
