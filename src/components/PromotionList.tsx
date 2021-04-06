@@ -1,7 +1,8 @@
 import './PromotionList.less';
 
+import { LoadingOutlined } from '@ant-design/icons';
 import { Place } from '@googlemaps/google-maps-services-js';
-import { Pagination } from 'antd';
+import { Pagination, Spin } from 'antd';
 import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 
 import PromotionCard from '../components/promotion/PromotionCard';
@@ -146,46 +147,53 @@ export default function PromotionList(props: Props): ReactElement {
   useEffect(() => {
     if (promotionsState.searchQuery) {
       promotionsDispatch({ type: PromotionsDispatch.DATA_LOADING });
-      PromotionService.getPromotions([
-        {
-          searchQuery: promotionsState.searchQuery,
-        },
-      ]).then((promotions) => {
+      PromotionService.getPromotions({
+        searchQuery: promotionsState.searchQuery,
+      }).then((promotions) => {
         promotionsDispatch({ type: PromotionsDispatch.DATA_SUCCESS });
         setPromotions(promotions);
       });
     }
   }, [promotionsDispatch, promotionsState.searchQuery]);
 
+  const indicator = <LoadingOutlined className="spinner-icon" spin={true} />;
+
   return (
     <div className="promotion-list-container" ref={container}>
-      {promotionsToDisplay.map((promotion) => (
-        <PromotionCard
-          key={promotion.id}
-          id={promotion.id}
-          boldDescription={promotion.boldDescription}
-          boldName={promotion.boldName}
-          dateAdded={promotion.dateAdded}
-          expirationDate={promotion.expirationDate}
-          description={promotion.description}
-          image={promotion.image}
-          isSavedByUser={promotion.isSavedByUser}
-          name={promotion.name}
-          placeId={promotion.restaurant.id}
-          // TODO: https://promopal.atlassian.net/browse/PP-96
-          restaurantName=""
-          schedules={promotion.schedules}
-          onSaveButtonClick={() => onSaveButtonClick(promotion.id)}
-          onCardClick={() => onClickHandler(promotion.restaurant)}
+      {promotionsState.isLoading && !promotionsState.hasError && (
+        <Spin className="spinner" indicator={indicator} />
+      )}
+      {!promotionsState.isLoading &&
+        !promotionsState.hasError &&
+        promotionsToDisplay.map((promotion) => (
+          <PromotionCard
+            key={promotion.id}
+            id={promotion.id}
+            boldDescription={promotion.boldDescription}
+            boldName={promotion.boldName}
+            dateAdded={promotion.dateAdded}
+            expirationDate={promotion.expirationDate}
+            description={promotion.description}
+            image={promotion.image}
+            isSavedByUser={promotion.isSavedByUser}
+            name={promotion.name}
+            placeId={promotion.restaurant.id}
+            // TODO: https://promopal.atlassian.net/browse/PP-96
+            restaurantName=""
+            schedules={promotion.schedules}
+            onSaveButtonClick={() => onSaveButtonClick(promotion.id)}
+            onCardClick={() => onClickHandler(promotion.restaurant)}
+          />
+        ))}
+      {!promotionsState.isLoading && !promotionsState.hasError && (
+        <Pagination
+          size="small"
+          defaultCurrent={1}
+          current={props.pageNum}
+          onChange={onPageChange}
+          total={promotions.length}
         />
-      ))}
-      <Pagination
-        size="small"
-        defaultCurrent={1}
-        current={props.pageNum}
-        onChange={onPageChange}
-        total={promotions.length}
-      />
+      )}
     </div>
   );
 }

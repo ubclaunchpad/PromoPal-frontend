@@ -61,11 +61,15 @@ class AmazonS3Service {
           method: 'PUT',
           body: blobData,
         });
-        // Uploaded photo URL will be https://promopal.s3-us-west-1.amazonaws.com/`promotionId`.`imageType`
+        // Uploaded photo URL will be https://promopal.s3-us-west-1.amazonaws.com/`promotionId`
       })
       .catch((err: AxiosError) => {
         return Promise.reject(err);
       });
+  }
+
+  getImageUrl(promotionId: string): string {
+    return `https://promopal.s3-us-west-1.amazonaws.com/${promotionId}`;
   }
 }
 
