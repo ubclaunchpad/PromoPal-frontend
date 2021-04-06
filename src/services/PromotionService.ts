@@ -25,22 +25,15 @@ import GooglePlacesService from './GooglePlacesService';
  *
  * @param query [optional] - An array of objects with key-value pairs for the query parameters
  */
-export async function getPromotions(query?: GetPromotionDTO[]): Promise<Promotion[]> {
-  // todo: we need to get userId from AuthUserContext and only call GET with the userId if a user exists
-  const userId = UserService.userId ? UserService.userId : undefined;
-  let endpoint = Routes.PROMOTIONS.GET(userId);
-  if (query && query.length > 0) {
-    endpoint += '?';
-    query.forEach((param: GetPromotionDTO, index: number) => {
-      Object.entries(param).forEach(([key, value], paramIdx) => {
-        // First query param is not prefixed by an ampersand
-        endpoint += `${index + paramIdx > 0 ? '&' : ''}${key}=${value}`;
-      });
-    });
-  }
-
+export async function getPromotions(query?: GetPromotionDTO): Promise<Promotion[]> {
+  const endpoint = Routes.PROMOTIONS.GET;
   return axios
-    .get(endpoint)
+    .get(endpoint, {
+      params: {
+        ...query,
+        userId: UserService.userId,
+      },
+    })
     .then(({ data }: AxiosResponse<GetPromotionsResponse>) => {
       if (isError<GetPromotionsResponse>(data)) {
         return Promise.reject(data);
@@ -100,23 +93,21 @@ export async function getRestaurant(restaurantId: string): Promise<Place> {
 export async function queryPromotions(filters: FilterOptions, sort?: Sort): Promise<Promotion[]> {
   const { cuisine, dayOfWeek, discountType, promotionType } = filters;
 
-  const promotionQueryDTO: Record<string, string>[] = [];
-  if (cuisine?.length > 0) {
-    cuisine.forEach((cuisine: string) => promotionQueryDTO.push({ cuisine }));
-  }
-  if (dayOfWeek.length > 0) {
-    dayOfWeek.forEach((dayOfWeek: string) => promotionQueryDTO.push({ dayOfWeek }));
-  }
+  const promotionQueryDTO: GetPromotionDTO = {
+    cuisine,
+    // note we only support querying one day of week at the moment
+    dayOfWeek: dayOfWeek.length > 0 ? dayOfWeek[0] : undefined,
+    // note we only support querying one promotion type at the moment
+    promotionType: promotionType.length > 0 ? promotionType[0] : undefined,
+  };
+
   if (discountType?.length > 0) {
     // Handle case where filter is one of ["$ Off", "% Off"]
     let discount = 'Other';
     if (discountType !== 'Other') {
       discount = discountType.substring(0, 1);
     }
-    promotionQueryDTO.push({ discountType: discount });
-  }
-  if (promotionType?.length > 0) {
-    promotionType.forEach((promotionType: string) => promotionQueryDTO.push({ promotionType }));
+    promotionQueryDTO.discountType = discount;
   }
 
   // todo: commented out until BE PR for sort is in
