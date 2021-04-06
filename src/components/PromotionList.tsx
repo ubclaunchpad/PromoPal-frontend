@@ -177,15 +177,13 @@ export default function PromotionList(props: Props): ReactElement {
    * When a search query is set, fetches promotions that satisfy the query.
    */
   useEffect(() => {
-    if (promotionsState.searchQuery) {
-      promotionsDispatch({ type: PromotionsDispatch.DATA_LOADING });
-      PromotionService.getPromotions({
-        searchQuery: promotionsState.searchQuery,
-      }).then((promotions) => {
-        promotionsDispatch({ type: PromotionsDispatch.DATA_SUCCESS });
-        setPromotions(promotions);
-      });
-    }
+    promotionsDispatch({ type: PromotionsDispatch.DATA_LOADING });
+    PromotionService.getPromotions({
+      searchQuery: promotionsState.searchQuery ? promotionsState.searchQuery : undefined,
+    }).then((promotions) => {
+      promotionsDispatch({ type: PromotionsDispatch.DATA_SUCCESS });
+      setPromotions(promotions);
+    });
   }, [promotionsDispatch, promotionsState.searchQuery]);
 
   const indicator = <LoadingOutlined style={styles.spinnerIcon} spin />;
