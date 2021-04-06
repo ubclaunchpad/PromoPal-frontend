@@ -1,7 +1,6 @@
 import { Place } from '@googlemaps/google-maps-services-js';
 import axios, { AxiosResponse } from 'axios';
 
-// import LocationService from '../services/LocationService';
 import UserService from '../services/UserService';
 import {
   DeletePromotionsResponse,
