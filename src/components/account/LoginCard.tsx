@@ -3,6 +3,7 @@ import React, { CSSProperties, ReactElement } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { useFirebase } from '../../contexts/FirebaseContext';
+import UserService from '../../services/UserService';
 import { FirebaseAuthError } from '../../types/firebase';
 import { InputRules } from '../../types/rules';
 
@@ -37,8 +38,7 @@ export default function LoginCard(props: Props): ReactElement {
   const history = useHistory();
 
   const onFinish = (data: { email: string; password: string; staySignedIn: boolean }): void => {
-    firebase
-      .doSignInWithEmailAndPassword(data.email, data.password, data.staySignedIn)
+    UserService.doSignInWithEmailAndPassword(firebase, data)
       .then(() => {
         history.push('/');
 

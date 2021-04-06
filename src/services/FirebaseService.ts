@@ -11,7 +11,8 @@ const config = {
   appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
-class Firebase {
+// todo: Make this class a singleton
+class FirebaseService {
   private auth: firebase.auth.Auth;
 
   constructor() {
@@ -36,15 +37,15 @@ class Firebase {
     return this.auth.createUserWithEmailAndPassword(email, password);
   }
 
-  doSignInWithEmailAndPassword(
+  async doSignInWithEmailAndPassword(
     email: string,
     password: string,
     staySignedIn: boolean
   ): Promise<firebase.auth.UserCredential> {
     if (staySignedIn) {
-      this.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+      await this.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     } else {
-      this.auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
+      await this.auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
     }
     return this.auth.signInWithEmailAndPassword(email, password);
   }
@@ -101,4 +102,4 @@ class Firebase {
   }
 }
 
-export default Firebase;
+export default FirebaseService;

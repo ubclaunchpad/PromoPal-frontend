@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
+import firebase from 'firebase';
 
-import Firebase from '../services/FirebaseService';
+import FirebaseService from '../services/FirebaseService';
 import {
   DeleteUserResponse,
   GetUserResponse,
@@ -11,16 +12,14 @@ import {
   UploadedPromotionsResponse,
 } from '../types/api';
 import { Promotion } from '../types/promotion';
-import { User, UserInputData } from '../types/user';
+import { PostUserDTO, User, UserInputData } from '../types/user';
 import { isError } from '../utils/api';
 import Routes from '../utils/routes';
 
 class UserService {
-  private _userId: string;
-
-  public constructor() {
-    this._userId = '8f8fc016-5bb2-4906-ad88-68932c438665';
-  }
+  // Todo: move this into AuthUserContext, but first look for usages of the userId and make sure we do not
+  // break existing behaviour
+  private _userId = '';
 
   public get userId(): string {
     return this._userId;
@@ -29,7 +28,8 @@ class UserService {
   /**
    * Fetches the uploaded promotions of the currently logged in user.
    */
-  public async getUploadedPromotions(): Promise<Promotion[]> {
+  public async getUploadedPromotions(firebaseService: FirebaseService): Promise<Promotion[]> {
+    firebaseService.getAuth().currentUser?.getIdToken();
     const endpoint = Routes.USERS.UPLOADED_PROMOTIONS(this.userId);
     return axios
       .get(endpoint)
@@ -45,7 +45,8 @@ class UserService {
   /**
    * Gets the details of the currently logged in user.
    */
-  public async getUser(): Promise<User> {
+  public async getUser(firebaseService: FirebaseService): Promise<User> {
+    firebaseService.getAuth().currentUser?.getIdToken();
     const url = Routes.USERS.GET(this.userId);
     return axios
       .get(url)
@@ -62,8 +63,13 @@ class UserService {
    * Sets the promotion as saved for the current user.
    *
    * @param promotionId - The id of the promotion to save
+   * @param firebaseService
    */
-  public async savePromotion(promotionId: string): Promise<SavePromotion> {
+  public async savePromotion(
+    promotionId: string,
+    firebaseService: FirebaseService
+  ): Promise<SavePromotion> {
+    firebaseService.getAuth().currentUser?.getIdToken();
     const endpoint = Routes.USERS.SAVE_PROMOTION(this.userId, promotionId);
     return axios
       .post(endpoint)
@@ -81,7 +87,11 @@ class UserService {
    *
    * @param promotionId - The id of the promotion to unsave
    */
-  public async unsavePromotion(promotionId: string): Promise<UnsavePromotionResponse> {
+  public async unsavePromotion(
+    promotionId: string,
+    firebaseService: FirebaseService
+  ): Promise<UnsavePromotionResponse> {
+    firebaseService.getAuth().currentUser?.getIdToken();
     const endpoint = Routes.USERS.UNSAVE_PROMOTION(this.userId, promotionId);
     return axios
       .delete(endpoint)
@@ -97,31 +107,62 @@ class UserService {
   /**
    * Registers a user in Firebase and in the BE
    *
-   * @param firebase - The firebase object
+   * @param firebaseService - The firebaseService object
    * @param data - Data to register the user with
+   * todo: pass in AuthUserContext
+   * todo update AuthUserContext with the user id
    */
-  public async registerUser(firebase: Firebase, data: UserInputData): Promise<void> {
-    return firebase
-      .doCreateUserWithEmailAndPassword(data.email, data.password)
-      .then(() => {
-        // TODO: Register user in backend
-        // https://promopal.atlassian.net/browse/PP-36
-        // https://promopal.atlassian.net/browse/PP-38
-      })
-      .catch((error: Error) => {
-        return Promise.reject(error);
-      });
+  public async registerUser(firebaseService: FirebaseService, data: UserInputData): Promise<void> {
+    try {
+      const userCredential: firebase.auth.UserCredential = await firebaseService.doCreateUserWithEmailAndPassword(
+        data.email,
+        data.password
+      );
+      const idToken = await userCredential.user?.getIdToken();
+      if (!userCredential.user?.uid || !idToken) {
+        // TODO: handle errors more appropriately https://promopal.atlassian.net/browse/PP-38
+        return Promise.reject(new Error('Sorry we were unable to register you, please try again.'));
+      }
+      const url = Routes.USERS.POST;
+      const postUserDTO: PostUserDTO = {
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        username: data.username,
+        firebaseId: userCredential.user?.uid,
+      };
+      try {
+        const response: AxiosResponse<User> = await axios.post(url, postUserDTO, {
+          headers: {
+            authorization: idToken,
+          },
+        });
+        // todo: remove the field _userId, keeping it here temporarily so application still runs
+        this._userId = response.data.id;
+        return Promise.resolve();
+      } catch (e) {
+        // we were not able to create user successfully, delete user in firebase
+        await userCredential.user?.delete();
+        throw e;
+      }
+    } catch (error) {
+      if (error.response?.data) {
+        return Promise.reject({ message: error.response.data });
+      }
+      return Promise.reject(error);
+    }
   }
 
   /**
    * Updates the given properties for the currently logged-in user
    * in Firebase and in the BE.
    *
-   * @param firebase - The firebase object
+   * @param firebaseService - The firebaseService object
    * @param data - Data to update the user with
    */
-  public async updateUser(firebase: Firebase, data: UserInputData): Promise<void> {
-    return firebase.doEmailUpdate(data.password, data.email).then(() => {
+  public async updateUser(firebaseService: FirebaseService, data: UserInputData): Promise<void> {
+    firebaseService.getAuth().currentUser?.getIdToken();
+    return firebaseService.doEmailUpdate(data.password, data.email).then(() => {
       // Update user in BE
       const url = Routes.USERS.UPDATE(this.userId);
       const user: Partial<User> = {
@@ -142,8 +183,13 @@ class UserService {
     });
   }
 
-  public async deleteUser(firebase: Firebase): Promise<void> {
-    return firebase
+  /**
+   * Deletes the user in firebase and also on the backend.
+   *
+   * @param firebaseService - The firebaseService object
+   */
+  public async deleteUser(firebaseService: FirebaseService): Promise<void> {
+    return firebaseService
       .deleteUser()
       .then(() => {
         const url = Routes.USERS.DELETE(this.userId);
@@ -156,6 +202,43 @@ class UserService {
         return Promise.resolve();
       })
       .catch((err: Error) => Promise.reject(err));
+  }
+
+  /**
+   * todo: pass in AuthUserContext
+   * todo update AuthUserContext with the user id
+   * */
+  public async doSignInWithEmailAndPassword(
+    firebaseService: FirebaseService,
+    data: { email: string; password: string; staySignedIn: boolean }
+  ): Promise<firebase.auth.UserCredential> {
+    try {
+      const userCredential = await firebaseService.doSignInWithEmailAndPassword(
+        data.email,
+        data.password,
+        data.staySignedIn
+      );
+      const idToken = await userCredential.user?.getIdToken();
+      if (!idToken || !userCredential.user?.uid) {
+        // TODO: handle errors more appropriately https://promopal.atlassian.net/browse/PP-38
+        return Promise.reject(new Error('Sorry we were unable to register you, please try again.'));
+      }
+
+      const url = Routes.USERS.GET_BY_FIREBASE_ID(userCredential.user.uid);
+      const response: AxiosResponse<User> = await axios.get(url, {
+        headers: {
+          authorization: idToken,
+        },
+      });
+      this._userId = response.data.id;
+      return Promise.resolve(userCredential);
+    } catch (error) {
+      // TODO: handle errors more appropriately https://promopal.atlassian.net/browse/PP-38
+      if (error.response?.data) {
+        return Promise.reject({ message: error.response.data });
+      }
+      return Promise.reject(error);
+    }
   }
 }
 

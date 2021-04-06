@@ -10,6 +10,7 @@ import React, {
 } from 'react';
 
 import PromotionCard from '../components/promotion/PromotionCard';
+import { useFirebase } from '../contexts/FirebaseContext';
 import {
   DispatchAction as PromotionsDispatch,
   usePromotionsList,
@@ -60,6 +61,7 @@ export default function PromotionList(props: Props): ReactElement {
 
   const { state: promotionsState, dispatch: promotionsDispatch } = usePromotionsList();
   const { dispatch: restaurantDispatch } = useRestaurantCard();
+  const firebase = useFirebase();
 
   const containerStyles = {
     height: props.dimensions.height,
@@ -100,12 +102,12 @@ export default function PromotionList(props: Props): ReactElement {
       if (promotion) {
         if (promotion.isSavedByUser) {
           promotion.isSavedByUser = false;
-          return UserService.unsavePromotion(promotionId)
+          return UserService.unsavePromotion(promotionId, firebase)
             .then(() => setPromotions(promos))
             .catch(() => null);
         }
         promotion.isSavedByUser = true;
-        return UserService.savePromotion(promotionId)
+        return UserService.savePromotion(promotionId, firebase)
           .then(() => setPromotions(promos))
           .catch(() => null);
       }
