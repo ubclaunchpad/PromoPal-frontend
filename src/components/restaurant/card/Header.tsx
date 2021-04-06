@@ -46,7 +46,7 @@ export default function Header(props: Props): ReactElement {
   const Buttons = (): ReactElement => (
     <Row className="action-buttons restaurant-card-header-component">
       <Button className="action-button">
-        <a href={props.website} target="_blank">
+        <a href={props.website} target="_blank" rel="noopener noreferrer">
           Website
         </a>
       </Button>
