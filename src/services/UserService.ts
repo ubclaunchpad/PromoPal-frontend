@@ -38,11 +38,11 @@ class UserService {
   /**
    * Gets the details of the currently logged in user.
    *
-   * @param firebaseId - The firebase id of the user to get
+   * @param userId - The id of the user to get
    */
-  public async getUser(firebaseId: string): Promise<User> {
+  public async getUser(userId: string): Promise<User> {
     FirebaseService.getAuth().currentUser?.getIdToken();
-    const url = Routes.USERS.GET_BY_FIREBASE_ID(firebaseId);
+    const url = Routes.USERS.GET(userId);
     return axios
       .get(url)
       .then(({ data }: AxiosResponse<GetUserResponse>) => {

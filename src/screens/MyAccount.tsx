@@ -9,7 +9,6 @@ import { User } from '../types/user';
 
 const defaultUser: User = {
   id: '',
-  firebaseId: '',
   firstName: '',
   lastName: '',
   username: '',

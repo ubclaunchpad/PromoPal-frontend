@@ -2,7 +2,6 @@ import { User as FirebaseUser } from '@firebase/auth-types';
 
 export interface User {
   id: string;
-  firebaseId: string;
   firstName: string;
   lastName: string;
   username: string;

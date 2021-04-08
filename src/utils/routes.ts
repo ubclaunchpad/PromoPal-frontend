@@ -14,7 +14,7 @@ export default {
   SAVED_PROMOTIONS: 'saved_promotions',
   SCHEDULES: '/schedules',
   USERS: {
-    GET_BY_FIREBASE_ID: (firebaseId: string): string => `/users/firebase/${firebaseId}`,
+    GET: (userId: string): string => `/users/${userId}`,
     SAVE_PROMOTION: (userId: string, promotionId: string): string =>
       `/users/${userId}/savedPromotions/${promotionId}`,
     UNSAVE_PROMOTION: (userId: string, promotionId: string): string =>
