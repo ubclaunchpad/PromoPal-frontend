@@ -1,8 +1,7 @@
 import { Place } from '@googlemaps/google-maps-services-js';
 import axios, { AxiosResponse } from 'axios';
 
-// import LocationService from '../services/LocationService';
-import UserService from '../services/UserService';
+import LocationService from '../services/LocationService';
 import {
   DeletePromotionsResponse,
   GetPromotionsResponse,
@@ -23,11 +22,13 @@ import GooglePlacesService from './GooglePlacesService';
  * Fetches entire list of promotions. If a query object is given, filters the promotions according to the given query.
  * If an error occurs, an empty list will be returned.
  *
+ * @param userId [optional] - The userId of a logged in user
  * @param query [optional] - An array of objects with key-value pairs for the query parameters
  */
-export async function getPromotions(query?: GetPromotionDTO[]): Promise<Promotion[]> {
-  // todo: we need to get userId from AuthUserContext and only call GET with the userId if a user exists
-  const userId = UserService.userId ? UserService.userId : undefined;
+export async function getPromotions(
+  userId?: string,
+  query?: GetPromotionDTO[]
+): Promise<Promotion[]> {
   let endpoint = Routes.PROMOTIONS.GET(userId);
   if (query && query.length > 0) {
     endpoint += '?';
@@ -38,7 +39,6 @@ export async function getPromotions(query?: GetPromotionDTO[]): Promise<Promotio
       });
     });
   }
-
   return axios
     .get(endpoint)
     .then(({ data }: AxiosResponse<GetPromotionsResponse>) => {
@@ -96,8 +96,13 @@ export async function getRestaurant(restaurantId: string): Promise<Place> {
  *
  * @param filters - An object specifying the keys and the values to filter the promotions by
  * @param sort - A string representing the key to sort the promotions by
+ * @param userId [optional] - The userId of a logged in user
  */
-export async function queryPromotions(filters: FilterOptions, sort?: Sort): Promise<Promotion[]> {
+export async function queryPromotions(
+  filters: FilterOptions,
+  sort?: Sort,
+  userId?: string
+): Promise<Promotion[]> {
   const { cuisine, dayOfWeek, discountType, promotionType } = filters;
 
   const promotionQueryDTO: Record<string, string>[] = [];
@@ -119,18 +124,17 @@ export async function queryPromotions(filters: FilterOptions, sort?: Sort): Prom
     promotionType.forEach((promotionType: string) => promotionQueryDTO.push({ promotionType }));
   }
 
-  // todo: commented out until BE PR for sort is in
-  // if (sort) {
-  //   const queryParams: { [paramKey: string]: string } = { sort };
-  //   if (sort === Sort.Distance) {
-  //     const {
-  //       coords: { latitude, longitude },
-  //     } = await LocationService.GeolocationPosition.getCurrentLocation();
-  //     queryParams.lat = `${latitude}`;
-  //     queryParams.lon = `${longitude}`;
-  //   }
-  //   promotionQueryDTO.push(queryParams);
-  // }
+  if (sort) {
+    const queryParams: { [paramKey: string]: string } = { sort };
+    if (sort === Sort.Distance) {
+      const {
+        coords: { latitude, longitude },
+      } = await LocationService.GeolocationPosition.getCurrentLocation();
+      queryParams.lat = `${latitude}`;
+      queryParams.lon = `${longitude}`;
+    }
+    promotionQueryDTO.push(queryParams);
+  }
 
-  return getPromotions(promotionQueryDTO);
+  return getPromotions(userId, promotionQueryDTO);
 }

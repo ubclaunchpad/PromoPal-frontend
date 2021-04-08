@@ -4,10 +4,9 @@ import { Button, Col, Form, Input, Row } from 'antd';
 import { Rule } from 'antd/lib/form';
 import React, { ReactElement } from 'react';
 
-import { useFirebase } from '../../contexts/FirebaseContext';
 import UserService from '../../services/UserService';
 import { InputRules } from '../../types/rules';
-import { UserInputData } from '../../types/user';
+import { UserRegistration } from '../../types/user';
 
 interface InputProps {
   defaultValue: string;
@@ -26,11 +25,10 @@ interface Props {
 }
 
 export default function AccountDetails(props: Props): ReactElement {
-  const firebase = useFirebase();
   const [form] = Form.useForm();
 
-  const onFinish = (data: UserInputData): void => {
-    UserService.updateUser(firebase, data)
+  const onFinish = (data: UserRegistration): void => {
+    UserService.updateUser(props.id, data)
       .then(() => {
         // TODO: https://promopal.atlassian.net/browse/PP-80
         alert('Your changes were saved.');

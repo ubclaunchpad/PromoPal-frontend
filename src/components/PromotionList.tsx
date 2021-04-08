@@ -10,7 +10,7 @@ import React, {
 } from 'react';
 
 import PromotionCard from '../components/promotion/PromotionCard';
-import { useFirebase } from '../contexts/FirebaseContext';
+import { useAuthUser } from '../contexts/AuthUserContext';
 import {
   DispatchAction as PromotionsDispatch,
   usePromotionsList,
@@ -61,7 +61,7 @@ export default function PromotionList(props: Props): ReactElement {
 
   const { state: promotionsState, dispatch: promotionsDispatch } = usePromotionsList();
   const { dispatch: restaurantDispatch } = useRestaurantCard();
-  const firebase = useFirebase();
+  const authUser = useAuthUser();
 
   const containerStyles = {
     height: props.dimensions.height,
@@ -97,22 +97,25 @@ export default function PromotionList(props: Props): ReactElement {
    */
   const onSaveButtonClick = useCallback(
     (promotionId: string) => {
+      if (!authUser) {
+        return Promise.reject(new Error('No user is logged in.'));
+      }
       const promos = [...promotions];
       const promotion = promos.find(({ id }) => id === promotionId);
       if (promotion) {
         if (promotion.isSavedByUser) {
           promotion.isSavedByUser = false;
-          return UserService.unsavePromotion(promotionId, firebase)
+          return UserService.unsavePromotion(authUser.user.id, promotionId)
             .then(() => setPromotions(promos))
             .catch(() => null);
         }
         promotion.isSavedByUser = true;
-        return UserService.savePromotion(promotionId, firebase)
+        return UserService.savePromotion(authUser.user.id, promotionId)
           .then(() => setPromotions(promos))
           .catch(() => null);
       }
     },
-    [promotions, setPromotions]
+    [promotions, setPromotions, authUser]
   );
 
   /**
@@ -149,7 +152,11 @@ export default function PromotionList(props: Props): ReactElement {
   useEffect(() => {
     promotionsDispatch({ type: PromotionsDispatch.DATA_LOADING });
 
-    PromotionService.queryPromotions(promotionsState.filter, promotionsState.sort)
+    PromotionService.queryPromotions(
+      promotionsState.filter,
+      promotionsState.sort,
+      authUser ? authUser.user.id : undefined
+    )
       .then((promotions: Promotion[]) => {
         promotionsDispatch({ type: PromotionsDispatch.DATA_SUCCESS });
 
@@ -162,7 +169,7 @@ export default function PromotionList(props: Props): ReactElement {
         promotionsDispatch({ type: PromotionsDispatch.DATA_FAILURE });
         setPromotions([]);
       });
-  }, [promotionsState.filter, promotionsState.sort, promotionsDispatch]);
+  }, [promotionsState.filter, promotionsState.sort, promotionsDispatch, authUser]);
 
   /**
    * When a search query is set, fetches promotions that satisfy the query.
@@ -170,16 +177,14 @@ export default function PromotionList(props: Props): ReactElement {
   useEffect(() => {
     if (promotionsState.searchQuery) {
       promotionsDispatch({ type: PromotionsDispatch.DATA_LOADING });
-      PromotionService.getPromotions([
-        {
-          searchQuery: promotionsState.searchQuery,
-        },
+      PromotionService.getPromotions(authUser ? authUser.user.id : undefined, [
+        { searchQuery: promotionsState.searchQuery },
       ]).then((promotions) => {
         promotionsDispatch({ type: PromotionsDispatch.DATA_SUCCESS });
         setPromotions(promotions);
       });
     }
-  }, [promotionsDispatch, promotionsState.searchQuery]);
+  }, [promotionsDispatch, promotionsState.searchQuery, authUser]);
 
   return (
     <div style={containerStyles} ref={container}>

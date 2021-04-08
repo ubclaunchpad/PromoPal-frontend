@@ -2,7 +2,6 @@ import { Button, Checkbox, Form, Input } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { useFirebase } from '../../contexts/FirebaseContext';
 import UserService from '../../services/UserService';
 import { InputRules } from '../../types/rules';
 
@@ -33,11 +32,10 @@ interface Props {
 }
 
 export default function LoginCard(props: Props): ReactElement {
-  const firebase = useFirebase();
   const history = useHistory();
 
   const onFinish = (data: { email: string; password: string; staySignedIn: boolean }): void => {
-    UserService.doSignInWithEmailAndPassword(firebase, data)
+    UserService.loginUser(data)
       .then(() => {
         history.push('/');
       })

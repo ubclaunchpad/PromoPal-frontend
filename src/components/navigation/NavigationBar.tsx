@@ -6,7 +6,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 import { ReactComponent as Logo } from '../../assets/logo.svg';
 import { useAuthUser } from '../../contexts/AuthUserContext';
-import { useFirebase } from '../../contexts/FirebaseContext';
+import UserService from '../../services/UserService';
 import SearchBar from '../navigation/SearchBar';
 
 enum Pages {
@@ -31,7 +31,6 @@ export default function NavigationBar(): ReactElement {
   const location: { pathname: string } = useLocation();
 
   const [current, setCurrent] = useState<Pages>(Pages.Home);
-  const firebase = useFirebase();
   const authUser = useAuthUser();
 
   // TODO: isActive is not highlighting the active page when the browser back button is pressed
@@ -76,7 +75,7 @@ export default function NavigationBar(): ReactElement {
         </Menu>
       </div>
       <SearchBar />
-      {authUser && <Button onClick={firebase.doSignOut}>Sign Out</Button>}
+      {authUser && <Button onClick={UserService.signUserOut}>Sign Out</Button>}
     </header>
   );
 }

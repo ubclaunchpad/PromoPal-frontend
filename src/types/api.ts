@@ -38,4 +38,4 @@ export type GetUserResponse = ApiResponse<User>;
 export type SavePromotionResponse = ApiResponse<SavePromotion>;
 export type UnsavePromotionResponse = ApiResponse<UnsavePromotion>;
 export type UpdateUserResponse = ApiResponse<string>;
-export type UploadedPromotionsResponse = ApiResponse<User>;
+export type UploadedPromotionsResponse = ApiResponse<Promotion[]>;

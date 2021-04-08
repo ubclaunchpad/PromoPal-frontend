@@ -6,9 +6,9 @@ import moment from 'moment';
 import React, { ReactElement, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
+import { useAuthUser } from '../../contexts/AuthUserContext';
 import EnumService from '../../services/EnumService';
 import * as PromotionService from '../../services/PromotionService';
-import UserService from '../../services/UserService';
 import { Day, PostPromotionDTO, Schedule } from '../../types/promotion';
 import Button from '../button/Button';
 import LocationSearchInput from '../restaurant/LocationSearchInput';
@@ -45,9 +45,15 @@ export default function UploadPromotionForm(): ReactElement {
   const [form] = Form.useForm();
 
   const history = useHistory();
+  const authUser = useAuthUser();
 
   const [datesEffective, setDatesEffective] = useState<PromotionDates>({ start: '', end: '' });
   const [times, setTimes] = useState<PromotionTimes>({});
+
+  // TODO: https://promopal.atlassian.net/browse/PP-80
+  if (!authUser) {
+    return <p> Error: No user is logged in. </p>;
+  }
 
   const initialValues: FormFields = {
     cuisineType: '',
@@ -115,7 +121,7 @@ export default function UploadPromotionForm(): ReactElement {
       restaurantAddress: formValues.restaurantAddress,
       schedules: getSchedules(),
       startDate: formValues.datesEffective[0],
-      userId: UserService.userId,
+      userId: authUser.user.id,
     };
 
     PromotionService.postPromotion(promotionDTO)

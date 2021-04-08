@@ -1,20 +1,19 @@
 import { Col, Row } from 'antd';
-import React, { CSSProperties, ReactElement, useEffect, useState } from 'react';
+import React, { CSSProperties, ReactElement } from 'react';
 
 import AccountDetails from '../components/account/AccountDetails';
 import AccountPhoto from '../components/account/AccountPhoto';
 import ChangePassword from '../components/account/ChangePassword';
-import { useFirebase } from '../contexts/FirebaseContext';
-import UserService from '../services/UserService';
+import { useAuthUser } from '../contexts/AuthUserContext';
 import { User } from '../types/user';
 
 const defaultUser: User = {
   id: '',
-  email: '',
+  firebaseId: '',
   firstName: '',
   lastName: '',
-  uploadedPromotions: [],
   username: '',
+  email: '',
 };
 
 const styles: { [identifier: string]: CSSProperties } = {
@@ -28,33 +27,30 @@ const styles: { [identifier: string]: CSSProperties } = {
 };
 
 export default function MyAccount(): ReactElement {
-  const [user, setUser] = useState<User>(defaultUser);
-  const firebase = useFirebase();
-
-  /**
-   * On initial render, gets the details of the currently logged in user.
-   */
-  useEffect(() => {
-    // todo: If you are logged in and refresh the page, UserService.userId is no longer remembered. We need
-    //  to have AuthUserContext somehow remember the id of the user even after refreshing
-    UserService.getUser(firebase)
-      .then((user: User) => setUser(user))
-      .catch(() => setUser(defaultUser));
-  }, []);
-
+  const authUser = useAuthUser();
   return (
     <Row style={styles.body} justify="space-around">
       <Col span={4}>
         <AccountPhoto />
       </Col>
       <Col span={10}>
-        <AccountDetails
-          id={user.id}
-          email={user.email}
-          firstName={user.firstName}
-          lastName={user.lastName}
-          username={user.username}
-        />
+        {authUser ? (
+          <AccountDetails
+            id={authUser.user.id}
+            email={authUser.user.email}
+            firstName={authUser.user.firstName}
+            lastName={authUser.user.lastName}
+            username={authUser.user.username}
+          />
+        ) : (
+          <AccountDetails
+            id={defaultUser.id}
+            email={defaultUser.email}
+            firstName={defaultUser.firstName}
+            lastName={defaultUser.lastName}
+            username={defaultUser.username}
+          />
+        )}
       </Col>
       <Col span={10}>
         <ChangePassword />

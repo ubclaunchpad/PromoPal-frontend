@@ -2,7 +2,7 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Tooltip } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
 
-import { useFirebase } from '../../contexts/FirebaseContext';
+import UserService from '../../services/UserService';
 import { InputRules } from '../../types/rules';
 
 const styles: { [identifier: string]: CSSProperties } = {
@@ -28,10 +28,8 @@ interface Props {
 }
 
 export default function ForgotPasswordCard(props: Props): ReactElement {
-  const firebase = useFirebase();
-
   const onFinish = (data: { email: string }): void => {
-    firebase.doPasswordReset(data.email);
+    UserService.resetUserPassword(data.email);
     // TODO: https://promopal.atlassian.net/browse/PP-80
     alert('A password reset email has been sent if an account with the email exists');
   };

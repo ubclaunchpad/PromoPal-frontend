@@ -17,7 +17,7 @@ export default {
   SAVED_PROMOTIONS: 'saved_promotions',
   SCHEDULES: '/schedules',
   USERS: {
-    GET: (userId: string): string => `/users/${userId}`,
+    GET_BY_FIREBASE_ID: (firebaseId: string): string => `/users/firebase/${firebaseId}`,
     SAVE_PROMOTION: (userId: string, promotionId: string): string =>
       `/users/${userId}/savedPromotions/${promotionId}`,
     UNSAVE_PROMOTION: (userId: string, promotionId: string): string =>
@@ -25,7 +25,6 @@ export default {
     UPDATE: (userId: string): string => `/users/${userId}`,
     UPLOADED_PROMOTIONS: (userId: string): string => `/users/${userId}/uploadedPromotions`,
     POST: '/users',
-    GET_BY_FIREBASE_ID: (firebaseId: string): string => `/users/firebase/${firebaseId}`,
   },
   RESTAURANTS: {
     RESTAURANT_DETAILS: (id: string): string => `/restaurants/${id}/restaurantDetails`,
