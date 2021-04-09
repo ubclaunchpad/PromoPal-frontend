@@ -151,6 +151,9 @@ class UserService {
       FirebaseService.getAuth().currentUser?.getIdToken();
       if (authUser.firebaseUser.email !== data.email) {
         await FirebaseService.doEmailUpdate(data.password, data.email);
+      } else {
+        // we still want to make sure user is authenticated to make changes to the rest of their account details
+        await FirebaseService.doReauthenticateUser(data.password);
       }
 
       if (
