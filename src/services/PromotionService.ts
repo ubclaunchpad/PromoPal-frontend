@@ -1,7 +1,6 @@
 import { Place } from '@googlemaps/google-maps-services-js';
 import axios, { AxiosResponse } from 'axios';
 
-import UserService from '../services/UserService';
 import {
   DeletePromotionsResponse,
   DownvotePromotionResponse,
@@ -43,15 +42,16 @@ class PromotionService {
    * Fetches entire list of promotions. If a query object is given, filters the promotions according to the given query.
    * If an error occurs, an empty list will be returned.
    *
+   * @param userId [optional] - The userId of a logged in user
    * @param query [optional] - An array of objects with key-value pairs for the query parameters
    */
-  public async getPromotions(query?: GetPromotionDTO): Promise<Promotion[]> {
+  public async getPromotions(userId?: string, query?: GetPromotionDTO): Promise<Promotion[]> {
     const endpoint = Routes.PROMOTIONS.GET;
     return axios
       .get(endpoint, {
         params: {
           ...query,
-          userId: UserService.userId,
+          userId: userId,
         },
       })
       .then(({ data }: AxiosResponse<GetPromotionsResponse>) => {
@@ -97,8 +97,13 @@ class PromotionService {
    *
    * @param filters - An object specifying the keys and the values to filter the promotions by
    * @param sort - A string representing the key to sort the promotions by
+   * @param userId [optional] - The userId of a logged in user
    */
-  public async queryPromotions(filters: FilterOptions, sort?: Sort): Promise<Promotion[]> {
+  public async queryPromotions(
+    filters: FilterOptions,
+    sort?: Sort,
+    userId?: string
+  ): Promise<Promotion[]> {
     const { cuisine, dayOfWeek, discountType, promotionType } = filters;
 
     const promotionQueryDTO: GetPromotionDTO = {
@@ -118,7 +123,6 @@ class PromotionService {
       promotionQueryDTO.discountType = discount;
     }
 
-    // todo: commented out until BE PR for sort is in
     // if (sort) {
     //   const queryParams: { [paramKey: string]: string } = { sort };
     //   if (sort === Sort.Distance) {
@@ -131,21 +135,19 @@ class PromotionService {
     //   promotionQueryDTO.push(queryParams);
     // }
 
-    return this.getPromotions(promotionQueryDTO);
+    return this.getPromotions(userId, promotionQueryDTO);
   }
 
   /**
    * Upvotes the promotion for the current user.
    *
    * @param promotionId - The id of the promotion to upvote
+   * @param userId - The user id of a logged in user
    */
-  public async upvotePromotion(promotionId: string): Promise<void> {
+  public async upvotePromotion(promotionId: string, userId: string): Promise<void> {
     const endpoint = Routes.PROMOTIONS.UPVOTE(promotionId);
     return axios
-      .post(endpoint, {
-        // TODO: temp, remove once user auth is merged in
-        uid: UserService.userId,
-      })
+      .post(endpoint, { uid: userId })
       .then(({ data }: AxiosResponse<UpvotePromotionResponse>) => {
         if (isError<UpvotePromotionResponse>(data)) {
           return Promise.reject(data);
@@ -159,14 +161,12 @@ class PromotionService {
    * Downvotes the promotion for the current user.
    *
    * @param promotionId - The id of the promotion to downvote
+   * @param userId - The user id of a logged in user
    */
-  public async downvotePromotion(promotionId: string): Promise<void> {
+  public async downvotePromotion(promotionId: string, userId: string): Promise<void> {
     const endpoint = Routes.PROMOTIONS.DOWNVOTE(promotionId);
     return axios
-      .post(endpoint, {
-        // TODO: temp, remove once user auth is merged in
-        uid: UserService.userId,
-      })
+      .post(endpoint, { uid: userId })
       .then(({ data }: AxiosResponse<DownvotePromotionResponse>) => {
         if (isError<DownvotePromotionResponse>(data)) {
           return Promise.reject(data);

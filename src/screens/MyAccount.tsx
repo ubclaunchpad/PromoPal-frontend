@@ -1,21 +1,11 @@
 import { Col, Row } from 'antd';
-import React, { CSSProperties, ReactElement, useEffect, useState } from 'react';
+import React, { CSSProperties, ReactElement } from 'react';
+import { Redirect } from 'react-router-dom';
 
 import AccountDetails from '../components/account/AccountDetails';
 import AccountPhoto from '../components/account/AccountPhoto';
 import ChangePassword from '../components/account/ChangePassword';
-import { useFirebase } from '../contexts/FirebaseContext';
-import UserService from '../services/UserService';
-import { User } from '../types/user';
-
-const defaultUser: User = {
-  id: '',
-  email: '',
-  firstName: '',
-  lastName: '',
-  uploadedPromotions: [],
-  username: '',
-};
+import { useAuthUser } from '../contexts/AuthUserContext';
 
 const styles: { [identifier: string]: CSSProperties } = {
   body: {
@@ -28,33 +18,18 @@ const styles: { [identifier: string]: CSSProperties } = {
 };
 
 export default function MyAccount(): ReactElement {
-  const [user, setUser] = useState<User>(defaultUser);
-  const firebase = useFirebase();
+  const authUser = useAuthUser();
 
-  /**
-   * On initial render, gets the details of the currently logged in user.
-   */
-  useEffect(() => {
-    // todo: If you are logged in and refresh the page, UserService.userId is no longer remembered. We need
-    //  to have AuthUserContext somehow remember the id of the user even after refreshing
-    UserService.getUser(firebase)
-      .then((user: User) => setUser(user))
-      .catch(() => setUser(defaultUser));
-  }, [firebase]);
-
+  if (!authUser) {
+    return <Redirect to="/account" />;
+  }
   return (
     <Row style={styles.body} justify="space-around">
       <Col span={4}>
         <AccountPhoto />
       </Col>
       <Col span={10}>
-        <AccountDetails
-          id={user.id}
-          email={user.email}
-          firstName={user.firstName}
-          lastName={user.lastName}
-          username={user.username}
-        />
+        <AccountDetails {...authUser} />
       </Col>
       <Col span={10}>
         <ChangePassword />

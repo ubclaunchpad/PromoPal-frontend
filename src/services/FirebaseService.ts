@@ -11,7 +11,6 @@ const config = {
   appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
-// todo: Make this class a singleton
 class FirebaseService {
   private auth: firebase.auth.Auth;
 
@@ -24,20 +23,12 @@ class FirebaseService {
     this.auth = firebase.auth();
   }
 
-  getAuth(): firebase.auth.Auth {
+  public getAuth(): firebase.auth.Auth {
     return this.auth;
   }
 
   // *** Auth API ***
-  // Creates a user and signs the user in
-  doCreateUserWithEmailAndPassword(
-    email: string,
-    password: string
-  ): Promise<firebase.auth.UserCredential> {
-    return this.auth.createUserWithEmailAndPassword(email, password);
-  }
-
-  async doSignInWithEmailAndPassword(
+  public async doSignInWithEmailAndPassword(
     email: string,
     password: string,
     staySignedIn: boolean
@@ -50,44 +41,38 @@ class FirebaseService {
     return this.auth.signInWithEmailAndPassword(email, password);
   }
 
-  doSignOut = (): Promise<void> => this.auth.signOut();
-
-  doPasswordReset(email: string): void {
-    // TODO: Hide 400 error when an account with the specified email does not exist
-    this.auth.sendPasswordResetEmail(email).catch(() => {
-      // This catch block is empty because the user should not know if
-      // an account with the specified email exists
-    });
+  public doSignOut(): Promise<void> {
+    return this.auth.signOut();
   }
 
-  doReauthenticateUser(password: string): Promise<firebase.auth.UserCredential> {
-    const authUser = this.auth.currentUser;
+  public async doReauthenticateUser(password: string): Promise<firebase.auth.UserCredential> {
+    const firebaseUser = this.auth.currentUser;
     // TODO: Redirect to 404 page if a user or user email does not exist
-    if (authUser === null) {
+    if (firebaseUser === null) {
       return Promise.reject(new Error('No user is logged in.'));
     }
-    if (authUser.email === null) {
+    if (firebaseUser.email === null) {
       return Promise.reject(new Error('User email does not exist.'));
     }
-    const credential = firebase.auth.EmailAuthProvider.credential(authUser.email, password);
-    return authUser.reauthenticateWithCredential(credential);
+    const credential = firebase.auth.EmailAuthProvider.credential(firebaseUser.email, password);
+    return firebaseUser.reauthenticateWithCredential(credential);
   }
 
-  doEmailUpdate(password: string, newEmail: string): Promise<void> {
+  public async doEmailUpdate(password: string, newEmail: string): Promise<void> {
     return this.doReauthenticateUser(password)
       .then(() => {
-        const authUser = this.auth.currentUser;
-        if (authUser?.email === newEmail) {
+        const firebaseUser = this.auth.currentUser;
+        if (firebaseUser?.email === newEmail) {
           return;
         }
-        return authUser?.updateEmail(newEmail);
+        return firebaseUser?.updateEmail(newEmail);
       })
       .catch((err: Error) => {
         return Promise.reject(err);
       });
   }
 
-  doPasswordUpdate(oldPassword: string, newPassword: string): Promise<void> {
+  public async doPasswordUpdate(oldPassword: string, newPassword: string): Promise<void> {
     return this.doReauthenticateUser(oldPassword)
       .then(() => {
         return this.auth.currentUser?.updatePassword(newPassword);
@@ -96,6 +81,24 @@ class FirebaseService {
         return Promise.reject(err);
       });
   }
+
+  public doPasswordReset(email: string): void {
+    // TODO: Hide 400 error when an account with the specified email does not exist
+    this.auth.sendPasswordResetEmail(email).catch(() => {
+      // This catch block is empty because the user should not know if
+      // an account with the specified email exists
+    });
+  }
+
+  public async doDeleteUser(password: string): Promise<void> {
+    return this.doReauthenticateUser(password)
+      .then(() => {
+        return this.auth.currentUser?.delete();
+      })
+      .catch((err: Error) => {
+        return Promise.reject(err);
+      });
+  }
 }
 
-export default FirebaseService;
+export default new FirebaseService();

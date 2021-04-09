@@ -11,7 +11,7 @@ import React, {
 } from 'react';
 
 import PromotionCard from '../components/promotion/PromotionCard';
-import { useFirebase } from '../contexts/FirebaseContext';
+import { useAuthUser } from '../contexts/AuthUserContext';
 import {
   DispatchAction as PromotionsDispatch,
   usePromotionsList,
@@ -72,7 +72,7 @@ export default function PromotionList(props: Props): ReactElement {
 
   const { state: promotionsState, dispatch: promotionsDispatch } = usePromotionsList();
   const { dispatch: restaurantDispatch } = useRestaurantCard();
-  const firebase = useFirebase();
+  const authUser = useAuthUser();
 
   const containerStyles = {
     height: props.dimensions.height,
@@ -115,17 +115,17 @@ export default function PromotionList(props: Props): ReactElement {
       if (promotion) {
         if (promotion.isSavedByUser) {
           promotion.isSavedByUser = false;
-          return UserService.unsavePromotion(promotionId, firebase)
+          return UserService.unsavePromotion(authUser?.user.id || '', promotionId)
             .then(() => setPromotions(promos))
             .catch(() => null);
         }
         promotion.isSavedByUser = true;
-        return UserService.savePromotion(promotionId, firebase)
+        return UserService.savePromotion(authUser?.user.id || '', promotionId)
           .then(() => setPromotions(promos))
           .catch(() => null);
       }
     },
-    [firebase, promotions, setPromotions]
+    [authUser, promotions, setPromotions]
   );
 
   /**
@@ -141,7 +141,7 @@ export default function PromotionList(props: Props): ReactElement {
         if (promotion.voteState === VoteState.DOWN) {
           promotion.votes = promotion.votes + 1;
           promotion.voteState = VoteState.INIT;
-          PromotionService.downvotePromotion(promotionId)
+          PromotionService.downvotePromotion(promotionId, authUser?.user.id || '')
             .then(() => setPromotions(promos))
             .catch(() => null);
         } else {
@@ -151,13 +151,13 @@ export default function PromotionList(props: Props): ReactElement {
           }
           promotion.votes = promotion.votes - 1;
           promotion.voteState = VoteState.DOWN;
-          PromotionService.downvotePromotion(promotionId)
+          PromotionService.downvotePromotion(promotionId, authUser?.user.id || '')
             .then(() => setPromotions(promos))
             .catch(() => null);
         }
       }
     },
-    [promotions, setPromotions]
+    [authUser, promotions, setPromotions]
   );
 
   /**
@@ -173,7 +173,7 @@ export default function PromotionList(props: Props): ReactElement {
         if (promotion.voteState === VoteState.UP) {
           promotion.votes = promotion.votes - 1;
           promotion.voteState = VoteState.INIT;
-          PromotionService.upvotePromotion(promotionId)
+          PromotionService.upvotePromotion(promotionId, authUser?.user.id || '')
             .then(() => setPromotions(promos))
             .catch(() => null);
         } else {
@@ -183,13 +183,13 @@ export default function PromotionList(props: Props): ReactElement {
           }
           promotion.votes = promotion.votes + 1;
           promotion.voteState = VoteState.UP;
-          PromotionService.upvotePromotion(promotionId)
+          PromotionService.upvotePromotion(promotionId, authUser?.user.id || '')
             .then(() => setPromotions(promos))
             .catch(() => null);
         }
       }
     },
-    [promotions, setPromotions]
+    [authUser, promotions, setPromotions]
   );
 
   /**
@@ -226,7 +226,11 @@ export default function PromotionList(props: Props): ReactElement {
   useEffect(() => {
     promotionsDispatch({ type: PromotionsDispatch.DATA_LOADING });
 
-    PromotionService.queryPromotions(promotionsState.filter, promotionsState.sort)
+    PromotionService.queryPromotions(
+      promotionsState.filter,
+      promotionsState.sort,
+      authUser?.user?.id
+    )
       .then((promotions: Promotion[]) => {
         promotionsDispatch({ type: PromotionsDispatch.DATA_SUCCESS });
 
@@ -239,22 +243,20 @@ export default function PromotionList(props: Props): ReactElement {
         promotionsDispatch({ type: PromotionsDispatch.DATA_FAILURE });
         setPromotions([]);
       });
-  }, [promotionsState.filter, promotionsState.sort, promotionsDispatch]);
+  }, [promotionsState.filter, promotionsState.sort, promotionsDispatch, authUser]);
 
   /**
    * When a search query is set, fetches promotions that satisfy the query.
    */
   useEffect(() => {
-    if (promotionsState.searchQuery) {
-      promotionsDispatch({ type: PromotionsDispatch.DATA_LOADING });
-      PromotionService.getPromotions({
-        searchQuery: promotionsState.searchQuery,
-      }).then((promotions) => {
-        promotionsDispatch({ type: PromotionsDispatch.DATA_SUCCESS });
-        setPromotions(promotions);
-      });
-    }
-  }, [promotionsDispatch, promotionsState.searchQuery]);
+    promotionsDispatch({ type: PromotionsDispatch.DATA_LOADING });
+    PromotionService.getPromotions(authUser?.user?.id, {
+      searchQuery: promotionsState.searchQuery ? promotionsState.searchQuery : undefined,
+    }).then((promotions) => {
+      promotionsDispatch({ type: PromotionsDispatch.DATA_SUCCESS });
+      setPromotions(promotions);
+    });
+  }, [promotionsDispatch, promotionsState.searchQuery, authUser]);
 
   const indicator = <LoadingOutlined style={styles.spinnerIcon} spin />;
 

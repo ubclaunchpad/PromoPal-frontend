@@ -17,7 +17,7 @@ export default function Router(): ReactElement {
         <NavigationBar />
         <Switch>
           <Route path="/account">{authUser ? <MyAccount /> : <Login />}</Route>
-          <Route path="/promotion">{authUser ? <MyPromotions /> : <Login />}</Route>
+          <Route path="/mypromotions">{authUser ? <MyPromotions /> : <Login />}</Route>
           <Route path="/promotion/upload">{authUser ? <UploadPromotion /> : <Login />}</Route>
           <Route path="/">
             <Home />

@@ -6,32 +6,34 @@ import { Link, useLocation } from 'react-router-dom';
 
 import { ReactComponent as Logo } from '../../assets/logo.svg';
 import { useAuthUser } from '../../contexts/AuthUserContext';
-import { useFirebase } from '../../contexts/FirebaseContext';
+import UserService from '../../services/UserService';
 import SearchBar from '../navigation/SearchBar';
 
 enum Pages {
   Home = 'Home',
   Account = 'Account',
   UploadPromotion = 'UploadPromotion',
+  MyPromotions = 'MyPromotions',
 }
 
 enum Paths {
   Home = '/',
   Account = '/account',
   UploadPromotion = '/promotion/upload',
+  MyPromotions = '/mypromotions',
 }
 
 const PathsToPages: { [path: string]: Pages } = {
   [Paths.Home]: Pages.Home,
   [Paths.Account]: Pages.Account,
   [Paths.UploadPromotion]: Pages.UploadPromotion,
+  [Paths.MyPromotions]: Pages.MyPromotions,
 };
 
 export default function NavigationBar(): ReactElement {
   const location: { pathname: string } = useLocation();
 
   const [current, setCurrent] = useState<Pages>(Pages.Home);
-  const firebase = useFirebase();
   const authUser = useAuthUser();
 
   // TODO: isActive is not highlighting the active page when the browser back button is pressed
@@ -73,10 +75,17 @@ export default function NavigationBar(): ReactElement {
           >
             <Link to={Paths.UploadPromotion}>Upload Promotion</Link>
           </Menu.Item>
+          <Menu.Item
+            key={Pages.MyPromotions}
+            className="navigation-menu-item"
+            style={isActive(Pages.MyPromotions)}
+          >
+            <Link to={Paths.MyPromotions}>My Promotions</Link>
+          </Menu.Item>
         </Menu>
       </div>
       <SearchBar />
-      {authUser && <Button onClick={firebase.doSignOut}>Sign Out</Button>}
+      {authUser && <Button onClick={UserService.signUserOut}>Sign Out</Button>}
     </header>
   );
 }

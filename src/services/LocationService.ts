@@ -59,7 +59,7 @@ class GeolocationPositionService extends LocationService<GeolocationPosition> {
     return new Promise((resolve, reject) => {
       if (navigator.geolocation) {
         const onSuccess = (position: GeolocationPosition): void => resolve(position);
-        const onError = (error: GeolocationPositionError): void => reject(error);
+        const onError = (err: GeolocationPositionError): void => reject(err);
         navigator.geolocation.getCurrentPosition(onSuccess, onError, { timeout: 3000 });
       } else {
         resolve(this.defaultLocation);
@@ -100,7 +100,7 @@ class LatLngService extends LocationService<LatLng> {
           } = position;
           return resolve(new google.maps.LatLng(latitude, longitude));
         };
-        const onError = (error: GeolocationPositionError): void => reject(error);
+        const onError = (err: GeolocationPositionError): void => reject(err);
         navigator.geolocation.getCurrentPosition(onSuccess, onError, { timeout: 3000 });
       } else {
         resolve(this.defaultLocation);

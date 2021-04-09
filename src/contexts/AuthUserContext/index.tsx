@@ -1,8 +1,10 @@
-import { User as AuthUser } from '@firebase/auth-types';
+import { User as FirebaseUser } from '@firebase/auth-types';
 import axios from 'axios';
 import React, { createContext, ReactElement, useContext, useEffect, useState } from 'react';
 
-import { useFirebase } from '../../contexts/FirebaseContext';
+import FirebaseService from '../../services/FirebaseService';
+import UserService from '../../services/UserService';
+import { AuthUser, User } from '../../types/user';
 
 /**
  * Holds the most up-to-date context object.
@@ -21,25 +23,36 @@ export function AuthUserProvider({
   children: ReactElement | ReactElement[];
 }): ReactElement {
   const [authUser, setAuthUser] = useState<AuthUser | null>(null);
-  const firebase = useFirebase();
 
   useEffect(() => {
-    firebase.getAuth().onAuthStateChanged((authUser: AuthUser | null) => {
-      authUser ? setAuthUser(authUser) : setAuthUser(null);
-      if (authUser) {
+    // Observer is triggered when the user signs in, signs out,
+    // changes account details, changes password,
+    // or when the user's ID token changes
+    FirebaseService.getAuth().onIdTokenChanged((firebaseUser: FirebaseUser | null) => {
+      if (firebaseUser) {
         axios.interceptors.request.use(
           async (request) => {
-            request.headers.authorization = await authUser.getIdToken();
+            request.headers.authorization = await firebaseUser.getIdToken();
             return request;
           },
-          (error) => {
-            return Promise.reject(error);
+          (err: Error) => {
+            return Promise.reject(err);
           }
         );
+        UserService.getUser(firebaseUser.uid)
+          .then((user: User) => {
+            setAuthUser({ user: user, firebaseUser: firebaseUser });
+          })
+          .catch((err: Error) => {
+            // TODO: https://promopal.atlassian.net/browse/PP-80
+            alert(err);
+            setAuthUser(null);
+          });
+      } else {
+        setAuthUser(null);
       }
     });
-  });
-
+  }, []);
   return <AuthUserContext.Provider value={authUser}>{children}</AuthUserContext.Provider>;
 }
 
@@ -47,6 +60,5 @@ export function AuthUserProvider({
  * Use this function to access the context object.
  */
 export function useAuthUser(): AuthUser | null {
-  const context = useContext(AuthUserContext);
-  return context;
+  return useContext(AuthUserContext);
 }

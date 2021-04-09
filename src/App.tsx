@@ -4,7 +4,6 @@ import React, { CSSProperties, ReactElement, useEffect, useState } from 'react';
 
 import { AuthUserProvider } from './contexts/AuthUserContext';
 import { DropdownProvider } from './contexts/DropdownContext';
-import { FirebaseProvider } from './contexts/FirebaseContext';
 import { PromotionsListProvider } from './contexts/PromotionsListContext';
 import { RestaurantCardProvider } from './contexts/RestaurantCardContext';
 import Router from './Router';
@@ -57,17 +56,15 @@ function App(): ReactElement {
 
   return (
     <div className="App" style={styles.container}>
-      <FirebaseProvider>
-        <AuthUserProvider>
-          <PromotionsListProvider>
-            <RestaurantCardProvider>
-              <DropdownProvider>
-                {isLoading ? <Spin indicator={indicator} style={styles.spinner} /> : <Router />}
-              </DropdownProvider>
-            </RestaurantCardProvider>
-          </PromotionsListProvider>
-        </AuthUserProvider>
-      </FirebaseProvider>
+      <AuthUserProvider>
+        <PromotionsListProvider>
+          <RestaurantCardProvider>
+            <DropdownProvider>
+              {isLoading ? <Spin indicator={indicator} style={styles.spinner} /> : <Router />}
+            </DropdownProvider>
+          </RestaurantCardProvider>
+        </PromotionsListProvider>
+      </AuthUserProvider>
     </div>
   );
 }

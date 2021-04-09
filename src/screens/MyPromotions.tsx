@@ -7,7 +7,7 @@ import UploadPromoButton from '../components/button/UploadPromoButton';
 import DropdownMenu from '../components/DropdownMenu';
 import DeleteModal from '../components/my-promotions/DeleteModal';
 import PromotionCard from '../components/promotion/PromotionCard';
-import { useFirebase } from '../contexts/FirebaseContext';
+import { useAuthUser } from '../contexts/AuthUserContext';
 import PromotionService from '../services/PromotionService';
 import UserService from '../services/UserService';
 import { Dropdown, DropdownType } from '../types/dropdown';
@@ -101,15 +101,22 @@ export default function MyPromotions(): ReactElement {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [promotionToDelete, setPromotionToDelete] = useState<Promotion | null>(null);
   const [uploadedPromotions, setUploadedPromotions] = useState<Promotion[]>([]);
-  const firebase = useFirebase();
+
+  const authUser = useAuthUser();
+
   /**
    * Fetches the user's uploaded promotions and sets them on this component.
    */
   const getUploadedPromotions = async (): Promise<void> => {
-    return UserService.getUploadedPromotions(firebase)
+    if (!authUser?.user?.id) {
+      return Promise.reject(new Error('No user is logged in.'));
+    }
+    return UserService.getUploadedPromotions(authUser.user.id)
       .then((promotions: Promotion[]) => setUploadedPromotions(promotions))
       .catch(() => setUploadedPromotions([]));
   };
+
+  // TODO: update list of uploaded promotions when a new promotion is uploaded
 
   /**
    * When a user confirms the deletion, update the list of uploaded promotions.
@@ -148,17 +155,17 @@ export default function MyPromotions(): ReactElement {
       if (promotion) {
         if (promotion.isSavedByUser) {
           promotion.isSavedByUser = false;
-          return UserService.unsavePromotion(promotionId, firebase)
+          return UserService.unsavePromotion(authUser?.user.id || '', promotionId)
             .then(() => setUploadedPromotions(promotions))
             .catch(() => null);
         }
         promotion.isSavedByUser = true;
-        return UserService.savePromotion(promotionId, firebase)
+        return UserService.savePromotion(authUser?.user.id || '', promotionId)
           .then(() => setUploadedPromotions(promotions))
           .catch(() => null);
       }
     },
-    [firebase, uploadedPromotions, setUploadedPromotions]
+    [authUser, uploadedPromotions, setUploadedPromotions]
   );
 
   /**
@@ -174,7 +181,7 @@ export default function MyPromotions(): ReactElement {
         if (promotion.voteState === VoteState.DOWN) {
           promotion.votes = promotion.votes + 1;
           promotion.voteState = VoteState.INIT;
-          PromotionService.downvotePromotion(promotionId)
+          PromotionService.downvotePromotion(promotionId, authUser?.user.id || '')
             .then(() => setUploadedPromotions(promos))
             .catch(() => null);
         } else {
@@ -184,13 +191,13 @@ export default function MyPromotions(): ReactElement {
           }
           promotion.votes = promotion.votes - 1;
           promotion.voteState = VoteState.DOWN;
-          PromotionService.downvotePromotion(promotionId)
+          PromotionService.downvotePromotion(promotionId, authUser?.user.id || '')
             .then(() => setUploadedPromotions(promos))
             .catch(() => null);
         }
       }
     },
-    [uploadedPromotions, setUploadedPromotions]
+    [authUser, uploadedPromotions, setUploadedPromotions]
   );
 
   /**
@@ -206,7 +213,7 @@ export default function MyPromotions(): ReactElement {
         if (promotion.voteState === VoteState.UP) {
           promotion.votes = promotion.votes - 1;
           promotion.voteState = promotion.voteState = VoteState.INIT;
-          PromotionService.upvotePromotion(promotionId)
+          PromotionService.upvotePromotion(promotionId, authUser?.user.id || '')
             .then(() => setUploadedPromotions(promos))
             .catch(() => null);
         } else {
@@ -216,23 +223,26 @@ export default function MyPromotions(): ReactElement {
           }
           promotion.votes = promotion.votes + 1;
           promotion.voteState = promotion.voteState = VoteState.UP;
-          PromotionService.upvotePromotion(promotionId)
+          PromotionService.upvotePromotion(promotionId, authUser?.user.id || '')
             .then(() => setUploadedPromotions(promos))
             .catch(() => null);
         }
       }
     },
-    [uploadedPromotions, setUploadedPromotions]
+    [authUser, uploadedPromotions, setUploadedPromotions]
   );
 
   /**
    * On initial render, retrieves the user's uploaded promotions.
    */
   useEffect(() => {
-    UserService.getUploadedPromotions(firebase)
+    if (!authUser?.user?.id) {
+      throw new Error('No user is logged in.');
+    }
+    UserService.getUploadedPromotions(authUser.user.id)
       .then((promotions: Promotion[]) => setUploadedPromotions(promotions))
       .catch(() => setUploadedPromotions([]));
-  }, [firebase]);
+  }, [authUser]);
 
   const renderUploadedPromotions = (): ReactElement => {
     return (
