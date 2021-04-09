@@ -4,10 +4,9 @@ import { Button, Col, Form, Input, message, Row } from 'antd';
 import { Rule } from 'antd/lib/form';
 import React, { ReactElement } from 'react';
 
-import { useFirebase } from '../../contexts/FirebaseContext';
 import UserService from '../../services/UserService';
 import { InputRules } from '../../types/rules';
-import { UserInputData } from '../../types/user';
+import { AuthUser, UserInput } from '../../types/user';
 
 interface InputProps {
   defaultValue: string;
@@ -17,20 +16,11 @@ interface InputProps {
   isPassword: boolean;
 }
 
-interface Props {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  username: string;
-}
-
-export default function AccountDetails(props: Props): ReactElement {
-  const firebase = useFirebase();
+export default function AccountDetails(authUser: AuthUser): ReactElement {
   const [form] = Form.useForm();
 
-  const onFinish = (data: UserInputData): void => {
-    UserService.updateUser(firebase, data)
+  const onFinish = (data: UserInput): void => {
+    UserService.updateUser(authUser, data)
       .then(() => {
         const successMessage = 'Your changes were saved successfully!';
         message.success(successMessage, 5);
@@ -68,7 +58,7 @@ export default function AccountDetails(props: Props): ReactElement {
         form={form}
         layout="vertical"
         requiredMark={false}
-        initialValues={props}
+        initialValues={authUser}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
       >
@@ -77,7 +67,7 @@ export default function AccountDetails(props: Props): ReactElement {
             <InputWrapper
               label="First Name"
               name="firstName"
-              defaultValue={props.firstName}
+              defaultValue={authUser.user.firstName}
               rules={InputRules.firstName}
               isPassword={false}
             />
@@ -86,7 +76,7 @@ export default function AccountDetails(props: Props): ReactElement {
             <InputWrapper
               label="Last Name"
               name="lastName"
-              defaultValue={props.lastName}
+              defaultValue={authUser.user.lastName}
               rules={InputRules.lastName}
               isPassword={false}
             />
@@ -95,14 +85,14 @@ export default function AccountDetails(props: Props): ReactElement {
         <InputWrapper
           label="Username"
           name="username"
-          defaultValue={props.username}
+          defaultValue={authUser.user.username}
           rules={InputRules.username}
           isPassword={false}
         />
         <InputWrapper
           label="Email"
           name="email"
-          defaultValue={props.email}
+          defaultValue={authUser.firebaseUser.email ? authUser.firebaseUser.email : ''}
           rules={InputRules.email}
           isPassword={false}
         />

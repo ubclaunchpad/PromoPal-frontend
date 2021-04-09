@@ -3,11 +3,10 @@ import { Button, Form, Input, message, Tooltip } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { useFirebase } from '../../contexts/FirebaseContext';
 import UserService from '../../services/UserService';
 import { FirebaseAuthError } from '../../types/firebase';
 import { InputRules } from '../../types/rules';
-import { UserInputData } from '../../types/user';
+import { UserInput } from '../../types/user';
 
 const styles: { [identifier: string]: CSSProperties } = {
   button: {
@@ -32,11 +31,10 @@ interface Props {
 }
 
 export default function RegisterCard(props: Props): ReactElement {
-  const firebase = useFirebase();
   const history = useHistory();
 
-  const onFinish = (data: UserInputData): void => {
-    UserService.registerUser(firebase, data)
+  const onFinish = (data: UserInput): void => {
+    UserService.registerUser(data)
       .then(() => {
         history.push('/');
 

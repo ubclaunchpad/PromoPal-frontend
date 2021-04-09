@@ -1,14 +1,14 @@
 import './UploadPromotionForm.less';
 
-import { DatePicker, Form, Input, message, Radio, Row, Select } from 'antd';
+import { DatePicker, Form, Input, InputNumber, message, Row, Select } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import moment from 'moment';
 import React, { ReactElement, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
+import { useAuthUser } from '../../contexts/AuthUserContext';
 import EnumService from '../../services/EnumService';
 import * as PromotionService from '../../services/PromotionService';
-import UserService from '../../services/UserService';
 import { Day, PostPromotionDTO, Schedule } from '../../types/promotion';
 import Button from '../button/Button';
 import LocationSearchInput from '../restaurant/LocationSearchInput';
@@ -18,6 +18,7 @@ interface FormFields {
   cuisineType: string;
   datesEffective: string[];
   discountType: string;
+  discountValue: number;
   promotionName: string;
   promotionDescription: string;
   promotionTimes: moment.Moment[];
@@ -45,14 +46,21 @@ export default function UploadPromotionForm(): ReactElement {
   const [form] = Form.useForm();
 
   const history = useHistory();
+  const authUser = useAuthUser();
 
   const [datesEffective, setDatesEffective] = useState<PromotionDates>({ start: '', end: '' });
   const [times, setTimes] = useState<PromotionTimes>({});
 
+  // TODO: https://promopal.atlassian.net/browse/PP-80
+  if (!authUser) {
+    return <p>Error: No user is logged in.</p>;
+  }
+
   const initialValues: FormFields = {
     cuisineType: '',
     datesEffective: [],
-    discountType: 'none',
+    discountType: '',
+    discountValue: NaN,
     promotionName: '',
     promotionDescription: '',
     promotionTimes: [],
@@ -104,18 +112,16 @@ export default function UploadPromotionForm(): ReactElement {
       description: formValues.promotionDescription,
       discount: {
         discountType: formValues.discountType,
-        // TODO: add support for this when we handle discount values
-        // https://promopal.atlassian.net/browse/PP-86
-        discountValue: 1,
+        discountValue: formValues.discountValue,
       },
       expirationDate: formValues.datesEffective[1],
       name: formValues.promotionName,
       placeId: formValues.restaurant,
       promotionType: formValues.promotionType,
-      restaurantAddress: formValues.restaurantAddress,
+      address: formValues.restaurantAddress,
       schedules: getSchedules(),
       startDate: formValues.datesEffective[0],
-      userId: UserService.userId,
+      userId: authUser.user.id,
     };
 
     PromotionService.postPromotion(promotionDTO)
@@ -125,8 +131,11 @@ export default function UploadPromotionForm(): ReactElement {
         const successMessage = `The promotion "${formValues.promotionName}" was successfully uploaded!`;
         message.success(successMessage, 5);
       })
-      .catch(() => {
-        const errorMessage = 'An error occurred. Please review the form to see what went wrong.';
+      .catch((error) => {
+        let errorMessage = 'An error occurred. ';
+        if (error.response?.data?.message && Array.isArray(error.response.data.message)) {
+          errorMessage = errorMessage + error.response.data.message.join('. ');
+        }
         message.error(errorMessage, 5);
       });
   };
@@ -230,6 +239,24 @@ export default function UploadPromotionForm(): ReactElement {
     form.setFieldsValue({ restaurant: '', restaurantAddress: '' });
   };
 
+  /**
+   * Handler to be called when the discount value is changed.
+   *
+   * @param discountValue - The discount Value
+   */
+  function onDiscountValueChange(discountValue: number): void {
+    form.setFieldsValue({ discountValue });
+  }
+
+  /**
+   * Handler to be called when the discount type is selected.
+   *
+   * @param discountType - The selected discount type
+   */
+  const onDiscountTypeChange = (discountType: string[]): void => {
+    form.setFieldsValue({ discountType });
+  };
+
   return (
     <Form
       className="upload-promotion-form"
@@ -273,23 +300,39 @@ export default function UploadPromotionForm(): ReactElement {
       <Form.Item name="restaurantAddress" hidden={true} />
 
       <Form.Item
-        label="Discount Type"
-        name="discountType"
+        label="Discount"
         labelAlign="left"
-        labelCol={{ span: 24 }}
-        wrapperCol={{ span: 24 }}
-        rules={[
-          {
-            required: true,
-            message: 'Please select a discount type!',
-          },
-        ]}
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 16 }}
       >
-        <Radio.Group>
-          <Radio value="%">Percentage Off</Radio>
-          <Radio value="$">Dollars Off</Radio>
-          <Radio value="Other">N/A</Radio>
-        </Radio.Group>
+        <Input.Group compact>
+          <Form.Item
+            name="discountValue"
+            rules={[
+              {
+                required: true,
+                message: 'Please input a discount value!',
+              },
+            ]}
+          >
+            <InputNumber onChange={onDiscountValueChange} />
+          </Form.Item>
+          <Form.Item
+            name="discountType"
+            rules={[
+              {
+                required: true,
+                message: 'Please select a discount type!',
+              },
+            ]}
+            style={{ marginLeft: '3px' }}
+          >
+            <Select
+              options={EnumService.discountTypes.map((type) => ({ value: type }))}
+              onChange={onDiscountTypeChange}
+            ></Select>
+          </Form.Item>
+        </Input.Group>
       </Form.Item>
 
       <Form.Item

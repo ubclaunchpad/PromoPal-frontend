@@ -7,10 +7,7 @@ export default {
     PROMOTION_TYPES: '/enums/PromotionType',
   },
   PROMOTIONS: {
-    GET: (userId?: string): string => {
-      if (userId) return `/promotions/?userId=${userId}`;
-      return '/promotions';
-    },
+    GET: '/promotions',
     DELETE: (promotionId: string): string => `/promotions/${promotionId}`,
     POST: '/promotions',
   },
@@ -26,7 +23,6 @@ export default {
     UPDATE: (userId: string): string => `/users/${userId}`,
     UPLOADED_PROMOTIONS: (userId: string): string => `/users/${userId}/uploadedPromotions`,
     POST: '/users',
-    GET_BY_FIREBASE_ID: (firebaseId: string): string => `/users/firebase/${firebaseId}`,
   },
   RESTAURANTS: {
     RESTAURANT_DETAILS: (id: string): string => `/restaurants/${id}/restaurantDetails`,

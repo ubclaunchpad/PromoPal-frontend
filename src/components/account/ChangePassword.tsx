@@ -3,15 +3,12 @@ import './AccountDetails.css';
 import { Button, Form, Input, message } from 'antd';
 import React, { ReactElement } from 'react';
 
-import { useFirebase } from '../../contexts/FirebaseContext';
+import UserService from '../../services/UserService';
 import { InputRules } from '../../types/rules';
 
 export default function ChangePassword(): ReactElement {
-  const firebase = useFirebase();
-
   const onFinish = (data: { oldPassword: string; newPassword: string }): void => {
-    firebase
-      .doPasswordUpdate(data.oldPassword, data.newPassword)
+    UserService.updateUserPassword(data.oldPassword, data.newPassword)
       .then(() => {
         const successMessage = 'Your new password was saved successfully!';
         message.success(successMessage, 5);

@@ -1,16 +1,13 @@
-import { Promotion } from './promotion';
+import { User as FirebaseUser } from '@firebase/auth-types';
 
 export interface User {
   id: string;
-  email: string;
   firstName: string;
   lastName: string;
-  uploadedPromotions: Promotion[];
   username: string;
-  // todo: should have firebaseId
 }
 
-export interface UserInputData {
+export interface UserInput {
   firstName: string;
   lastName: string;
   username: string;
@@ -18,10 +15,7 @@ export interface UserInputData {
   password: string;
 }
 
-export interface PostUserDTO {
-  username: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  firebaseId?: string;
+export interface AuthUser {
+  user: User;
+  firebaseUser: FirebaseUser;
 }

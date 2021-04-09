@@ -1,23 +1,13 @@
-import { Col, message, Row } from 'antd';
-import React, { CSSProperties, ReactElement, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Col, Input, message, Row } from 'antd';
+import React, { ChangeEvent, CSSProperties, ReactElement, useState } from 'react';
+import { Redirect, useHistory } from 'react-router-dom';
 
 import AccountDetails from '../components/account/AccountDetails';
 import AccountPhoto from '../components/account/AccountPhoto';
 import ChangePassword from '../components/account/ChangePassword';
 import DeleteModal from '../components/modal/DeleteModal';
-import { useFirebase } from '../contexts/FirebaseContext';
+import { useAuthUser } from '../contexts/AuthUserContext';
 import UserService from '../services/UserService';
-import { User } from '../types/user';
-
-const defaultUser: User = {
-  id: '',
-  email: '',
-  firstName: '',
-  lastName: '',
-  uploadedPromotions: [],
-  username: '',
-};
 
 const styles: { [identifier: string]: CSSProperties } = {
   body: {
@@ -31,13 +21,13 @@ const styles: { [identifier: string]: CSSProperties } = {
 
 export default function MyAccount(): ReactElement {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [user, setUser] = useState<User>(defaultUser);
+  const [password, setPassword] = useState<string>('');
 
-  const firebase = useFirebase();
+  const authUser = useAuthUser();
   const history = useHistory();
 
-  const onDeleteUser = async (): Promise<void> => {
-    return UserService.deleteUser(firebase)
+  const onDeleteUser = async (password: string): Promise<void> => {
+    return UserService.deleteUser(authUser?.user.id || '', password)
       .then(() => {
         setIsModalVisible(false);
 
@@ -45,7 +35,7 @@ export default function MyAccount(): ReactElement {
           "Your account has successfully been deleted. We're sad to see you go!";
         message.success(successMessage, 5);
 
-        return firebase.doSignOut();
+        return UserService.signUserOut();
       })
       .then(() => {
         // Redirect user to login page
@@ -63,30 +53,20 @@ export default function MyAccount(): ReactElement {
     setIsModalVisible(false);
   };
 
-  /**
-   * On initial render, gets the details of the currently logged in user.
-   */
-  useEffect(() => {
-    // todo: If you are logged in and refresh the page, UserService.userId is no longer remembered. We need
-    //  to have AuthUserContext somehow remember the id of the user even after refreshing
-    UserService.getUser(firebase)
-      .then((user: User) => setUser(user))
-      .catch(() => setUser(defaultUser));
-  }, []);
+  const onPasswordChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    setPassword(event.target.value);
+  };
 
+  if (!authUser) {
+    return <Redirect to="/account" />;
+  }
   return (
     <Row style={styles.body} justify="space-around">
       <Col span={4}>
         <AccountPhoto onDeleteUser={() => setIsModalVisible(true)} />
       </Col>
       <Col span={10}>
-        <AccountDetails
-          id={user.id}
-          email={user.email}
-          firstName={user.firstName}
-          lastName={user.lastName}
-          username={user.username}
-        />
+        <AccountDetails {...authUser} />
       </Col>
       <Col span={10}>
         <ChangePassword />
@@ -95,12 +75,20 @@ export default function MyAccount(): ReactElement {
         title="Delete Account"
         description={
           <>
-            Are you sure you want to delete your account?{' '}
-            <strong>This action is irreversible.</strong>
+            <p>
+              Are you sure you want to delete your account?{' '}
+              <strong>This action is irreversible.</strong>
+            </p>
+            Please enter your password below to confirm.
+            <Input.Password
+              placeholder="Enter your password"
+              value={password}
+              onChange={onPasswordChange}
+            />
           </>
         }
         isVisible={isModalVisible}
-        onOk={onDeleteUser}
+        onOk={() => onDeleteUser(password)}
         onCancel={onDeleteCancel}
       />
     </Row>
