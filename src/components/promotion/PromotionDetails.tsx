@@ -6,6 +6,7 @@ import { formatDistanceToNow } from 'date-fns';
 import parse from 'html-react-parser';
 import React, { CSSProperties, MouseEvent, ReactElement } from 'react';
 
+import { useAuthUser } from '../../contexts/AuthUserContext';
 import { Schedule, VoteState } from '../../types/promotion';
 import { formatTime } from '../../utils/time';
 import Votes from './Votes';
@@ -82,6 +83,8 @@ interface Props {
 }
 
 export default function PromotionDetails(props: Props): ReactElement {
+  const authUser = useAuthUser();
+
   /**
    * Returns display text for age of promotion.
    */
@@ -134,7 +137,7 @@ export default function PromotionDetails(props: Props): ReactElement {
 
   return (
     <Row className="promotion-details" style={styles.detailsContainer} justify="space-between">
-      <Col span={22}>
+      <Col span={authUser ? 22 : 24}>
         <Row style={styles.header}>
           <Title className="promotion-name" style={styles.promotionName}>
             {props.boldName ? parse(props.boldName) : props.name}
@@ -166,16 +169,18 @@ export default function PromotionDetails(props: Props): ReactElement {
           <Text style={styles.footer}>{promotionAge(props.dateAdded)}</Text>
         </Row>
       </Col>
-      <Col span={2} style={styles.rightHand}>
-        <Votes
-          votes={props.votes}
-          voteState={props.voteState}
-          onDownvoteClick={props.onDownvoteClick}
-          onUpvoteClick={props.onUpvoteClick}
-        />
-        {likeIcon}
-        {props.onDeleteButtonClick && deleteIcon}
-      </Col>
+      {authUser && (
+        <Col span={2} style={styles.rightHand}>
+          <Votes
+            votes={props.votes}
+            voteState={props.voteState}
+            onDownvoteClick={props.onDownvoteClick}
+            onUpvoteClick={props.onUpvoteClick}
+          />
+          {likeIcon}
+          {props.onDeleteButtonClick && deleteIcon}
+        </Col>
+      )}
     </Row>
   );
 }
