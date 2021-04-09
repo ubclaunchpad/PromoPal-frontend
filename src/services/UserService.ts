@@ -11,7 +11,7 @@ import {
   UploadedPromotionsResponse,
 } from '../types/api';
 import { Promotion } from '../types/promotion';
-import { User, UserRegistration } from '../types/user';
+import { AuthUser, User, UserInput } from '../types/user';
 import { isError } from '../utils/api';
 import Routes from '../utils/routes';
 
@@ -102,7 +102,7 @@ class UserService {
    *
    * @param data - Data to register the user with
    */
-  public async registerUser(data: UserRegistration): Promise<void> {
+  public async registerUser(data: UserInput): Promise<void> {
     try {
       const url = Routes.USERS.POST;
       await axios.post(url, data);
@@ -141,15 +141,22 @@ class UserService {
    * Updates the given properties for the currently logged-in user
    * in Firebase and in the BE.
    *
+   * @param authUser - The logged in user
    * @param data - Data to update the user with
    */
-  public async updateUser(userId: string, data: UserRegistration): Promise<void> {
+  public async updateUser(authUser: AuthUser, data: UserInput): Promise<void> {
     FirebaseService.getAuth().currentUser?.getIdToken();
     return FirebaseService.doEmailUpdate(data.password, data.email).then(() => {
+      if (
+        authUser.user.firstName === data.firstName &&
+        authUser.user.lastName === data.lastName &&
+        authUser.user.username === data.username
+      ) {
+        return Promise.resolve();
+      }
       // Update user in BE
-      const url = Routes.USERS.UPDATE(userId);
+      const url = Routes.USERS.UPDATE(authUser.user.id);
       const user: Partial<User> = {
-        email: data.email,
         firstName: data.firstName,
         lastName: data.lastName,
         username: data.username,

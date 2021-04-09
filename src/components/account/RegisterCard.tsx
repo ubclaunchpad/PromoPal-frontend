@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 
 import UserService from '../../services/UserService';
 import { InputRules } from '../../types/rules';
-import { UserRegistration } from '../../types/user';
+import { UserInput } from '../../types/user';
 
 const styles: { [identifier: string]: CSSProperties } = {
   button: {
@@ -32,7 +32,7 @@ interface Props {
 export default function RegisterCard(props: Props): ReactElement {
   const history = useHistory();
 
-  const onFinish = (data: UserRegistration): void => {
+  const onFinish = (data: UserInput): void => {
     UserService.registerUser(data)
       .then(() => {
         history.push('/');

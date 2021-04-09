@@ -207,7 +207,7 @@ export default function MyPromotions(): ReactElement {
 
   // TODO: https://promopal.atlassian.net/browse/PP-80
   if (!authUser) {
-    return <p> Error: No user is logged in. </p>;
+    return <p>Error: No user is logged in.</p>;
   }
 
   return (
