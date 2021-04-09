@@ -166,7 +166,7 @@ export default function PromotionList(props: Props): ReactElement {
     PromotionService.queryPromotions(
       promotionsState.filter,
       promotionsState.sort,
-      authUser ? authUser.user.id : undefined
+      authUser?.user?.id
     )
       .then((promotions: Promotion[]) => {
         promotionsDispatch({ type: PromotionsDispatch.DATA_SUCCESS });
@@ -186,15 +186,13 @@ export default function PromotionList(props: Props): ReactElement {
    * When a search query is set, fetches promotions that satisfy the query.
    */
   useEffect(() => {
-    if (promotionsState.searchQuery) {
-      promotionsDispatch({ type: PromotionsDispatch.DATA_LOADING });
-      PromotionService.getPromotions(authUser ? authUser.user.id : undefined, {
-        searchQuery: promotionsState.searchQuery,
-      }).then((promotions) => {
-        promotionsDispatch({ type: PromotionsDispatch.DATA_SUCCESS });
-        setPromotions(promotions);
-      });
-    }
+    promotionsDispatch({ type: PromotionsDispatch.DATA_LOADING });
+    PromotionService.getPromotions(authUser?.user?.id, {
+      searchQuery: promotionsState.searchQuery ? promotionsState.searchQuery : undefined,
+    }).then((promotions) => {
+      promotionsDispatch({ type: PromotionsDispatch.DATA_SUCCESS });
+      setPromotions(promotions);
+    });
   }, [promotionsDispatch, promotionsState.searchQuery, authUser]);
 
   const indicator = <LoadingOutlined style={styles.spinnerIcon} spin />;

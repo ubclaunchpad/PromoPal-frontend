@@ -44,6 +44,7 @@ interface PromotionDates {
 // https://promopal.atlassian.net/browse/PP-87
 export default function UploadPromotionForm(): ReactElement {
   const [form] = Form.useForm();
+  const [isDisabled, setDisabled] = useState(false);
 
   const history = useHistory();
   const authUser = useAuthUser();
@@ -76,6 +77,7 @@ export default function UploadPromotionForm(): ReactElement {
    * @param values - The values entered in the form
    */
   const onFinish = (values: unknown): void => {
+    setDisabled(true);
     const getSchedules = (): Schedule[] => {
       return Object.entries(times).map(([day, times]) => {
         return {
@@ -130,6 +132,7 @@ export default function UploadPromotionForm(): ReactElement {
 
         const successMessage = `The promotion "${formValues.promotionName}" was successfully uploaded!`;
         message.success(successMessage, 5);
+        setDisabled(false);
       })
       .catch((error) => {
         let errorMessage = 'An error occurred. ';
@@ -137,6 +140,7 @@ export default function UploadPromotionForm(): ReactElement {
           errorMessage = errorMessage + error.response.data.message.join('. ');
         }
         message.error(errorMessage, 5);
+        setDisabled(false);
       });
   };
 
@@ -330,7 +334,7 @@ export default function UploadPromotionForm(): ReactElement {
             <Select
               options={EnumService.discountTypes.map((type) => ({ value: type }))}
               onChange={onDiscountTypeChange}
-            ></Select>
+            />
           </Form.Item>
         </Input.Group>
       </Form.Item>
@@ -423,7 +427,7 @@ export default function UploadPromotionForm(): ReactElement {
 
       <Form.Item>
         <Row justify="center" className="submit-upload-promotion-form">
-          <Button htmlType="submit" size="large" text="Submit" />
+          <Button htmlType="submit" size="large" text="Submit" disabled={isDisabled} />
         </Row>
       </Form.Item>
     </Form>

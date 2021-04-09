@@ -1,5 +1,5 @@
 import { Button, Checkbox, Form, Input, message } from 'antd';
-import React, { CSSProperties, ReactElement } from 'react';
+import React, { CSSProperties, ReactElement, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import UserService from '../../services/UserService';
@@ -34,14 +34,16 @@ interface Props {
 
 export default function LoginCard(props: Props): ReactElement {
   const history = useHistory();
+  const [isDisabled, setDisabled] = useState(false);
 
   const onFinish = (data: { email: string; password: string; staySignedIn: boolean }): void => {
+    setDisabled(true);
     UserService.loginUser(data)
       .then(() => {
         history.push('/');
-
         const successMessage = 'Welcome back!';
         message.success(successMessage, 5);
+        setDisabled(false);
       })
       .catch((err: FirebaseAuthError) => {
         let errorMessage = '';
@@ -56,12 +58,14 @@ export default function LoginCard(props: Props): ReactElement {
           errorMessage = 'An error occurred while attempting to log in! Please try again later.';
         }
         message.error(errorMessage, 5);
+        setDisabled(false);
       });
   };
 
   const onFinishFailed = (): void => {
     const errorMessage = 'An error occurred! Please review the form to see what went wrong.';
     message.error(errorMessage, 5);
+    setDisabled(false);
   };
 
   return (
@@ -96,13 +100,14 @@ export default function LoginCard(props: Props): ReactElement {
           <Checkbox>Stay signed in</Checkbox>
         </Form.Item>
         <Form.Item>
-          <Button className="button" style={styles.button} htmlType="submit">
+          <Button className="button" style={styles.button} htmlType="submit" disabled={isDisabled}>
             Login
           </Button>
           <button
             className="link-button"
             style={styles.forgot}
             onClick={props.onClickForgotPassword}
+            disabled={isDisabled}
           >
             Forgot password?
           </button>
@@ -115,6 +120,7 @@ export default function LoginCard(props: Props): ReactElement {
             onClick={props.onClickRegister}
             className="button"
             style={styles.button}
+            disabled={isDisabled}
           >
             Register here!
           </Button>

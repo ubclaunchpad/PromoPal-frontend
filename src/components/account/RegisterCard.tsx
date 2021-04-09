@@ -1,6 +1,6 @@
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message, Tooltip } from 'antd';
-import React, { CSSProperties, ReactElement } from 'react';
+import React, { CSSProperties, ReactElement, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import UserService from '../../services/UserService';
@@ -32,14 +32,16 @@ interface Props {
 
 export default function RegisterCard(props: Props): ReactElement {
   const history = useHistory();
+  const [isDisabled, setDisabled] = useState(false);
 
   const onFinish = (data: UserInput): void => {
+    setDisabled(true);
     UserService.registerUser(data)
       .then(() => {
         history.push('/');
-
         const successMessage = "Welcome aboard! We're excited to have you here.";
         message.success(successMessage, 5);
+        setDisabled(false);
       })
       .catch((err: FirebaseAuthError) => {
         let errorMessage = '';
@@ -53,12 +55,14 @@ export default function RegisterCard(props: Props): ReactElement {
             'An error occurred while attempting to register your account! Please try again later.';
         }
         message.error(errorMessage, 5);
+        setDisabled(false);
       });
   };
 
   const onFinishFailed = (): void => {
     const errorMessage = 'An error occurred! Please review the form to see what went wrong.';
     message.error(errorMessage, 5);
+    setDisabled(false);
   };
 
   return (
@@ -134,7 +138,7 @@ export default function RegisterCard(props: Props): ReactElement {
         <Input.Password placeholder="Confirm Password" />
       </Form.Item>
       <Form.Item>
-        <Button className="button" style={styles.button} htmlType="submit">
+        <Button className="button" style={styles.button} htmlType="submit" disabled={isDisabled}>
           Register
         </Button>
       </Form.Item>
