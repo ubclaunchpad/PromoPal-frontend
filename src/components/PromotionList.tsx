@@ -226,7 +226,7 @@ export default function PromotionList(props: Props): ReactElement {
     });
   }, [promotionsDispatch, promotionsState.searchQuery, authUser]);
 
-  const indicator = <LoadingOutlined className="spinner-icon" spin />;
+  const indicator = <LoadingOutlined className="spinner-icon" spin={true} />;
 
   return (
     <div className="promotion-list-container" ref={container}>
