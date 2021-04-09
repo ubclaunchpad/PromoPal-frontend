@@ -3,6 +3,7 @@ import firebase from 'firebase';
 
 import FirebaseService from '../services/FirebaseService';
 import {
+  DeleteUserResponse,
   GetUserResponse,
   SavePromotion,
   SavePromotionResponse,
@@ -203,7 +204,7 @@ class UserService {
    * Wrapper for FirebaseService.doPasswordReset()
    * Sends a reset password request to the email specified.
    *
-   * @param email
+   * @param email - The user's email
    */
   public resetUserPassword(email: string): void {
     return FirebaseService.doPasswordReset(email);
@@ -213,10 +214,22 @@ class UserService {
    * Wrapper for FirebaseService.doDeleteUser()
    * Deletes the currently logged-in user.
    *
-   * @param password
+   * @param userId - The id of the user
+   * @param password - The user's password
    */
-  public async deleteUser(password: string): Promise<void> {
-    return FirebaseService.doDeleteUser(password);
+  public async deleteUser(userId: string, password: string): Promise<DeleteUserResponse> {
+    return FirebaseService.doDeleteUser(password)
+      .then(() => {
+        const url = Routes.USERS.DELETE(userId);
+        return axios.delete(url);
+      })
+      .then(({ data }: AxiosResponse<DeleteUserResponse>) => {
+        if (isError<DeleteUserResponse>(data)) {
+          return Promise.reject(data);
+        }
+        return Promise.resolve();
+      })
+      .catch((err: Error) => Promise.reject(err));
   }
 }
 

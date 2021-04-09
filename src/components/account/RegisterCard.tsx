@@ -1,9 +1,10 @@
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Tooltip } from 'antd';
+import { Button, Form, Input, message, Tooltip } from 'antd';
 import React, { CSSProperties, ReactElement, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import UserService from '../../services/UserService';
+import { FirebaseAuthError } from '../../types/firebase';
 import { InputRules } from '../../types/rules';
 import { UserInput } from '../../types/user';
 
@@ -38,18 +39,29 @@ export default function RegisterCard(props: Props): ReactElement {
     UserService.registerUser(data)
       .then(() => {
         history.push('/');
+        const successMessage = "Welcome aboard! We're excited to have you here.";
+        message.success(successMessage, 5);
         setDisabled(false);
       })
-      .catch((err: Error) => {
-        // TODO: https://promopal.atlassian.net/browse/PP-80
-        alert(err.message);
+      .catch((err: FirebaseAuthError) => {
+        let errorMessage = '';
+        if (err?.code === '400') {
+          if (err.message.startsWith('EMAIL_EXISTS')) {
+            errorMessage =
+              'An account with this email already exists. Please try logging in with your credentials instead.';
+          }
+        } else {
+          errorMessage =
+            'An error occurred while attempting to register your account! Please try again later.';
+        }
+        message.error(errorMessage, 5);
         setDisabled(false);
       });
   };
 
   const onFinishFailed = (): void => {
-    // TODO: https://promopal.atlassian.net/browse/PP-80
-    alert('Please submit the form after filling out all fields.');
+    const errorMessage = 'An error occurred! Please review the form to see what went wrong.';
+    message.error(errorMessage, 5);
     setDisabled(false);
   };
 

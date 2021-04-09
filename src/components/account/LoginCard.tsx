@@ -1,8 +1,9 @@
-import { Button, Checkbox, Form, Input } from 'antd';
+import { Button, Checkbox, Form, Input, message } from 'antd';
 import React, { CSSProperties, ReactElement, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import UserService from '../../services/UserService';
+import { FirebaseAuthError } from '../../types/firebase';
 import { InputRules } from '../../types/rules';
 
 const styles: { [identifier: string]: CSSProperties } = {
@@ -40,18 +41,30 @@ export default function LoginCard(props: Props): ReactElement {
     UserService.loginUser(data)
       .then(() => {
         history.push('/');
+        const successMessage = 'Welcome back!';
+        message.success(successMessage, 5);
         setDisabled(false);
       })
-      .catch((err: Error) => {
-        // TODO: https://promopal.atlassian.net/browse/PP-80
-        alert(err.message);
+      .catch((err: FirebaseAuthError) => {
+        let errorMessage = '';
+        if (err?.code === '400') {
+          if (err.message.startsWith('TOO_MANY_ATTEMPTS_TRY_LATER')) {
+            errorMessage = `Access to this account has been temporarily disabled due to many failed login attempts.
+              You can immediately restore it by resetting your password or you can try again later.`;
+          } else if (err.message.startsWith('INVALID_PASSWORD')) {
+            errorMessage = 'The password entered is incorrect. Please try again.';
+          }
+        } else {
+          errorMessage = 'An error occurred while attempting to log in! Please try again later.';
+        }
+        message.error(errorMessage, 5);
         setDisabled(false);
       });
   };
 
   const onFinishFailed = (): void => {
-    // TODO: https://promopal.atlassian.net/browse/PP-80
-    alert('Please submit the form after filling out all fields.');
+    const errorMessage = 'An error occurred! Please review the form to see what went wrong.';
+    message.error(errorMessage, 5);
     setDisabled(false);
   };
 
@@ -78,7 +91,7 @@ export default function LoginCard(props: Props): ReactElement {
         <Form.Item
           name="password"
           style={styles.inputWrapper}
-          rules={InputRules.password}
+          rules={InputRules.loginPassword}
           hasFeedback={true}
         >
           <Input.Password placeholder="Password" />

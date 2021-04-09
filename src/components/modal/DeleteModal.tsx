@@ -1,15 +1,12 @@
-import './DeleteModal.css';
+import './DeleteModal.less';
 
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Modal } from 'antd';
 import React, { ReactElement, useState } from 'react';
 
-import { Promotion } from '../../types/promotion';
-
 interface Props {
   description: ReactElement | string;
   isVisible: boolean;
-  promotion: Promotion;
   title: string;
 
   onCancel: () => void;
