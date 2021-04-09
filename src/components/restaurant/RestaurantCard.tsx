@@ -1,9 +1,9 @@
 import './RestaurantCard.css';
 
-import { CloseCircleOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import { OpeningHours, PlacePhoto } from '@googlemaps/google-maps-services-js';
-import { Col, Row } from 'antd';
-import React, { ReactElement, useEffect, useState } from 'react';
+import { Col, Row, Spin } from 'antd';
+import React, { CSSProperties, ReactElement, useEffect, useState } from 'react';
 
 import { DispatchAction, useRestaurantCard } from '../../contexts/RestaurantCardContext';
 import LocationService, { LatLng } from '../../services/LocationService';
@@ -25,10 +25,23 @@ interface Props {
   website: string | undefined;
 }
 
+const styles: { [identifier: string]: CSSProperties } = {
+  spinner: {
+    alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    height: '100%',
+    width: '100%',
+  },
+  spinnerIcon: {
+    fontSize: '4em',
+  },
+};
+
 export default function RestaurantCard(props: Props): ReactElement {
   const [distance, setDistance] = useState<number>(0);
 
-  const { dispatch } = useRestaurantCard();
+  const { state: restaurantCardState, dispatch } = useRestaurantCard();
 
   const containerPadding = '15px';
 
@@ -110,10 +123,14 @@ export default function RestaurantCard(props: Props): ReactElement {
     );
   };
 
+  const indicator = <LoadingOutlined style={styles.spinnerIcon} spin />;
+
   return (
     <div className="restaurant-card-container">
       <Col className="restaurant-card" style={{ left: `calc(65% - ${containerPadding} - 350px)` }}>
-        {props.isNotFound ? restaurantNotFoundCard() : restaurantCard()}
+        {restaurantCardState.isLoading && <Spin indicator={indicator} style={styles.spinner} />}
+        {!restaurantCardState.isLoading &&
+          (props.isNotFound ? restaurantNotFoundCard() : restaurantCard())}
       </Col>
     </div>
   );
