@@ -5,7 +5,7 @@ import React, { CSSProperties, ReactElement, useCallback, useEffect, useState } 
 
 import UploadPromoButton from '../components/button/UploadPromoButton';
 import DropdownMenu from '../components/DropdownMenu';
-import DeleteModal from '../components/my-promotions/DeleteModal';
+import DeleteModal from '../components/modal/DeleteModal';
 import PromotionCard from '../components/promotion/PromotionCard';
 import { useAuthUser } from '../contexts/AuthUserContext';
 import * as PromotionService from '../services/PromotionService';
@@ -245,7 +245,6 @@ export default function MyPromotions(): ReactElement {
             </>
           }
           isVisible={isModalVisible}
-          promotion={promotionToDelete}
           onOk={onDeleteOk}
           onCancel={onDeleteCancel}
         />

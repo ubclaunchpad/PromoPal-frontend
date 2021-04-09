@@ -34,6 +34,7 @@ export interface UnsavePromotion {
   userId: string;
 }
 
+export type DeleteUserResponse = ApiResponse<void>;
 export type GetUserResponse = ApiResponse<User>;
 export type SavePromotionResponse = ApiResponse<SavePromotion>;
 export type UnsavePromotionResponse = ApiResponse<UnsavePromotion>;

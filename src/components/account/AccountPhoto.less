@@ -1,0 +1,33 @@
+@import '../../variables.less';
+
+.account-photo-container {
+  align-items: center;
+  color: @black;
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+
+  .delete-account {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    color: @red;
+    margin-top: 10px;
+
+    &:hover {
+      color: @red;
+    }
+
+    span {
+      border-bottom: 2px solid transparent;
+      text-underline-offset: 5px;
+      transition: 0.25s linear;
+
+      &:hover {
+        border-bottom: 2px solid @red;
+      }
+    }
+  }
+}

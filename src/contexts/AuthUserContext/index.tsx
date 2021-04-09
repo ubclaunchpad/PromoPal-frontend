@@ -43,9 +43,7 @@ export function AuthUserProvider({
           .then((user: User) => {
             setAuthUser({ user: user, firebaseUser: firebaseUser });
           })
-          .catch((err: Error) => {
-            // TODO: https://promopal.atlassian.net/browse/PP-80
-            alert(err);
+          .catch(() => {
             setAuthUser(null);
           });
       } else {
