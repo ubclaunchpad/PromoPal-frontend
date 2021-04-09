@@ -22,7 +22,6 @@ export default function AccountDetails(authUser: AuthUser): ReactElement {
   const onFinish = (data: UserInput): void => {
     UserService.updateUser(authUser, data)
       .then(() => {
-        // TODO: https://promopal.atlassian.net/browse/PP-80
         alert('Your changes were saved.');
       })
       .catch((err: Error) => {

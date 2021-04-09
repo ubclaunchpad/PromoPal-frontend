@@ -30,17 +30,17 @@ export function AuthUserProvider({
     // or when the user's ID token changes
     FirebaseService.getAuth().onIdTokenChanged((firebaseUser: FirebaseUser | null) => {
       if (firebaseUser) {
+        axios.interceptors.request.use(
+          async (request) => {
+            request.headers.authorization = await firebaseUser.getIdToken();
+            return request;
+          },
+          (err: Error) => {
+            return Promise.reject(err);
+          }
+        );
         UserService.getUser(firebaseUser.uid)
           .then((user: User) => {
-            axios.interceptors.request.use(
-              async (request) => {
-                request.headers.authorization = await firebaseUser.getIdToken();
-                return request;
-              },
-              (err: Error) => {
-                return Promise.reject(err);
-              }
-            );
             setAuthUser({ user: user, firebaseUser: firebaseUser });
           })
           .catch((err: Error) => {

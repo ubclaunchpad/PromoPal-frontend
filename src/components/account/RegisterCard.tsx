@@ -1,6 +1,6 @@
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Tooltip } from 'antd';
-import React, { CSSProperties, ReactElement } from 'react';
+import React, { CSSProperties, ReactElement, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import UserService from '../../services/UserService';
@@ -31,21 +31,26 @@ interface Props {
 
 export default function RegisterCard(props: Props): ReactElement {
   const history = useHistory();
+  const [isDisabled, setDisabled] = useState(false);
 
   const onFinish = (data: UserInput): void => {
+    setDisabled(true);
     UserService.registerUser(data)
       .then(() => {
         history.push('/');
+        setDisabled(false);
       })
       .catch((err: Error) => {
         // TODO: https://promopal.atlassian.net/browse/PP-80
         alert(err.message);
+        setDisabled(false);
       });
   };
 
   const onFinishFailed = (): void => {
     // TODO: https://promopal.atlassian.net/browse/PP-80
     alert('Please submit the form after filling out all fields.');
+    setDisabled(false);
   };
 
   return (
@@ -121,7 +126,7 @@ export default function RegisterCard(props: Props): ReactElement {
         <Input.Password placeholder="Confirm Password" />
       </Form.Item>
       <Form.Item>
-        <Button className="button" style={styles.button} htmlType="submit">
+        <Button className="button" style={styles.button} htmlType="submit" disabled={isDisabled}>
           Register
         </Button>
       </Form.Item>

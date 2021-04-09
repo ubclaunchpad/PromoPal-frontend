@@ -166,7 +166,7 @@ export default function PromotionList(props: Props): ReactElement {
     PromotionService.queryPromotions(
       promotionsState.filter,
       promotionsState.sort,
-      authUser ? authUser.user.id : undefined
+      authUser?.user?.id
     )
       .then((promotions: Promotion[]) => {
         promotionsDispatch({ type: PromotionsDispatch.DATA_SUCCESS });
