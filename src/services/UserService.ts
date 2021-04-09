@@ -105,11 +105,13 @@ class UserService {
   public async registerUser(data: UserInput): Promise<void> {
     try {
       const url = Routes.USERS.POST;
-      await axios.post(url, data);
+      await axios.post(url, { ...data, confirmPassword: undefined });
+      // after successful creation of user, sign in to trigger AuthUserContext and update state
+      await FirebaseService.doSignInWithEmailAndPassword(data.email, data.password, false);
       return Promise.resolve();
     } catch (err) {
-      if (err.response?.data) {
-        return Promise.reject({ message: err.response.data });
+      if (err.response?.data?.message && Array.isArray(err.response.data.message)) {
+        return Promise.reject({ message: err.response.data.message.join(' ') });
       }
       return Promise.reject(err);
     }
@@ -145,8 +147,15 @@ class UserService {
    * @param data - Data to update the user with
    */
   public async updateUser(authUser: AuthUser, data: UserInput): Promise<void> {
-    FirebaseService.getAuth().currentUser?.getIdToken();
-    return FirebaseService.doEmailUpdate(data.password, data.email).then(() => {
+    try {
+      FirebaseService.getAuth().currentUser?.getIdToken();
+      if (authUser.firebaseUser.email !== data.email) {
+        await FirebaseService.doEmailUpdate(data.password, data.email);
+      } else {
+        // we still want to make sure user is authenticated to make changes to the rest of their account details
+        await FirebaseService.doReauthenticateUser(data.password);
+      }
+
       if (
         authUser.user.firstName === data.firstName &&
         authUser.user.lastName === data.lastName &&
@@ -154,23 +163,30 @@ class UserService {
       ) {
         return Promise.resolve();
       }
-      // Update user in BE
+
       const url = Routes.USERS.UPDATE(authUser.user.id);
       const user: Partial<User> = {
         firstName: data.firstName,
         lastName: data.lastName,
         username: data.username,
       };
-      return axios
+      await axios
         .patch(url, user)
-        .then(({ data }: AxiosResponse<UpdateUserResponse>) => {
+        .then(async ({ data }: AxiosResponse<UpdateUserResponse>) => {
           if (isError<UpdateUserResponse>(data)) {
             return Promise.reject(data);
           }
+          // hack: force onIdTokenChanged to be called
+          await authUser.firebaseUser.getIdToken(true);
           return Promise.resolve();
         })
         .catch((err: Error) => Promise.reject(err));
-    });
+    } catch (err) {
+      if (err.response?.data?.message && Array.isArray(err.response.data.message)) {
+        return Promise.reject({ message: err.response.data.message.join(' ') });
+      }
+      return Promise.reject(err);
+    }
   }
 
   /**

@@ -13,18 +13,21 @@ enum Pages {
   Home = 'Home',
   Account = 'Account',
   UploadPromotion = 'UploadPromotion',
+  MyPromotions = 'MyPromotions',
 }
 
 enum Paths {
   Home = '/',
   Account = '/account',
   UploadPromotion = '/promotion/upload',
+  MyPromotions = '/mypromotions',
 }
 
 const PathsToPages: { [path: string]: Pages } = {
   [Paths.Home]: Pages.Home,
   [Paths.Account]: Pages.Account,
   [Paths.UploadPromotion]: Pages.UploadPromotion,
+  [Paths.MyPromotions]: Pages.MyPromotions,
 };
 
 export default function NavigationBar(): ReactElement {
@@ -71,6 +74,13 @@ export default function NavigationBar(): ReactElement {
             style={isActive(Pages.UploadPromotion)}
           >
             <Link to={Paths.UploadPromotion}>Upload Promotion</Link>
+          </Menu.Item>
+          <Menu.Item
+            key={Pages.MyPromotions}
+            className="navigation-menu-item"
+            style={isActive(Pages.MyPromotions)}
+          >
+            <Link to={Paths.MyPromotions}>My Promotions</Link>
           </Menu.Item>
         </Menu>
       </div>

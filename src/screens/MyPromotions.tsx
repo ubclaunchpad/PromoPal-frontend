@@ -108,7 +108,10 @@ export default function MyPromotions(): ReactElement {
    * Fetches the user's uploaded promotions and sets them on this component.
    */
   const getUploadedPromotions = async (): Promise<void> => {
-    return UserService.getUploadedPromotions(authUser ? authUser.user.id : '')
+    if (!authUser?.user?.id) {
+      return Promise.reject(new Error('No user is logged in.'));
+    }
+    return UserService.getUploadedPromotions(authUser.user.id)
       .then((promotions: Promotion[]) => setUploadedPromotions(promotions))
       .catch(() => setUploadedPromotions([]));
   };
@@ -172,7 +175,10 @@ export default function MyPromotions(): ReactElement {
    * On initial render, retrieves the user's uploaded promotions.
    */
   useEffect(() => {
-    UserService.getUploadedPromotions(authUser ? authUser.user.id : '')
+    if (!authUser?.user?.id) {
+      throw new Error('No user is logged in.');
+    }
+    UserService.getUploadedPromotions(authUser.user.id)
       .then((promotions: Promotion[]) => setUploadedPromotions(promotions))
       .catch(() => setUploadedPromotions([]));
   }, [authUser]);
