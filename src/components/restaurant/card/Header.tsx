@@ -14,6 +14,19 @@ interface Props {
 
 export default function Header(props: Props): ReactElement {
   /**
+   * Returns the distance of the restaurant from the user, rounded to the nearest .1 of a kilometre
+   *
+   * @param distance - The distance of the restaurant from the user's current location, in metres
+   */
+  const formatDistance = (distance: number): number => {
+    if (distance > 0) {
+      const km = distance / 1000;
+      return Math.round(km * 10) / 10;
+    }
+    return 0;
+  };
+
+  /**
    * Returns a string that displays the priceLevel in number of dollar signs.
    *
    * @param priceLevel - The price level of the restaurant
@@ -73,7 +86,7 @@ export default function Header(props: Props): ReactElement {
         {/*<p className="restaurant-details-text">{props.cuisine}</p>*/}
         <p className="restaurant-details-text">{formatPriceLevel(props.priceLevel)}</p>
         {separator}
-        <p className="restaurant-details-text">{props.distance}m</p>
+        <p className="restaurant-details-text">{formatDistance(props.distance)}km</p>
       </Row>
       <Buttons />
     </>
