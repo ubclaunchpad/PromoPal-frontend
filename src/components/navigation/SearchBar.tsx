@@ -27,5 +27,11 @@ export default function SearchBar(): ReactElement {
     [dropdownState.resetCallbacks, promotionsDispatch]
   );
 
-  return <Search placeholder="Search..." onSearch={onSearch} className="search-bar" />;
+  return (
+    <Search
+      placeholder="Search by dish, cuisine, or location..."
+      onSearch={onSearch}
+      className="search-bar"
+    />
+  );
 }

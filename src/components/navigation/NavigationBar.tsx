@@ -93,7 +93,11 @@ export default function NavigationBar(): ReactElement {
         </Menu>
       </div>
       <SearchBar />
-      {authUser && <Button onClick={UserService.signUserOut}>Sign Out</Button>}
+      {authUser && (
+        <Button className="sign-out-button" onClick={UserService.signUserOut}>
+          Sign Out
+        </Button>
+      )}
     </header>
   );
 }

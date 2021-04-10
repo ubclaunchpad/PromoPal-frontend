@@ -89,7 +89,7 @@ export default function PromotionDetails(props: Props): ReactElement {
   };
 
   return (
-    <Row className="promotion-details" justify="space-between">
+    <Row className="promotion-details" gutter={2} justify="space-between">
       <Col span={authUser ? 22 : 24}>
         <Row>
           <Title className="promotion-name">
@@ -101,15 +101,17 @@ export default function PromotionDetails(props: Props): ReactElement {
         </Row>
         <Row>
           <Text className="promotion-description">
-            {props.boldDescription ? parse(props.boldDescription) : <p>{props.description}</p>}
+            {props.boldDescription ? parse(props.boldDescription) : props.description}
           </Text>
         </Row>
 
-        <Row className="schedule-container">
+        <Row className="schedule-container" gutter={12}>
           <Col span={2}>
             <ClockCircleOutlined className="schedule-clock" />
           </Col>
-          <Col span={22}>{displaySchedules(props.schedules)}</Col>
+          <Col span={22} className="schedule-times-container">
+            {displaySchedules(props.schedules)}
+          </Col>
         </Row>
 
         <Row>
@@ -123,7 +125,7 @@ export default function PromotionDetails(props: Props): ReactElement {
         </Row>
       </Col>
       {authUser && (
-        <Col span={2}>
+        <Col span={2} className="sidebar-buttons">
           <Votes
             votes={props.votes}
             voteState={props.voteState}

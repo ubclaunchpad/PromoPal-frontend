@@ -140,7 +140,7 @@ export default function Home(): ReactElement {
       <DropdownMenu dropdowns={dropdowns} shadow />
       <div
         id="content-container"
-        style={{ display: 'inline-flex', height: '100%', position: 'relative' }}
+        style={{ display: 'inline-flex', height: '100%', overflow: 'hidden', position: 'relative' }}
       >
         {restaurantCardState.showCard && (
           <RestaurantCard

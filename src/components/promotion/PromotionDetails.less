@@ -14,15 +14,28 @@
     justify-content: space-between;
   }
 
-  .heart-icon {
-    font-size: 1.5em;
+  .sidebar-buttons {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 
-    &.heart-icon-filled {
-      color: @red;
+    .heart-icon {
+      color: @gray;
+      font-size: 1.5em;
+
+      &.heart-icon-filled {
+        color: @red;
+      }
+
+      &.heart-icon-outlined:hover {
+        color: @red;
+      }
     }
 
-    &.heart-icon-outlined {
+    .trash-icon {
       color: @black;
+      font-size: 1.5em;
 
       &:hover {
         color: @red;
@@ -31,19 +44,28 @@
   }
 
   .promotion-description {
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     display: -webkit-box;
+    font-size: 0.8rem;
+    line-height: 1rem;
     margin-bottom: 0;
     overflow: hidden;
     text-overflow: ellipsis;
-    word-break: break-all;
+    word-break: break-word;
   }
 
   .promotion-name {
-    font-size: 1.5em;
-    font-weight: normal;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+    font-family: 'ABeeZee';
+    font-size: 1.3em;
+    font-weight: 400;
     margin-bottom: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
   }
 
   .restaurant-name {
@@ -56,23 +78,21 @@
     padding-top: 10px;
     padding-bottom: 10px;
 
+    .schedule-times-container {
+      align-items: flex-start;
+      display: flex;
+      flex-direction: column;
+    }
+
     .schedule-clock {
       color: @gray;
       font-size: 0.9em;
+      top: 0;
     }
 
     .schedules {
       color: @gray;
-      font-size: 0.9em;
-    }
-  }
-
-  .trash-icon {
-    color: @black;
-    font-size: 1.5em;
-
-    &:hover {
-      color: @red;
+      font-size: 0.8em;
     }
   }
 }
