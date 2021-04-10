@@ -22,7 +22,6 @@ export interface Promotion {
   discount: Discount;
   distance: number;
   expirationDate: string;
-  image: PromotionImage;
   isSavedByUser: boolean;
   lat: number;
   lon: number;
@@ -65,10 +64,6 @@ export interface PostPromotionDTO {
 export interface Discount {
   discountValue: number;
   discountType: string;
-}
-
-export interface PromotionImage {
-  src: string;
 }
 
 export interface Schedule {

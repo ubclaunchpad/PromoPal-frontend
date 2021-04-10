@@ -1,7 +1,7 @@
 import { Card } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
 
-import { PromotionImage as PromotionImageType, Schedule, VoteState } from '../../types/promotion';
+import { Schedule, VoteState } from '../../types/promotion';
 import PromotionDetails from '../promotion/PromotionDetails';
 import PromotionImage from '../promotion/PromotionImage';
 
@@ -28,7 +28,7 @@ interface Props {
   description: string;
   expirationDate: string;
   id: string;
-  image: PromotionImageType;
+  imageSrc: string;
   isSavedByUser: boolean;
   name: string;
   placeId: string;
@@ -51,7 +51,7 @@ interface Props {
 export default function PromotionCard(props: Props): ReactElement {
   return (
     <Card style={styles.card} bodyStyle={styles.body} onClick={props.onCardClick}>
-      <PromotionImage src={props.image?.src} />
+      <PromotionImage src={props.imageSrc} />
       <PromotionDetails
         boldName={props.boldName}
         boldDescription={props.boldDescription}

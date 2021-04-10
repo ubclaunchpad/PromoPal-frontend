@@ -9,8 +9,10 @@ import { Redirect, useHistory } from 'react-router-dom';
 import { useAuthUser } from '../../contexts/AuthUserContext';
 import EnumService from '../../services/EnumService';
 import PromotionService from '../../services/PromotionService';
+import { Image } from '../../types/image';
 import { Day, PostPromotionDTO, Schedule } from '../../types/promotion';
 import Button from '../button/Button';
+import ImageSelector from '../ImageSelector';
 import LocationSearchInput from '../restaurant/LocationSearchInput';
 import PromotionTime from './PromotionTime';
 
@@ -51,6 +53,11 @@ export default function UploadPromotionForm(): ReactElement {
 
   const [datesEffective, setDatesEffective] = useState<PromotionDates>({ start: '', end: '' });
   const [times, setTimes] = useState<PromotionTimes>({});
+  const [image, setImage] = useState<Image>({ imageBinary: '', imageType: '' });
+
+  if (!authUser) {
+    return <Redirect to="/account" />;
+  }
 
   const initialValues: FormFields = {
     cuisineType: '',
@@ -125,7 +132,7 @@ export default function UploadPromotionForm(): ReactElement {
       userId: authUser.user.id,
     };
 
-    PromotionService.postPromotion(promotionDTO)
+    PromotionService.postPromotion(promotionDTO, image)
       .then(() => {
         history.push('/promotions');
 
@@ -422,6 +429,10 @@ export default function UploadPromotionForm(): ReactElement {
         ]}
       >
         <DatePicker.RangePicker allowEmpty={[true, false]} onCalendarChange={onDatesSelected} />
+      </Form.Item>
+
+      <Form.Item label="Upload Image" name="uploadImage" labelAlign="left">
+        <ImageSelector image={image} setImage={setImage} />
       </Form.Item>
 
       <Form.Item>
