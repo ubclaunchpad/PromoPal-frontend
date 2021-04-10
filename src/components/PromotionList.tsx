@@ -1,6 +1,6 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { Place } from '@googlemaps/google-maps-services-js';
-import { Pagination, Spin } from 'antd';
+import { message, Pagination, Spin } from 'antd';
 import React, {
   CSSProperties,
   ReactElement,
@@ -109,20 +109,30 @@ export default function PromotionList(props: Props): ReactElement {
    * @param promotionId - The id of the promotion to save
    */
   const onSaveButtonClick = useCallback(
-    (promotionId: string) => {
+    async (promotionId: string): Promise<void> => {
+      if (!authUser?.user.id) {
+        message.error('An error occurred! Please try signing back in again.', 5);
+        return Promise.resolve();
+      }
       const promos = [...promotions];
       const promotion = promos.find(({ id }) => id === promotionId);
       if (promotion) {
         if (promotion.isSavedByUser) {
           promotion.isSavedByUser = false;
-          return UserService.unsavePromotion(authUser?.user.id || '', promotionId)
+          return UserService.unsavePromotion(authUser.user.id, promotionId)
             .then(() => setPromotions(promos))
-            .catch(() => null);
+            .catch(() => {
+              promotion.isSavedByUser = true;
+              message.error('An error occurred! Please try again later.', 3);
+            });
         }
         promotion.isSavedByUser = true;
-        return UserService.savePromotion(authUser?.user.id || '', promotionId)
+        return UserService.savePromotion(authUser.user.id, promotionId)
           .then(() => setPromotions(promos))
-          .catch(() => null);
+          .catch(() => {
+            promotion.isSavedByUser = false;
+            message.error('An error occurred! Please try again later.', 3);
+          });
       }
     },
     [authUser, promotions, setPromotions]
@@ -134,27 +144,33 @@ export default function PromotionList(props: Props): ReactElement {
    * @param promotionId - The id of the promotion to downvote
    */
   const onDownvoteClick = useCallback(
-    (promotionId: string): void => {
+    async (promotionId: string): Promise<void> => {
+      if (!authUser?.user.id) {
+        message.error('An error occurred! Please try signing back in again.', 5);
+        return Promise.resolve();
+      }
       const promos = [...promotions];
       const promotion = promos.find(({ id }) => id === promotionId);
       if (promotion) {
-        if (promotion.voteState === VoteState.DOWN) {
-          promotion.votes = promotion.votes + 1;
+        const initialVotes = promotion.votes;
+        const initialVoteState = promotion.voteState;
+        if (initialVoteState === VoteState.DOWN) {
+          promotion.votes = initialVotes + 1;
           promotion.voteState = VoteState.INIT;
-          PromotionService.downvotePromotion(promotionId, authUser?.user.id || '')
-            .then(() => setPromotions(promos))
-            .catch(() => null);
-        } else {
-          if (promotion.voteState === VoteState.UP) {
-            // Remove upvote
-            promotion.votes = promotion.votes - 1;
-          }
-          promotion.votes = promotion.votes - 1;
+        } else if (initialVoteState === VoteState.UP) {
+          promotion.votes = initialVotes - 2;
           promotion.voteState = VoteState.DOWN;
-          PromotionService.downvotePromotion(promotionId, authUser?.user.id || '')
-            .then(() => setPromotions(promos))
-            .catch(() => null);
+        } else {
+          promotion.votes = initialVotes - 1;
+          promotion.voteState = VoteState.DOWN;
         }
+        return PromotionService.downvotePromotion(promotionId, authUser.user.id)
+          .then(() => setPromotions(promos))
+          .catch(() => {
+            promotion.votes = initialVotes;
+            promotion.voteState = initialVoteState;
+            message.error('An error occurred! Please try again later.', 3);
+          });
       }
     },
     [authUser, promotions, setPromotions]
@@ -166,27 +182,33 @@ export default function PromotionList(props: Props): ReactElement {
    * @param promotionId - The id of the promotion to upvote
    */
   const onUpvoteClick = useCallback(
-    (promotionId: string): void => {
+    async (promotionId: string): Promise<void> => {
+      if (!authUser?.user.id) {
+        message.error('An error occurred! Please try signing back in again.', 5);
+        return Promise.resolve();
+      }
       const promos = [...promotions];
       const promotion = promos.find(({ id }) => id === promotionId);
       if (promotion) {
-        if (promotion.voteState === VoteState.UP) {
-          promotion.votes = promotion.votes - 1;
+        const initialVotes = promotion.votes;
+        const initialVoteState = promotion.voteState;
+        if (initialVoteState === VoteState.UP) {
+          promotion.votes = initialVotes - 1;
           promotion.voteState = VoteState.INIT;
-          PromotionService.upvotePromotion(promotionId, authUser?.user.id || '')
-            .then(() => setPromotions(promos))
-            .catch(() => null);
-        } else {
-          if (promotion.voteState === VoteState.DOWN) {
-            // Remove downvote
-            promotion.votes = promotion.votes + 1;
-          }
-          promotion.votes = promotion.votes + 1;
+        } else if (initialVoteState === VoteState.DOWN) {
+          promotion.votes = initialVotes + 2;
           promotion.voteState = VoteState.UP;
-          PromotionService.upvotePromotion(promotionId, authUser?.user.id || '')
-            .then(() => setPromotions(promos))
-            .catch(() => null);
+        } else {
+          promotion.votes = initialVotes + 1;
+          promotion.voteState = VoteState.UP;
         }
+        return PromotionService.upvotePromotion(promotionId, authUser.user.id)
+          .then(() => setPromotions(promos))
+          .catch(() => {
+            promotion.votes = initialVotes;
+            promotion.voteState = initialVoteState;
+            message.error('An error occurred! Please try again later.', 3);
+          });
       }
     },
     [authUser, promotions, setPromotions]

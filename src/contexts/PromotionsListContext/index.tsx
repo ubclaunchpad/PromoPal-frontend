@@ -53,7 +53,7 @@ export function PromotionsListProvider({
    */
   useEffect(() => {
     dispatch({ type: DispatchAction.DATA_LOADING });
-    PromotionService.getPromotions(authUser?.user.id || '')
+    PromotionService.getPromotions(authUser?.user.id)
       .then((promotions: Promotion[]) => {
         const payload = { promotions };
         dispatch({ type: DispatchAction.DATA_SUCCESS, payload });

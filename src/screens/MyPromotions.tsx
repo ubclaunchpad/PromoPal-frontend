@@ -1,7 +1,8 @@
 import '../index.less';
 
-import { Checkbox, Col, Row } from 'antd';
+import { Checkbox, Col, message, Row } from 'antd';
 import React, { CSSProperties, ReactElement, useCallback, useEffect, useState } from 'react';
+import { Redirect } from 'react-router-dom';
 
 import UploadPromoButton from '../components/button/UploadPromoButton';
 import DropdownMenu from '../components/DropdownMenu';
@@ -108,8 +109,8 @@ export default function MyPromotions(): ReactElement {
    * Fetches the user's uploaded promotions and sets them on this component.
    */
   const getUploadedPromotions = async (): Promise<void> => {
-    if (!authUser?.user?.id) {
-      return Promise.reject(new Error('No user is logged in.'));
+    if (!authUser?.user.id) {
+      return message.error('An error occurred! Please try signing back in again.', 5);
     }
     return UserService.getUploadedPromotions(authUser.user.id)
       .then((promotions: Promotion[]) => setUploadedPromotions(promotions))
@@ -147,22 +148,34 @@ export default function MyPromotions(): ReactElement {
 
   /**
    * If the user has not saved the promotion, save the promotion. Otherwise, delete it from their saved promotions.
+   *
+   * @param promotionId - The id of the promotion to save
    */
   const onSaveButtonClick = useCallback(
-    (promotionId: string) => {
-      const promotions = [...uploadedPromotions];
-      const promotion = promotions.find(({ id }) => id === promotionId);
+    async (promotionId: string): Promise<void> => {
+      if (!authUser?.user.id) {
+        message.error('An error occurred! Please try signing back in again.', 5);
+        return Promise.resolve();
+      }
+      const promos = [...uploadedPromotions];
+      const promotion = promos.find(({ id }) => id === promotionId);
       if (promotion) {
         if (promotion.isSavedByUser) {
           promotion.isSavedByUser = false;
-          return UserService.unsavePromotion(authUser?.user.id || '', promotionId)
-            .then(() => setUploadedPromotions(promotions))
-            .catch(() => null);
+          return UserService.unsavePromotion(authUser.user.id, promotionId)
+            .then(() => setUploadedPromotions(promos))
+            .catch(() => {
+              promotion.isSavedByUser = true;
+              message.error('An error occurred! Please try again later.', 3);
+            });
         }
         promotion.isSavedByUser = true;
-        return UserService.savePromotion(authUser?.user.id || '', promotionId)
-          .then(() => setUploadedPromotions(promotions))
-          .catch(() => null);
+        return UserService.savePromotion(authUser.user.id, promotionId)
+          .then(() => setUploadedPromotions(promos))
+          .catch(() => {
+            promotion.isSavedByUser = false;
+            message.error('An error occurred! Please try again later.', 3);
+          });
       }
     },
     [authUser, uploadedPromotions, setUploadedPromotions]
@@ -174,27 +187,33 @@ export default function MyPromotions(): ReactElement {
    * @param promotionId - The id of the promotion to downvote
    */
   const onDownvoteClick = useCallback(
-    (promotionId: string): void => {
+    async (promotionId: string): Promise<void> => {
+      if (!authUser?.user.id) {
+        message.error('An error occurred! Please try signing back in again.', 5);
+        return Promise.resolve();
+      }
       const promos = [...uploadedPromotions];
       const promotion = promos.find(({ id }) => id === promotionId);
       if (promotion) {
-        if (promotion.voteState === VoteState.DOWN) {
-          promotion.votes = promotion.votes + 1;
+        const initialVotes = promotion.votes;
+        const initialVoteState = promotion.voteState;
+        if (initialVoteState === VoteState.DOWN) {
+          promotion.votes = initialVotes + 1;
           promotion.voteState = VoteState.INIT;
-          PromotionService.downvotePromotion(promotionId, authUser?.user.id || '')
-            .then(() => setUploadedPromotions(promos))
-            .catch(() => null);
-        } else {
-          if (promotion.voteState === VoteState.UP) {
-            // Remove upvote
-            promotion.votes = promotion.votes - 1;
-          }
-          promotion.votes = promotion.votes - 1;
+        } else if (initialVoteState === VoteState.UP) {
+          promotion.votes = initialVotes - 2;
           promotion.voteState = VoteState.DOWN;
-          PromotionService.downvotePromotion(promotionId, authUser?.user.id || '')
-            .then(() => setUploadedPromotions(promos))
-            .catch(() => null);
+        } else {
+          promotion.votes = initialVotes - 1;
+          promotion.voteState = VoteState.DOWN;
         }
+        return PromotionService.downvotePromotion(promotionId, authUser.user.id)
+          .then(() => setUploadedPromotions(promos))
+          .catch(() => {
+            promotion.votes = initialVotes;
+            promotion.voteState = initialVoteState;
+            message.error('An error occurred! Please try again later.', 3);
+          });
       }
     },
     [authUser, uploadedPromotions, setUploadedPromotions]
@@ -206,27 +225,33 @@ export default function MyPromotions(): ReactElement {
    * @param promotionId - The id of the promotion to upvote
    */
   const onUpvoteClick = useCallback(
-    (promotionId: string): void => {
+    async (promotionId: string): Promise<void> => {
+      if (!authUser?.user.id) {
+        message.error('An error occurred! Please try signing back in again.', 5);
+        return Promise.resolve();
+      }
       const promos = [...uploadedPromotions];
       const promotion = promos.find(({ id }) => id === promotionId);
       if (promotion) {
-        if (promotion.voteState === VoteState.UP) {
-          promotion.votes = promotion.votes - 1;
-          promotion.voteState = promotion.voteState = VoteState.INIT;
-          PromotionService.upvotePromotion(promotionId, authUser?.user.id || '')
-            .then(() => setUploadedPromotions(promos))
-            .catch(() => null);
+        const initialVotes = promotion.votes;
+        const initialVoteState = promotion.voteState;
+        if (initialVoteState === VoteState.UP) {
+          promotion.votes = initialVotes - 1;
+          promotion.voteState = VoteState.INIT;
+        } else if (initialVoteState === VoteState.DOWN) {
+          promotion.votes = initialVotes + 2;
+          promotion.voteState = VoteState.UP;
         } else {
-          if (promotion.voteState === VoteState.DOWN) {
-            // Remove downvote
-            promotion.votes = promotion.votes + 1;
-          }
-          promotion.votes = promotion.votes + 1;
-          promotion.voteState = promotion.voteState = VoteState.UP;
-          PromotionService.upvotePromotion(promotionId, authUser?.user.id || '')
-            .then(() => setUploadedPromotions(promos))
-            .catch(() => null);
+          promotion.votes = initialVotes + 1;
+          promotion.voteState = VoteState.UP;
         }
+        return PromotionService.upvotePromotion(promotionId, authUser.user.id)
+          .then(() => setUploadedPromotions(promos))
+          .catch(() => {
+            promotion.votes = initialVotes;
+            promotion.voteState = initialVoteState;
+            message.error('An error occurred! Please try again later.', 3);
+          });
       }
     },
     [authUser, uploadedPromotions, setUploadedPromotions]
@@ -236,8 +261,8 @@ export default function MyPromotions(): ReactElement {
    * On initial render, retrieves the user's uploaded promotions.
    */
   useEffect(() => {
-    if (!authUser?.user?.id) {
-      throw new Error('No user is logged in.');
+    if (!authUser?.user.id) {
+      return message.error('An error occurred! Please try signing back in again.', 5);
     }
     UserService.getUploadedPromotions(authUser.user.id)
       .then((promotions: Promotion[]) => setUploadedPromotions(promotions))
@@ -276,6 +301,9 @@ export default function MyPromotions(): ReactElement {
     );
   };
 
+  if (!authUser) {
+    return <Redirect to="/account" />;
+  }
   return (
     <>
       <div style={styles.body}>
