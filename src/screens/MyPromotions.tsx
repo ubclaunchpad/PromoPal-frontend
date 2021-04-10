@@ -1,17 +1,18 @@
 import '../index.less';
 
-import { Checkbox, Col, Row } from 'antd';
+import { Checkbox, Col, message, Row } from 'antd';
 import React, { CSSProperties, ReactElement, useCallback, useEffect, useState } from 'react';
+import { Redirect } from 'react-router-dom';
 
 import UploadPromoButton from '../components/button/UploadPromoButton';
 import DropdownMenu from '../components/DropdownMenu';
 import DeleteModal from '../components/modal/DeleteModal';
 import PromotionCard from '../components/promotion/PromotionCard';
 import { useAuthUser } from '../contexts/AuthUserContext';
-import * as PromotionService from '../services/PromotionService';
+import PromotionService from '../services/PromotionService';
 import UserService from '../services/UserService';
 import { Dropdown, DropdownType } from '../types/dropdown';
-import { Promotion } from '../types/promotion';
+import { Promotion, VoteState } from '../types/promotion';
 
 const dropdowns: Dropdown[] = [
   {
@@ -108,8 +109,8 @@ export default function MyPromotions(): ReactElement {
    * Fetches the user's uploaded promotions and sets them on this component.
    */
   const getUploadedPromotions = async (): Promise<void> => {
-    if (!authUser?.user?.id) {
-      return Promise.reject(new Error('No user is logged in.'));
+    if (!authUser?.user.id) {
+      return message.error('An error occurred! Please try signing back in again.', 5);
     }
     return UserService.getUploadedPromotions(authUser.user.id)
       .then((promotions: Promotion[]) => setUploadedPromotions(promotions))
@@ -147,36 +148,121 @@ export default function MyPromotions(): ReactElement {
 
   /**
    * If the user has not saved the promotion, save the promotion. Otherwise, delete it from their saved promotions.
+   *
+   * @param promotionId - The id of the promotion to save
    */
   const onSaveButtonClick = useCallback(
-    (promotionId: string) => {
-      if (!authUser) {
-        return Promise.reject(new Error('No user is logged in.'));
+    async (promotionId: string): Promise<void> => {
+      if (!authUser?.user.id) {
+        message.error('An error occurred! Please try signing back in again.', 5);
+        return Promise.resolve();
       }
-      const promotions = [...uploadedPromotions];
-      const promotion = promotions.find(({ id }) => id === promotionId);
+      const promos = [...uploadedPromotions];
+      const promotion = promos.find(({ id }) => id === promotionId);
       if (promotion) {
         if (promotion.isSavedByUser) {
           promotion.isSavedByUser = false;
           return UserService.unsavePromotion(authUser.user.id, promotionId)
-            .then(() => setUploadedPromotions(promotions))
-            .catch(() => null);
+            .then(() => setUploadedPromotions(promos))
+            .catch(() => {
+              promotion.isSavedByUser = true;
+              message.error('An error occurred! Please try again later.', 3);
+            });
         }
         promotion.isSavedByUser = true;
         return UserService.savePromotion(authUser.user.id, promotionId)
-          .then(() => setUploadedPromotions(promotions))
-          .catch(() => null);
+          .then(() => setUploadedPromotions(promos))
+          .catch(() => {
+            promotion.isSavedByUser = false;
+            message.error('An error occurred! Please try again later.', 3);
+          });
       }
     },
-    [uploadedPromotions, setUploadedPromotions, authUser]
+    [authUser, uploadedPromotions, setUploadedPromotions]
+  );
+
+  /**
+   * If the user has not downvoted the promotion, downvote the promotion. Otherwise, set back to initial state.
+   *
+   * @param promotionId - The id of the promotion to downvote
+   */
+  const onDownvoteClick = useCallback(
+    async (promotionId: string): Promise<void> => {
+      if (!authUser?.user.id) {
+        message.error('An error occurred! Please try signing back in again.', 5);
+        return Promise.resolve();
+      }
+      const promos = [...uploadedPromotions];
+      const promotion = promos.find(({ id }) => id === promotionId);
+      if (promotion) {
+        const initialVotes = promotion.votes;
+        const initialVoteState = promotion.voteState;
+        if (initialVoteState === VoteState.DOWN) {
+          promotion.votes = initialVotes + 1;
+          promotion.voteState = VoteState.INIT;
+        } else if (initialVoteState === VoteState.UP) {
+          promotion.votes = initialVotes - 2;
+          promotion.voteState = VoteState.DOWN;
+        } else {
+          promotion.votes = initialVotes - 1;
+          promotion.voteState = VoteState.DOWN;
+        }
+        return PromotionService.downvotePromotion(promotionId, authUser.user.id)
+          .then(() => setUploadedPromotions(promos))
+          .catch(() => {
+            promotion.votes = initialVotes;
+            promotion.voteState = initialVoteState;
+            message.error('An error occurred! Please try again later.', 3);
+          });
+      }
+    },
+    [authUser, uploadedPromotions, setUploadedPromotions]
+  );
+
+  /**
+   * If the user has not upvoted the promotion, upvote the promotion. Otherwise, set back to initial state.
+   *
+   * @param promotionId - The id of the promotion to upvote
+   */
+  const onUpvoteClick = useCallback(
+    async (promotionId: string): Promise<void> => {
+      if (!authUser?.user.id) {
+        message.error('An error occurred! Please try signing back in again.', 5);
+        return Promise.resolve();
+      }
+      const promos = [...uploadedPromotions];
+      const promotion = promos.find(({ id }) => id === promotionId);
+      if (promotion) {
+        const initialVotes = promotion.votes;
+        const initialVoteState = promotion.voteState;
+        if (initialVoteState === VoteState.UP) {
+          promotion.votes = initialVotes - 1;
+          promotion.voteState = VoteState.INIT;
+        } else if (initialVoteState === VoteState.DOWN) {
+          promotion.votes = initialVotes + 2;
+          promotion.voteState = VoteState.UP;
+        } else {
+          promotion.votes = initialVotes + 1;
+          promotion.voteState = VoteState.UP;
+        }
+        return PromotionService.upvotePromotion(promotionId, authUser.user.id)
+          .then(() => setUploadedPromotions(promos))
+          .catch(() => {
+            promotion.votes = initialVotes;
+            promotion.voteState = initialVoteState;
+            message.error('An error occurred! Please try again later.', 3);
+          });
+      }
+    },
+    [authUser, uploadedPromotions, setUploadedPromotions]
   );
 
   /**
    * On initial render, retrieves the user's uploaded promotions.
    */
   useEffect(() => {
-    if (!authUser?.user?.id) {
-      throw new Error('No user is logged in.');
+    if (!authUser?.user.id) {
+      return message.error('An error occurred! Please try signing back in again.', 5);
     }
     UserService.getUploadedPromotions(authUser.user.id)
       .then((promotions: Promotion[]) => setUploadedPromotions(promotions))
@@ -202,8 +288,12 @@ export default function MyPromotions(): ReactElement {
               // TODO: https://promopal.atlassian.net/browse/PP-96
               restaurantName=""
               schedules={promotion.schedules}
+              votes={promotion.votes}
+              voteState={promotion.voteState}
               onDeleteButtonClick={() => onDeleteButtonClick(promotion)}
+              onDownvoteClick={() => onDownvoteClick(promotion.id)}
               onSaveButtonClick={() => onSaveButtonClick(promotion.id)}
+              onUpvoteClick={() => onUpvoteClick(promotion.id)}
             />
           </Col>
         ))}
@@ -211,11 +301,9 @@ export default function MyPromotions(): ReactElement {
     );
   };
 
-  // TODO: https://promopal.atlassian.net/browse/PP-80
   if (!authUser) {
-    return <p>Error: No user is logged in.</p>;
+    return <Redirect to="/account" />;
   }
-
   return (
     <>
       <div style={styles.body}>

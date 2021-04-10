@@ -7,9 +7,11 @@ export default {
     PROMOTION_TYPES: '/enums/PromotionType',
   },
   PROMOTIONS: {
-    GET: '/promotions',
     DELETE: (promotionId: string): string => `/promotions/${promotionId}`,
+    DOWNVOTE: (promotionId: string): string => `/promotions/${promotionId}/downVote`,
+    GET: '/promotions',
     POST: '/promotions',
+    UPVOTE: (promotionId: string): string => `/promotions/${promotionId}/upVote`,
   },
   SAVED_PROMOTIONS: 'saved_promotions',
   SCHEDULES: '/schedules',

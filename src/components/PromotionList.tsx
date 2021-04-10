@@ -1,6 +1,6 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { Place } from '@googlemaps/google-maps-services-js';
-import { Pagination, Spin } from 'antd';
+import { message, Pagination, Spin } from 'antd';
 import React, {
   CSSProperties,
   ReactElement,
@@ -20,9 +20,9 @@ import {
   DispatchAction as RestaurantDispatch,
   useRestaurantCard,
 } from '../contexts/RestaurantCardContext';
-import * as PromotionService from '../services/PromotionService';
+import PromotionService from '../services/PromotionService';
 import UserService from '../services/UserService';
-import { Promotion, Restaurant } from '../types/promotion';
+import { Promotion, Restaurant, VoteState } from '../types/promotion';
 
 const PAGE_SIZE = 10;
 
@@ -107,11 +107,14 @@ export default function PromotionList(props: Props): ReactElement {
 
   /**
    * If the user has not saved the promotion, save the promotion. Otherwise, delete it from their saved promotions.
+   *
+   * @param promotionId - The id of the promotion to save
    */
   const onSaveButtonClick = useCallback(
-    (promotionId: string) => {
-      if (!authUser) {
-        return Promise.reject(new Error('No user is logged in.'));
+    async (promotionId: string): Promise<void> => {
+      if (!authUser?.user.id) {
+        message.error('An error occurred! Please try signing back in again.', 5);
+        return Promise.resolve();
       }
       const promos = [...promotions];
       const promotion = promos.find(({ id }) => id === promotionId);
@@ -120,15 +123,97 @@ export default function PromotionList(props: Props): ReactElement {
           promotion.isSavedByUser = false;
           return UserService.unsavePromotion(authUser.user.id, promotionId)
             .then(() => setPromotions(promos))
-            .catch(() => null);
+            .catch(() => {
+              promotion.isSavedByUser = true;
+              message.error('An error occurred! Please try again later.', 3);
+            });
         }
         promotion.isSavedByUser = true;
         return UserService.savePromotion(authUser.user.id, promotionId)
           .then(() => setPromotions(promos))
-          .catch(() => null);
+          .catch(() => {
+            promotion.isSavedByUser = false;
+            message.error('An error occurred! Please try again later.', 3);
+          });
       }
     },
-    [promotions, setPromotions, authUser]
+    [authUser, promotions, setPromotions]
+  );
+
+  /**
+   * If the user has not downvoted the promotion, downvote the promotion. Otherwise, set back to initial state.
+   *
+   * @param promotionId - The id of the promotion to downvote
+   */
+  const onDownvoteClick = useCallback(
+    async (promotionId: string): Promise<void> => {
+      if (!authUser?.user.id) {
+        message.error('An error occurred! Please try signing back in again.', 5);
+        return Promise.resolve();
+      }
+      const promos = [...promotions];
+      const promotion = promos.find(({ id }) => id === promotionId);
+      if (promotion) {
+        const initialVotes = promotion.votes;
+        const initialVoteState = promotion.voteState;
+        if (initialVoteState === VoteState.DOWN) {
+          promotion.votes = initialVotes + 1;
+          promotion.voteState = VoteState.INIT;
+        } else if (initialVoteState === VoteState.UP) {
+          promotion.votes = initialVotes - 2;
+          promotion.voteState = VoteState.DOWN;
+        } else {
+          promotion.votes = initialVotes - 1;
+          promotion.voteState = VoteState.DOWN;
+        }
+        return PromotionService.downvotePromotion(promotionId, authUser.user.id)
+          .then(() => setPromotions(promos))
+          .catch(() => {
+            promotion.votes = initialVotes;
+            promotion.voteState = initialVoteState;
+            message.error('An error occurred! Please try again later.', 3);
+          });
+      }
+    },
+    [authUser, promotions, setPromotions]
+  );
+
+  /**
+   * If the user has not upvoted the promotion, upvote the promotion. Otherwise, set back to initial state.
+   *
+   * @param promotionId - The id of the promotion to upvote
+   */
+  const onUpvoteClick = useCallback(
+    async (promotionId: string): Promise<void> => {
+      if (!authUser?.user.id) {
+        message.error('An error occurred! Please try signing back in again.', 5);
+        return Promise.resolve();
+      }
+      const promos = [...promotions];
+      const promotion = promos.find(({ id }) => id === promotionId);
+      if (promotion) {
+        const initialVotes = promotion.votes;
+        const initialVoteState = promotion.voteState;
+        if (initialVoteState === VoteState.UP) {
+          promotion.votes = initialVotes - 1;
+          promotion.voteState = VoteState.INIT;
+        } else if (initialVoteState === VoteState.DOWN) {
+          promotion.votes = initialVotes + 2;
+          promotion.voteState = VoteState.UP;
+        } else {
+          promotion.votes = initialVotes + 1;
+          promotion.voteState = VoteState.UP;
+        }
+        return PromotionService.upvotePromotion(promotionId, authUser.user.id)
+          .then(() => setPromotions(promos))
+          .catch(() => {
+            promotion.votes = initialVotes;
+            promotion.voteState = initialVoteState;
+            message.error('An error occurred! Please try again later.', 3);
+          });
+      }
+    },
+    [authUser, promotions, setPromotions]
   );
 
   /**
@@ -222,8 +307,12 @@ export default function PromotionList(props: Props): ReactElement {
             // TODO: https://promopal.atlassian.net/browse/PP-96
             restaurantName=""
             schedules={promotion.schedules}
-            onSaveButtonClick={() => onSaveButtonClick(promotion.id)}
+            votes={promotion.votes}
+            voteState={promotion.voteState}
             onCardClick={() => onClickHandler(promotion.restaurant)}
+            onDownvoteClick={() => onDownvoteClick(promotion.id)}
+            onSaveButtonClick={() => onSaveButtonClick(promotion.id)}
+            onUpvoteClick={() => onUpvoteClick(promotion.id)}
           />
         ))}
       {!promotionsState.isLoading && !promotionsState.hasError && (

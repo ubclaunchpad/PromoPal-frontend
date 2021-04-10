@@ -1,4 +1,4 @@
-import './PromotionDetails.css';
+import './PromotionDetails.less';
 
 import { ClockCircleOutlined, DeleteOutlined, HeartFilled, HeartOutlined } from '@ant-design/icons';
 import { Button, Col, Row, Typography } from 'antd';
@@ -6,20 +6,24 @@ import { formatDistanceToNow } from 'date-fns';
 import parse from 'html-react-parser';
 import React, { CSSProperties, MouseEvent, ReactElement } from 'react';
 
-import { Schedule } from '../../types/promotion';
+import { useAuthUser } from '../../contexts/AuthUserContext';
+import { Schedule, VoteState } from '../../types/promotion';
 import { formatTime } from '../../utils/time';
+import Votes from './Votes';
 
 const { Title, Text } = Typography;
 
 const styles: { [identifier: string]: CSSProperties } = {
   detailsContainer: {
     paddingLeft: 10,
+    paddingRight: 10,
     textAlign: 'left',
     width: '100%',
   },
   footer: {
     color: '#8B8888',
     fontSize: '0.8em',
+    lineHeight: '1.2rem',
   },
   header: {
     justifyContent: 'space-between',
@@ -31,6 +35,12 @@ const styles: { [identifier: string]: CSSProperties } = {
     fontSize: '1.5em',
     fontWeight: 'normal',
     marginBottom: 0,
+  },
+  rightHand: {
+    alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
   },
   restaurantName: {
     fontSize: '0.9em',
@@ -59,8 +69,12 @@ interface Props {
   name: string;
   restaurantName: string;
   schedules: Schedule[];
+  votes: number;
+  voteState: VoteState;
 
+  onDownvoteClick: () => void;
   onSaveButtonClick: () => void;
+  onUpvoteClick: () => void;
 
   boldName?: string;
   boldDescription?: string;
@@ -69,11 +83,14 @@ interface Props {
 }
 
 export default function PromotionDetails(props: Props): ReactElement {
+  const authUser = useAuthUser();
+
   /**
    * Returns display text for age of promotion.
    */
   const promotionAge = (dateAdded: string): string => {
-    return formatDistanceToNow(new Date(dateAdded), { addSuffix: true });
+    const distance = formatDistanceToNow(new Date(dateAdded), { addSuffix: true });
+    return `Posted ${distance}`;
   };
 
   /**
@@ -86,6 +103,28 @@ export default function PromotionDetails(props: Props): ReactElement {
     props.onSaveButtonClick();
   };
 
+  const likeIcon = (
+    <Button
+      type="link"
+      icon={
+        props.isSavedByUser ? (
+          <HeartFilled className="heart-icon-filled" style={styles.heart} />
+        ) : (
+          <HeartOutlined className="heart-icon-outlined" style={styles.heart} />
+        )
+      }
+      onClick={onSaveHandler}
+    />
+  );
+
+  const deleteIcon = (
+    <Button
+      type="link"
+      icon={<DeleteOutlined className="trash-icon" style={styles.trashIcon} />}
+      onClick={props.onDeleteButtonClick}
+    />
+  );
+
   const displaySchedules = (schedules: Schedule[]): ReactElement[] => {
     return schedules?.map(({ dayOfWeek, startTime, endTime }, index) => (
       <Row key={index}>
@@ -96,41 +135,13 @@ export default function PromotionDetails(props: Props): ReactElement {
     ));
   };
 
-  const Info = (): ReactElement => {
-    const likeIcon = (
-      <Button
-        type="link"
-        icon={
-          props.isSavedByUser ? (
-            <HeartFilled className="heart-icon-filled" style={styles.heart} />
-          ) : (
-            <HeartOutlined className="heart-icon-outlined" style={styles.heart} />
-          )
-        }
-        onClick={onSaveHandler}
-      />
-    );
-
-    const deleteIcon = props.onDeleteButtonClick && (
-      <Button
-        type="link"
-        icon={<DeleteOutlined className="trash-icon" style={styles.trashIcon} />}
-        onClick={props.onDeleteButtonClick}
-      />
-    );
-
-    return (
-      <>
+  return (
+    <Row className="promotion-details" style={styles.detailsContainer} justify="space-between">
+      <Col span={authUser ? 22 : 24}>
         <Row style={styles.header}>
-          <Col span={22}>
-            <Title style={styles.promotionName}>
-              {props.boldName ? parse(props.boldName) : props.name}
-            </Title>
-          </Col>
-          <Col span={2}>
-            {likeIcon}
-            {deleteIcon}
-          </Col>
+          <Title className="promotion-name" style={styles.promotionName}>
+            {props.boldName ? parse(props.boldName) : props.name}
+          </Title>
         </Row>
         <Row>
           <Title style={styles.restaurantName}>{props.restaurantName}</Title>
@@ -140,38 +151,36 @@ export default function PromotionDetails(props: Props): ReactElement {
             {props.boldDescription ? parse(props.boldDescription) : <p>{props.description}</p>}
           </Text>
         </Row>
-      </>
-    );
-  };
 
-  const Schedule = (): ReactElement => (
-    <Row style={styles.scheduleContainer}>
-      <Col span={2}>
-        <ClockCircleOutlined style={styles.schedule} />
+        <Row style={styles.scheduleContainer}>
+          <Col span={2}>
+            <ClockCircleOutlined style={styles.schedule} />
+          </Col>
+          <Col span={22}>{displaySchedules(props.schedules)}</Col>
+        </Row>
+
+        <Row>
+          <Text style={styles.footer}>
+            Expires<b>{` ${new Date(props.expirationDate).toDateString()}`}</b>
+          </Text>
+        </Row>
+
+        <Row>
+          <Text style={styles.footer}>{promotionAge(props.dateAdded)}</Text>
+        </Row>
       </Col>
-      <Col span={22}>{displaySchedules(props.schedules)}</Col>
+      {authUser && (
+        <Col span={2} style={styles.rightHand}>
+          <Votes
+            votes={props.votes}
+            voteState={props.voteState}
+            onDownvoteClick={props.onDownvoteClick}
+            onUpvoteClick={props.onUpvoteClick}
+          />
+          {likeIcon}
+          {props.onDeleteButtonClick && deleteIcon}
+        </Col>
+      )}
     </Row>
-  );
-
-  const Footer = (): ReactElement => (
-    <Row justify="space-between">
-      <Col>
-        <Text style={styles.footer}>Expires</Text>
-        <Text strong style={styles.footer}>
-          {` ${new Date(props.expirationDate).toDateString()}`}
-        </Text>
-      </Col>
-      <Col>
-        <Text style={styles.footer}>{promotionAge(props.dateAdded)}</Text>
-      </Col>
-    </Row>
-  );
-
-  return (
-    <Col className="promotion-details" style={styles.detailsContainer}>
-      <Info />
-      <Schedule />
-      <Footer />
-    </Col>
   );
 }
