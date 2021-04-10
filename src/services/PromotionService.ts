@@ -1,7 +1,7 @@
 import { Place } from '@googlemaps/google-maps-services-js';
 import axios, { AxiosResponse } from 'axios';
 
-import UserService from '../services/UserService';
+// import LocationService from '../services/LocationService';
 import {
   DeletePromotionsResponse,
   GetPromotionsResponse,
@@ -22,16 +22,19 @@ import GooglePlacesService from './GooglePlacesService';
  * Fetches entire list of promotions. If a query object is given, filters the promotions according to the given query.
  * If an error occurs, an empty list will be returned.
  *
+ * @param userId [optional] - The userId of a logged in user
  * @param query [optional] - An array of objects with key-value pairs for the query parameters
  */
-export async function getPromotions(query?: GetPromotionDTO): Promise<Promotion[]> {
+export async function getPromotions(
+  userId?: string,
+  query?: GetPromotionDTO
+): Promise<Promotion[]> {
   const endpoint = Routes.PROMOTIONS.GET;
-
   return axios
     .get(endpoint, {
       params: {
         ...query,
-        userId: UserService.userId,
+        userId: userId,
       },
     })
     .then(({ data }: AxiosResponse<GetPromotionsResponse>) => {
@@ -89,8 +92,13 @@ export async function getRestaurant(restaurantId: string): Promise<Place> {
  *
  * @param filters - An object specifying the keys and the values to filter the promotions by
  * @param sort - A string representing the key to sort the promotions by
+ * @param userId [optional] - The userId of a logged in user
  */
-export async function queryPromotions(filters: FilterOptions, sort?: Sort): Promise<Promotion[]> {
+export async function queryPromotions(
+  filters: FilterOptions,
+  sort?: Sort,
+  userId?: string
+): Promise<Promotion[]> {
   const { cuisine, dayOfWeek, discountType, promotionType } = filters;
 
   const promotionQueryDTO: GetPromotionDTO = {
@@ -122,5 +130,5 @@ export async function queryPromotions(filters: FilterOptions, sort?: Sort): Prom
   //   promotionQueryDTO.push(queryParams);
   // }
 
-  return getPromotions(promotionQueryDTO);
+  return getPromotions(userId, promotionQueryDTO);
 }

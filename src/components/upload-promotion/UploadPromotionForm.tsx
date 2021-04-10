@@ -6,9 +6,9 @@ import moment from 'moment';
 import React, { ReactElement, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
+import { useAuthUser } from '../../contexts/AuthUserContext';
 import EnumService from '../../services/EnumService';
 import * as PromotionService from '../../services/PromotionService';
-import UserService from '../../services/UserService';
 import { Day, PostPromotionDTO, Schedule } from '../../types/promotion';
 import Button from '../button/Button';
 import LocationSearchInput from '../restaurant/LocationSearchInput';
@@ -44,11 +44,18 @@ interface PromotionDates {
 // https://promopal.atlassian.net/browse/PP-87
 export default function UploadPromotionForm(): ReactElement {
   const [form] = Form.useForm();
+  const [isDisabled, setDisabled] = useState(false);
 
   const history = useHistory();
+  const authUser = useAuthUser();
 
   const [datesEffective, setDatesEffective] = useState<PromotionDates>({ start: '', end: '' });
   const [times, setTimes] = useState<PromotionTimes>({});
+
+  // TODO: https://promopal.atlassian.net/browse/PP-80
+  if (!authUser) {
+    return <p>Error: No user is logged in.</p>;
+  }
 
   const initialValues: FormFields = {
     cuisineType: '',
@@ -70,6 +77,7 @@ export default function UploadPromotionForm(): ReactElement {
    * @param values - The values entered in the form
    */
   const onFinish = (values: unknown): void => {
+    setDisabled(true);
     const getSchedules = (): Schedule[] => {
       return Object.entries(times).map(([day, times]) => {
         return {
@@ -115,7 +123,7 @@ export default function UploadPromotionForm(): ReactElement {
       address: formValues.restaurantAddress,
       schedules: getSchedules(),
       startDate: formValues.datesEffective[0],
-      userId: UserService.userId,
+      userId: authUser.user.id,
     };
 
     PromotionService.postPromotion(promotionDTO)
@@ -124,6 +132,7 @@ export default function UploadPromotionForm(): ReactElement {
 
         const successMessage = `The promotion "${formValues.promotionName}" was successfully uploaded!`;
         message.success(successMessage, 5);
+        setDisabled(false);
       })
       .catch((error) => {
         let errorMessage = 'An error occurred. ';
@@ -131,6 +140,7 @@ export default function UploadPromotionForm(): ReactElement {
           errorMessage = errorMessage + error.response.data.message.join('. ');
         }
         message.error(errorMessage, 5);
+        setDisabled(false);
       });
   };
 
@@ -324,7 +334,7 @@ export default function UploadPromotionForm(): ReactElement {
             <Select
               options={EnumService.discountTypes.map((type) => ({ value: type }))}
               onChange={onDiscountTypeChange}
-            ></Select>
+            />
           </Form.Item>
         </Input.Group>
       </Form.Item>
@@ -417,7 +427,7 @@ export default function UploadPromotionForm(): ReactElement {
 
       <Form.Item>
         <Row justify="center" className="submit-upload-promotion-form">
-          <Button htmlType="submit" size="large" text="Submit" />
+          <Button htmlType="submit" size="large" text="Submit" disabled={isDisabled} />
         </Row>
       </Form.Item>
     </Form>

@@ -3,6 +3,7 @@ import React, { createContext, ReactElement, useContext, useEffect, useReducer }
 import { promotionsListReducer } from '../../reducers/PromotionsListReducer';
 import { getPromotions } from '../../services/PromotionService';
 import { FilterOptions, Promotion, Sort } from '../../types/promotion';
+import { useAuthUser } from '../AuthUserContext';
 import { Context, DispatchAction, DispatchParams, State } from './types';
 
 export const defaultFilters: FilterOptions = {
@@ -45,12 +46,14 @@ export function PromotionsListProvider({
 }): ReactElement {
   const [state, dispatch] = useReducer(promotionsListReducer, initialState);
 
+  const authUser = useAuthUser();
+
   /**
    * On component mount, fetch promotions and set them on the state.
    */
   useEffect(() => {
     dispatch({ type: DispatchAction.DATA_LOADING });
-    getPromotions()
+    getPromotions(authUser?.user?.id)
       .then((promotions: Promotion[]) => {
         const payload = { promotions };
         dispatch({ type: DispatchAction.DATA_SUCCESS, payload });
@@ -59,7 +62,7 @@ export function PromotionsListProvider({
         const payload = { promotions: [] };
         dispatch({ type: DispatchAction.DATA_FAILURE, payload });
       });
-  }, []);
+  }, [authUser]);
 
   return (
     <PromotionsListContext.Provider value={{ state, dispatch }}>

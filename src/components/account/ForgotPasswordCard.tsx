@@ -1,6 +1,9 @@
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Tooltip } from 'antd';
+import { Button, Form, Input, message, Tooltip } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
+
+import UserService from '../../services/UserService';
+import { InputRules } from '../../types/rules';
 
 const styles: { [identifier: string]: CSSProperties } = {
   button: {
@@ -25,16 +28,16 @@ interface Props {
 }
 
 export default function ForgotPasswordCard(props: Props): ReactElement {
-  const onFinish = (): void => {
-    alert('Finish');
-    //console.log('Success:', values);
-    // TODO https://promopal.atlassian.net/jira/software/projects/PP/boards/1?selectedIssue=PP-35
-    // TODO https://promopal.atlassian.net/jira/software/projects/PP/boards/1?selectedIssue=PP-37
+  const onFinish = (data: { email: string }): void => {
+    UserService.resetUserPassword(data.email);
+    const successMessage =
+      'A password reset email has been sent if an account with the email exists';
+    message.success(successMessage, 5);
   };
 
   const onFinishFailed = (): void => {
-    //console.log('Failed:', errorInfo);
-    // TODO https://promopal.atlassian.net/jira/software/projects/PP/boards/1?selectedIssue=PP-38
+    const errorMessage = 'An error occurred! Please review the form to see what went wrong.';
+    message.error(errorMessage, 5);
   };
 
   return (
@@ -53,10 +56,7 @@ export default function ForgotPasswordCard(props: Props): ReactElement {
       <Form.Item
         style={styles.inputWrapper}
         name="email"
-        rules={[
-          { required: true, message: 'An email is required.' },
-          { type: 'email', message: 'The input is not a valid email.' },
-        ]}
+        rules={InputRules.email}
         hasFeedback={true}
       >
         <Input placeholder="Email" />
