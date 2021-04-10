@@ -69,12 +69,12 @@ export default function RegisterCard(props: Props): ReactElement {
 
       <Row gutter={6} style={{ marginBottom: 5 }}>
         <Col span={12}>
-          <Form.Item name="firstname" rules={InputRules.firstName} hasFeedback={true}>
+          <Form.Item name="firstName" rules={InputRules.firstName} hasFeedback={true}>
             <Input placeholder="First name" />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="lastname" rules={InputRules.lastName} hasFeedback={true}>
+          <Form.Item name="lastName" rules={InputRules.lastName} hasFeedback={true}>
             <Input placeholder="Last name" />
           </Form.Item>
         </Col>

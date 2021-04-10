@@ -57,15 +57,6 @@ export default function NavigationBar(): ReactElement {
           selectedKeys={[current]}
         >
           <Menu.Item
-            key={Pages.Account}
-            className={className(
-              { 'navigation-menu-item--active': current === Pages.Account },
-              'navigation-menu-item'
-            )}
-          >
-            <Link to={Paths.Account}>{authUser ? 'My Account' : 'Login'}</Link>
-          </Menu.Item>
-          <Menu.Item
             key={Pages.UploadPromotion}
             className={className(
               { 'navigation-menu-item--active': current === Pages.UploadPromotion },
@@ -82,6 +73,15 @@ export default function NavigationBar(): ReactElement {
             )}
           >
             <Link to={Paths.MyPromotions}>My Promotions</Link>
+          </Menu.Item>
+          <Menu.Item
+            key={Pages.Account}
+            className={className(
+              { 'navigation-menu-item--active': current === Pages.Account },
+              'navigation-menu-item'
+            )}
+          >
+            <Link to={Paths.Account}>{authUser ? 'My Account' : 'Login'}</Link>
           </Menu.Item>
         </Menu>
       </div>

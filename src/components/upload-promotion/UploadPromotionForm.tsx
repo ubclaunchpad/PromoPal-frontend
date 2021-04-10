@@ -4,7 +4,7 @@ import { Col, DatePicker, Form, Input, InputNumber, message, Row, Select } from 
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import moment from 'moment';
 import React, { ReactElement, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 
 import { useAuthUser } from '../../contexts/AuthUserContext';
 import EnumService from '../../services/EnumService';
@@ -52,11 +52,6 @@ export default function UploadPromotionForm(): ReactElement {
   const [datesEffective, setDatesEffective] = useState<PromotionDates>({ start: '', end: '' });
   const [times, setTimes] = useState<PromotionTimes>({});
 
-  // TODO: https://promopal.atlassian.net/browse/PP-80
-  if (!authUser) {
-    return <p>Error: No user is logged in.</p>;
-  }
-
   const initialValues: FormFields = {
     cuisineType: '',
     datesEffective: [],
@@ -69,6 +64,10 @@ export default function UploadPromotionForm(): ReactElement {
     restaurant: '',
     restaurantAddress: '',
   };
+
+  if (!authUser?.user.id) {
+    return <Redirect to="/account" />;
+  }
 
   /**
    * Handler to be called when form is submitted. This function processes and cleans the values from the form

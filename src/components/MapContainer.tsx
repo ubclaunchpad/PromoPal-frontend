@@ -23,6 +23,7 @@ function MapContainer(): ReactElement {
   const initializeMarkers = useCallback(
     (map: google.maps.Map | null) => {
       const onClickHandler = (promoRestaurant: Restaurant): void => {
+        restaurantDispatch({ type: RestaurantDispatch.DATA_LOADING });
         PromotionService.getRestaurant(promoRestaurant.id)
           .then((restaurant: Place) => {
             restaurantDispatch({
