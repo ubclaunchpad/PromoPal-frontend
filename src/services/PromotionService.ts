@@ -65,28 +65,28 @@ class PromotionService {
       .catch((err: Error) => Promise.reject(err));
   }
 
-/**
- * Creates a new promotion.
- *
- * @param promotionDTO - An object containing the fields of the promotion
- * @param image - An promotion image to upload
- */
-export async function postPromotion(promotionDTO: PostPromotionDTO, image?: Image): Promise<void> {
-  const url = Routes.PROMOTIONS.POST;
-  return axios
-    .post(url, promotionDTO)
-    .then(async ({ data }: AxiosResponse<PostPromotionsResponse>) => {
-      if (isError<PostPromotionsResponse>(data)) {
-        return Promise.reject(data);
-      }
-      if (image) {
-        // Will resolve even on error
-        await AmazonS3Service.uploadImage(image, data.id);
-      }
-      return Promise.resolve();
-    })
-    .catch((err: Error) => Promise.reject(err));
-}
+  /**
+   * Creates a new promotion.
+   *
+   * @param promotionDTO - An object containing the fields of the promotion
+   * @param image - An promotion image to upload
+   */
+  public async postPromotion(promotionDTO: PostPromotionDTO, image?: Image): Promise<void> {
+    const url = Routes.PROMOTIONS.POST;
+    return axios
+      .post(url, promotionDTO)
+      .then(async ({ data }: AxiosResponse<PostPromotionsResponse>) => {
+        if (isError<PostPromotionsResponse>(data)) {
+          return Promise.reject(data);
+        }
+        if (image) {
+          // Will resolve even on error
+          await AmazonS3Service.uploadImage(image, data.id);
+        }
+        return Promise.resolve();
+      })
+      .catch((err: Error) => Promise.reject(err));
+  }
 
   /**
    * Retrieves the restaurant associated with the promotion.
