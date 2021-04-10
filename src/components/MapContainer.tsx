@@ -82,7 +82,7 @@ function MapContainer(): ReactElement {
       });
   }, [createMap]);
 
-  return <div id="map-container" style={{ width: '60vw' }} ref={mapElement}></div>;
+  return <div id="map-container" style={{ width: '65vw' }} ref={mapElement}></div>;
 }
 
 export default MapContainer;

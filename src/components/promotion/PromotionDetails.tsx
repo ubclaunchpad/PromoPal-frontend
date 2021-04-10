@@ -2,7 +2,6 @@ import './PromotionDetails.less';
 
 import { ClockCircleOutlined, DeleteOutlined, HeartFilled, HeartOutlined } from '@ant-design/icons';
 import { Button, Col, Row, Typography } from 'antd';
-import { formatDistanceToNow } from 'date-fns';
 import parse from 'html-react-parser';
 import React, { MouseEvent, ReactElement } from 'react';
 
@@ -37,14 +36,6 @@ interface Props {
 
 export default function PromotionDetails(props: Props): ReactElement {
   const authUser = useAuthUser();
-
-  /**
-   * Returns display text for age of promotion.
-   */
-  const promotionAge = (dateAdded: string): string => {
-    const distance = formatDistanceToNow(new Date(dateAdded), { addSuffix: true });
-    return `Posted ${distance}`;
-  };
 
   /**
    * On click handler for "save" button: stops restaurant card from being opened when the save button is pressed.
@@ -97,31 +88,20 @@ export default function PromotionDetails(props: Props): ReactElement {
           </Title>
         </Row>
         <Row>
-          <Title className="restaurant-name">{props.restaurantName}</Title>
-        </Row>
-        <Row>
           <Text className="promotion-description">
             {props.boldDescription ? parse(props.boldDescription) : props.description}
           </Text>
         </Row>
 
-        <Row className="schedule-container" gutter={12}>
-          <Col span={2}>
-            <ClockCircleOutlined className="schedule-clock" />
-          </Col>
-          <Col span={22} className="schedule-times-container">
-            {displaySchedules(props.schedules)}
-          </Col>
+        <Row className="schedule-container">
+          <ClockCircleOutlined className="schedule-clock" />
+          <div className="schedule-times-container">{displaySchedules(props.schedules)}</div>
         </Row>
 
         <Row>
           <Text className="footer-text">
             Expires<b>{` ${new Date(props.expirationDate).toDateString()}`}</b>
           </Text>
-        </Row>
-
-        <Row>
-          <Text className="footer-text">{promotionAge(props.dateAdded)}</Text>
         </Row>
       </Col>
       {authUser && (

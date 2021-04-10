@@ -107,7 +107,7 @@ export default function Home(): ReactElement {
       })),
     },
     {
-      text: 'Day of Week',
+      text: 'Day of the Week',
       type: DropdownType.MultiSelect,
       options: EnumService.daysOfWeek.map((dayOfWeek) => ({
         action: actions.dayOfWeek,

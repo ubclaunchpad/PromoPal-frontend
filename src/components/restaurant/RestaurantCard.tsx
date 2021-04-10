@@ -107,7 +107,7 @@ export default function RestaurantCard(props: Props): ReactElement {
 
   return (
     <div className="restaurant-card-container">
-      <Col className="restaurant-card" style={{ left: `calc(60% - ${containerPadding} - 350px)` }}>
+      <Col className="restaurant-card" style={{ left: `calc(65% - ${containerPadding} - 350px)` }}>
         {props.isNotFound ? restaurantNotFoundCard() : restaurantCard()}
       </Col>
     </div>

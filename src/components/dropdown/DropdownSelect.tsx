@@ -81,7 +81,7 @@ export default function DropdownSelect(props: Props): ReactElement {
   return (
     <Dropdown overlay={dropdownOptions}>
       <div className={className({ 'dropdown-button--active': !!activeKey }, 'dropdown-button')}>
-        {props.text} <DownOutlined />
+        {activeKey ? `${props.text}: ${activeKey}` : props.text} <DownOutlined />
       </div>
     </Dropdown>
   );
