@@ -1,4 +1,4 @@
-import './PromotionsTab.css';
+import './PromotionsTab.less';
 
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { Col, Row, Tabs } from 'antd';
@@ -63,7 +63,7 @@ export default function PromotionsTab(props: Props): ReactElement {
   }, [props.restaurantId]);
 
   return (
-    <Tabs className="tab-promotions" defaultActiveKey="Sun" size="small">
+    <Tabs className="promotions-tab" defaultActiveKey="Sun" size="small">
       {DAYS.map((day) => {
         const restaurantPromotions = mapPromotionsToDays(promotions)[day];
         return (

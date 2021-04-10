@@ -1,10 +1,10 @@
-import './Body.css';
+import './Body.less';
 
 import { OpeningHours, PlacePhoto } from '@googlemaps/google-maps-services-js';
 import { Col, Row, Tabs } from 'antd';
 import React, { ReactElement } from 'react';
 
-import PhotosTab from './PhotosTab';
+import PhotosTab from './tab/PhotosTab';
 import PromotionsTab from './tab/PromotionsTab';
 
 const { TabPane } = Tabs;

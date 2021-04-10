@@ -1,0 +1,78 @@
+@import '../../../variables.less';
+
+.restaurant-tabs {
+  width: 100%;
+
+  .ant-tabs-nav-wrap {
+    background-color: #ffeddc;
+    margin-top: 10px;
+    margin-bottom: -10px;
+
+    .ant-tabs-content.ant-tabs-content-top {
+      margin-bottom: 15px;
+    }
+
+    .ant-tabs-nav-list {
+      .ant-tabs-ink-bar.ant-tabs-ink-bar-animated {
+        height: 0;
+        width: 0;
+      }
+
+      .ant-tabs-tab {
+        padding-left: 20px;
+        padding-right: 20px;
+        margin-right: 0px;
+        transition: all 0.5s ease-in-out;
+
+        &:hover {
+          color: @black;
+        }
+
+        & + .ant-tabs-tab {
+          margin: 0px;
+        }
+
+        &.ant-tabs-tab-active {
+          background-color: @yellow;
+
+          .ant-tabs-tab-btn {
+            font-weight: bold;
+          }
+        }
+
+        .ant-tabs-tab-btn {
+          color: @black;
+        }
+      }
+    }
+  }
+
+  .restaurant-section {
+    padding-bottom: 10px;
+
+    h3 {
+      color: @black;
+      font-size: 0.9rem;
+      font-weight: bold;
+      margin-bottom: 0px;
+    }
+
+    p {
+      color: @gray;
+      font-size: 0.8rem;
+      margin-bottom: 0px;
+    }
+
+    .restaurant-section-details {
+      white-space: pre-line;
+    }
+  }
+
+  .restaurant-tab-content {
+    flex: inherit;
+    margin: 10px 20px 20px 20px;
+    max-height: 250px;
+    overflow-y: scroll;
+    word-break: break-word;
+  }
+}

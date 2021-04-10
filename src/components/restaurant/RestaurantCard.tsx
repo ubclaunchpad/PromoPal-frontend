@@ -88,11 +88,6 @@ export default function RestaurantCard(props: Props): ReactElement {
           </Col>
         </Row>
         <Header
-          // cuisine={
-          //   'Italian'
-          //   // todo: this should use a promotions cuisine https://promopal.atlassian.net/browse/PP-91
-          //   // restaurant.cuisine
-          // }
           distance={distance}
           priceLevel={props.priceLevel}
           name={props.name}
