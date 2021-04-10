@@ -47,22 +47,15 @@ export default function NavigationBar(): ReactElement {
   return (
     <header id="navigation-header" className="navigation-header">
       <div className="navigation-header-container">
-        <Logo title="PromoPal" className="logo" height={50} />
+        <Link to={Paths.Home}>
+          <Logo title="PromoPal" className="logo" height={50} />
+        </Link>
         <Menu
           mode="horizontal"
           className="navigation-menu"
           onClick={({ key }) => setCurrent(key as Pages)}
           selectedKeys={[current]}
         >
-          <Menu.Item
-            key={Pages.Home}
-            className={className(
-              { 'navigation-menu-item--active': current === Pages.Home },
-              'navigation-menu-item'
-            )}
-          >
-            <Link to={Paths.Home}>Home</Link>
-          </Menu.Item>
           <Menu.Item
             key={Pages.Account}
             className={className(
