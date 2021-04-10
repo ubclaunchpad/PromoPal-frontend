@@ -13,7 +13,7 @@ interface Props {
 
 export default function ImageSelector(props: Props): ReactElement {
   return (
-    <div className="promotion-image">
+    <div className="promotion-image-upload">
       {/* Displays the image selector if no image is selected */}
       {!props.image.imageBinary && (
         <input
