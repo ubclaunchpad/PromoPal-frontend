@@ -1,78 +1,16 @@
 import '../index.less';
 import './MyPromotions.less';
 
-import { Button, Checkbox, Col, Row } from 'antd';
+import { Button, Col, Row } from 'antd';
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import DropdownMenu from '../components/DropdownMenu';
 import DeleteModal from '../components/modal/DeleteModal';
 import PromotionCard from '../components/promotion/PromotionCard';
 import { useAuthUser } from '../contexts/AuthUserContext';
 import PromotionService from '../services/PromotionService';
 import UserService from '../services/UserService';
-import { Dropdown, DropdownType } from '../types/dropdown';
 import { Promotion, VoteState } from '../types/promotion';
-
-const dropdowns: Dropdown[] = [
-  {
-    text: 'Sort',
-    type: DropdownType.Radio,
-    options: [
-      {
-        action: () => {
-          /* stub */
-        },
-        description: 'Sort by Option 1',
-        text: 'Option 1',
-      },
-      {
-        action: () => {
-          /* stub */
-        },
-        description: 'Sort by Option 2',
-        text: 'Option 2',
-      },
-      {
-        action: () => {
-          /* stub */
-        },
-        description: 'Sort by Option 3',
-        text: 'Option 3',
-      },
-    ],
-  },
-  {
-    text: 'Category',
-    type: DropdownType.MultiSelect,
-    options: [
-      {
-        action: () => {
-          /* stub */
-        },
-        text: 'Option 1',
-      },
-      {
-        action: () => {
-          /* stub */
-        },
-        text: 'Option 2',
-      },
-      {
-        action: () => {
-          /* stub */
-        },
-        text: 'Option 3',
-      },
-    ],
-  },
-];
-
-const dropdownMenuWidth = 30;
-
-const onChange = (): void => {
-  /* stub */
-};
 
 export default function MyPromotions(): ReactElement {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
@@ -264,19 +202,8 @@ export default function MyPromotions(): ReactElement {
   return (
     <>
       <div className="promotions-container">
-        <h1>Uploaded by you</h1>
-        <div style={{ display: 'inline-flex', width: '100%' }}>
-          <div style={{ width: dropdownMenuWidth }}>
-            <DropdownMenu dropdowns={dropdowns} />
-          </div>
-          <div className="checkbox-container" style={{ width: 100 - dropdownMenuWidth }}>
-            <Checkbox onChange={onChange} style={{ float: 'right' }}>
-              Show active deals only
-            </Checkbox>
-          </div>
-        </div>
-        <div className="uploaded-promotions">{renderUploadedPromotions()}</div>
-        <div className="upload-promotion-button-container">
+        <div className="promotions-header">
+          <h1>Uploaded by you</h1>
           <Button
             size="large"
             shape="round"
@@ -286,6 +213,17 @@ export default function MyPromotions(): ReactElement {
             Upload Promo
           </Button>
         </div>
+        {/* <div className="promotions-actions">
+          <div className="promotions-dropdown-menu">
+            <DropdownMenu dropdowns={dropdowns} location="my-promotions" />
+          </div>
+          <div className="checkbox-container">
+            <Checkbox onChange={onChange} style={{ float: 'right' }}>
+              Show active deals only
+            </Checkbox>
+          </div>
+        </div> */}
+        <div className="uploaded-promotions">{renderUploadedPromotions()}</div>
       </div>
 
       {promotionToDelete && (

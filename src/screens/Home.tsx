@@ -137,7 +137,7 @@ export default function Home(): ReactElement {
 
   return (
     <>
-      <DropdownMenu dropdowns={dropdowns} shadow />
+      <DropdownMenu dropdowns={dropdowns} shadow={true} location="home" />
       <div
         id="content-container"
         style={{ display: 'inline-flex', height: '100%', overflow: 'hidden', position: 'relative' }}

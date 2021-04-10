@@ -37,20 +37,24 @@ function ClearAllButton(): ReactElement {
  * @param dropdowns The list of Dropdown objects for this menu with the title of the dropdown button,
  * the dropdown type (radio or multiple select), and the list of options to be selected
  * @param shadow Whether or not to display the surrounding box shadow
+ * @param location The place in the app where this dropdown is located, will be used to apply a class called
+ * `dropdown-menu-container--${location}` which is specific to this instance
  */
 export default function DropdownMenu({
   dropdowns,
   shadow = false,
+  location,
 }: {
   dropdowns: DropdownType[];
   shadow?: boolean;
+  location: string;
 }): ReactElement {
   return (
     <Row
       id="dropdown-menu"
       className={className(
         { 'dropdown-menu-container--shadow': !!shadow },
-        'dropdown-menu-container'
+        `dropdown-menu-container dropdown-menu-container--${location}`
       )}
     >
       {dropdowns.map((dropdown, index) => (

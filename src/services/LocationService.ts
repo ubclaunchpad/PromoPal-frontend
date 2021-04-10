@@ -25,6 +25,11 @@ export type LatLng = google.maps.LatLng;
 
 abstract class LocationService<LocationType> {
   /**
+   * The last known location of the user.
+   */
+  public currentLocation: LocationType | null = null;
+
+  /**
    * Default coordinates is in downtown Vancouver
    */
   public defaultCoordinates = { latitude: 49.282, longitude: -123.1171 };
@@ -57,8 +62,13 @@ class GeolocationPositionService extends LocationService<GeolocationPosition> {
    */
   public async getCurrentLocation(): Promise<GeolocationPosition> {
     return new Promise((resolve, reject) => {
+      this.currentLocation = this.defaultLocation;
+
       if (navigator.geolocation) {
-        const onSuccess = (position: GeolocationPosition): void => resolve(position);
+        const onSuccess = (position: GeolocationPosition): void => {
+          this.currentLocation = position;
+          return resolve(position);
+        };
         const onError = (err: GeolocationPositionError): void => reject(err);
         navigator.geolocation.getCurrentPosition(onSuccess, onError, { timeout: 3000 });
       } else {
@@ -93,12 +103,15 @@ class LatLngService extends LocationService<LatLng> {
    */
   public async getCurrentLocation(): Promise<LatLng> {
     return new Promise((resolve, reject) => {
+      this.currentLocation = this.defaultLocation;
+
       if (navigator.geolocation) {
         const onSuccess = (position: GeolocationPosition): void => {
           const {
             coords: { latitude, longitude },
           } = position;
-          return resolve(new google.maps.LatLng(latitude, longitude));
+          this.currentLocation = new google.maps.LatLng(latitude, longitude);
+          return resolve(this.currentLocation);
         };
         const onError = (err: GeolocationPositionError): void => reject(err);
         navigator.geolocation.getCurrentPosition(onSuccess, onError, { timeout: 3000 });

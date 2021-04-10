@@ -18,6 +18,7 @@ import {
 import { isError } from '../utils/api';
 import Routes from '../utils/routes';
 import GooglePlacesService from './GooglePlacesService';
+import LocationService from './LocationService';
 
 class PromotionService {
   /**
@@ -123,17 +124,17 @@ class PromotionService {
       promotionQueryDTO.discountType = discount;
     }
 
-    // if (sort) {
-    //   const queryParams: { [paramKey: string]: string } = { sort };
-    //   if (sort === Sort.Distance) {
-    //     const {
-    //       coords: { latitude, longitude },
-    //     } = await LocationService.GeolocationPosition.getCurrentLocation();
-    //     queryParams.lat = `${latitude}`;
-    //     queryParams.lon = `${longitude}`;
-    //   }
-    //   promotionQueryDTO.push(queryParams);
-    // }
+    if (sort) {
+      promotionQueryDTO.sort = sort;
+      if (sort === Sort.Distance) {
+        const { currentLocation, defaultLocation } = LocationService.GeolocationPosition;
+        const {
+          coords: { latitude, longitude },
+        } = currentLocation || defaultLocation;
+        promotionQueryDTO.lat = latitude;
+        promotionQueryDTO.lon = longitude;
+      }
+    }
 
     return this.getPromotions(userId, promotionQueryDTO);
   }
