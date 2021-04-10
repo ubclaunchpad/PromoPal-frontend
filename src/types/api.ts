@@ -15,9 +15,11 @@ export interface ApiError {
 export type EnumResponse = ApiResponse<string[]>;
 
 // Promotions
-export type GetPromotionsResponse = ApiResponse<Promotion[]>;
 export type DeletePromotionsResponse = ApiResponse<string>;
+export type DownvotePromotionResponse = ApiResponse<void>;
+export type GetPromotionsResponse = ApiResponse<Promotion[]>;
 export type PostPromotionsResponse = ApiResponse<Promotion>;
+export type UpvotePromotionResponse = ApiResponse<void>;
 
 // Restaurants
 export type RestaurantDetailsResponse = ApiResponse<Place>;

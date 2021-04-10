@@ -8,7 +8,7 @@ import { Redirect, useHistory } from 'react-router-dom';
 
 import { useAuthUser } from '../../contexts/AuthUserContext';
 import EnumService from '../../services/EnumService';
-import * as PromotionService from '../../services/PromotionService';
+import PromotionService from '../../services/PromotionService';
 import { Image } from '../../types/image';
 import { Day, PostPromotionDTO, Schedule } from '../../types/promotion';
 import Button from '../button/Button';
@@ -71,6 +71,10 @@ export default function UploadPromotionForm(): ReactElement {
     restaurant: '',
     restaurantAddress: '',
   };
+
+  if (!authUser?.user.id) {
+    return <Redirect to="/account" />;
+  }
 
   /**
    * Handler to be called when form is submitted. This function processes and cleans the values from the form

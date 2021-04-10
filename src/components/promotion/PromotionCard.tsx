@@ -1,7 +1,7 @@
 import { Card } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
 
-import { Schedule } from '../../types/promotion';
+import { Schedule, VoteState } from '../../types/promotion';
 import PromotionDetails from '../promotion/PromotionDetails';
 import PromotionImage from '../promotion/PromotionImage';
 
@@ -34,8 +34,12 @@ interface Props {
   placeId: string;
   restaurantName: string;
   schedules: Schedule[];
+  votes: number;
+  voteState: VoteState;
 
+  onDownvoteClick: () => void;
   onSaveButtonClick: () => void;
+  onUpvoteClick: () => void;
 
   boldName?: string;
   boldDescription?: string;
@@ -59,8 +63,12 @@ export default function PromotionCard(props: Props): ReactElement {
         restaurantName={props.restaurantName}
         isSavedByUser={props.isSavedByUser}
         schedules={props.schedules}
+        votes={props.votes}
+        voteState={props.voteState}
         onDeleteButtonClick={props.onDeleteButtonClick}
         onSaveButtonClick={props.onSaveButtonClick}
+        onDownvoteClick={props.onDownvoteClick}
+        onUpvoteClick={props.onUpvoteClick}
       />
     </Card>
   );

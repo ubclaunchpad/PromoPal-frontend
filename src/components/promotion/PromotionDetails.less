@@ -1,35 +1,48 @@
-/* Promotion text description */
-.promotion-description {
-  -webkit-line-clamp: 2;
+@import '../../variables.less';
+
+/* Promotion name */
+.promotion-name {
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   display: -webkit-box;
   margin-bottom: 0;
   overflow: hidden;
   text-overflow: ellipsis;
-  word-break: break-all;
+  word-break: break-word;
+}
+
+/* Promotion text description */
+.promotion-description {
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  margin-bottom: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
 }
 
 /* Heart icon (liked) */
 .promotion-details .heart-icon-filled {
-  color: var(--red);
+  color: @red;
 }
 
 /* Heart icon */
 .promotion-details .heart-icon-outlined {
-  color: var(--black);
+  color: @gray;
 }
 
 /* Heart icon hover */
 .promotion-details .heart-icon-outlined:hover {
-  color: var(--red);
+  color: @red;
 }
 
 /* Delete icon */
 .promotion-details .trash-icon {
-  color: var(--black);
+  color: @gray;
 }
 
 /* Delete icon hover */
 .promotion-details .trash-icon:hover {
-  color: var(--red);
+  color: @red;
 }

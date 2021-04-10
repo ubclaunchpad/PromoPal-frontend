@@ -7,6 +7,12 @@ export enum Sort {
   Recency = 'Recency',
 }
 
+export enum VoteState {
+  INIT = 0,
+  UP = 1,
+  DOWN = -1,
+}
+
 export interface Promotion {
   id: string;
   category: string;
@@ -25,6 +31,7 @@ export interface Promotion {
   schedules: Schedule[];
   user: User;
   votes: number;
+  voteState: VoteState;
   boldDescription?: string;
   boldName?: string;
   rank?: number;
