@@ -12,6 +12,7 @@ export default function PromotionImage(props: Props): ReactElement {
   const defaultSrc =
     'https://d1ralsognjng37.cloudfront.net/92a7b4fb-892c-47bb-b5bb-884c89c254a2.jpeg';
 
+  // TODO: If getting the image from S3 fails, resort to a default image
   const imageSrc = props.src || defaultSrc;
   return (
     <div>

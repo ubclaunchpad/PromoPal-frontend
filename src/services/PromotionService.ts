@@ -8,6 +8,7 @@ import {
   PostPromotionsResponse,
   UpvotePromotionResponse,
 } from '../types/api';
+import { Image } from '../types/image';
 import {
   FilterOptions,
   GetPromotionDTO,
@@ -17,6 +18,7 @@ import {
 } from '../types/promotion';
 import { isError } from '../utils/api';
 import Routes from '../utils/routes';
+import AmazonS3Service from './AmazonS3Service';
 import GooglePlacesService from './GooglePlacesService';
 import LocationService from './LocationService';
 
@@ -68,14 +70,19 @@ class PromotionService {
    * Creates a new promotion.
    *
    * @param promotionDTO - An object containing the fields of the promotion
+   * @param image - An promotion image to upload
    */
-  public async postPromotion(promotionDTO: PostPromotionDTO): Promise<void> {
+  public async postPromotion(promotionDTO: PostPromotionDTO, image?: Image): Promise<void> {
     const url = Routes.PROMOTIONS.POST;
     return axios
       .post(url, promotionDTO)
-      .then(({ data }: AxiosResponse<PostPromotionsResponse>) => {
+      .then(async ({ data }: AxiosResponse<PostPromotionsResponse>) => {
         if (isError<PostPromotionsResponse>(data)) {
           return Promise.reject(data);
+        }
+        if (image) {
+          // Will resolve even on error
+          await AmazonS3Service.uploadImage(image, data.id);
         }
         return Promise.resolve();
       })

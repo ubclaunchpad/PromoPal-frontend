@@ -15,6 +15,7 @@ import {
   DispatchAction as RestaurantDispatch,
   useRestaurantCard,
 } from '../contexts/RestaurantCardContext';
+import AmazonS3Service from '../services/AmazonS3Service';
 import PromotionService from '../services/PromotionService';
 import UserService from '../services/UserService';
 import { Promotion, Restaurant, VoteState } from '../types/promotion';
@@ -268,7 +269,7 @@ export default function PromotionList(props: Props): ReactElement {
             dateAdded={promotion.dateAdded}
             expirationDate={promotion.expirationDate}
             description={promotion.description}
-            image={promotion.image}
+            imageSrc={AmazonS3Service.getImageUrl(promotion.id)}
             isSavedByUser={promotion.isSavedByUser}
             name={promotion.name}
             placeId={promotion.restaurant.id}

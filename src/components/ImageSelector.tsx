@@ -1,41 +1,40 @@
-import React, { ReactElement, useState } from 'react';
+import { Button, Image as Img } from 'antd';
+import React, { ReactElement } from 'react';
 
 import AmazonS3Service from '../services/AmazonS3Service';
 import { Image } from '../types/image';
 
-export default function ImageSelector(): ReactElement {
-  const [image, setImage] = useState<Image>({ imageBinary: '', imageType: '' });
+interface Props {
+  image: Image;
+  setImage: (image: Image) => void;
+}
 
+export default function ImageSelector(props: Props): ReactElement {
   return (
     <>
       {/* Displays the image selector if no image is selected */}
-      {!image.imageBinary && (
+      {!props.image.imageBinary && (
         <input
           type="file"
           accept="image/jpeg, image/png, image/gif"
           onChange={(event) => {
             AmazonS3Service.onFileChange(event)
-              .then((image: Image) => setImage(image))
+              .then((image: Image) => {
+                props.setImage(image);
+              })
               .catch((err: Error) => alert(err));
           }}
         />
       )}
-      {/* Displays the image if an image is selected */}
-      {image.imageBinary && <img src={image.imageBinary} alt="" />}
-      {/* Displays the remove image button if an image is selected */}
-      {image.imageBinary && (
-        <button onClick={() => setImage({ imageBinary: '', imageType: '' })}>Remove image</button>
-      )}
-      {/* Displays the upload image button if an image is selected */}
-      {/* TODO: https://promopal.atlassian.net/browse/PP-75
-          This will need to be removed in the future, as the upload promotion button
-          in the upload promotion page will invoke AmazonS3Service.uploadImage(image, promotionId) 
-          after an promotion has been successfully saved to our backend db
-      */}
-      {image.imageBinary && (
-        <button onClick={() => AmazonS3Service.uploadImage(image, 'promotionId123')}>
-          Upload image
-        </button>
+      {/* Displays the image and remove button if an image is selected */}
+      {props.image.imageBinary && (
+        // TODO: Style the image and remove button
+        <>
+          <Img height={200} width={200} src={props.image.imageBinary} />
+          <Button onClick={() => props.setImage({ imageBinary: '', imageType: '' })}>
+            Remove image
+          </Button>
+        </>
       )}
     </>
   );
