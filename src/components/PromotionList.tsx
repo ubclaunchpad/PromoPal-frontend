@@ -87,6 +87,8 @@ export default function PromotionList(props: Props): ReactElement {
    */
   const onClickHandler = useCallback(
     (promoRestaurant: Restaurant) => {
+      restaurantDispatch({ type: RestaurantDispatch.DATA_LOADING });
+
       PromotionService.getRestaurant(promoRestaurant.id)
         .then((restaurant: Place) => {
           restaurantDispatch({

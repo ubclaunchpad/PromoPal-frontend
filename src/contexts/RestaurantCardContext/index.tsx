@@ -8,6 +8,7 @@ import { Context, DispatchAction, DispatchParams, Payload, State } from './types
 
 export const initialState: State = {
   showCard: false,
+  isLoading: false,
   restaurant: {} as Place & Restaurant,
 };
 

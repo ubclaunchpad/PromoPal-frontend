@@ -14,6 +14,17 @@ export function restaurantCardReducer(state: State, { type, payload }: DispatchP
 
   switch (type) {
     /**
+     * Sets state.isLoading to true.
+     */
+    case DispatchAction.DATA_LOADING:
+      nextState = {
+        ...nextState,
+        isLoading: true,
+        showCard: true,
+      };
+      break;
+
+    /**
      * Shows the restaurant card.
      */
     case DispatchAction.SHOW_CARD: {
@@ -22,6 +33,7 @@ export function restaurantCardReducer(state: State, { type, payload }: DispatchP
         ...nextState,
         restaurant,
         showCard: true,
+        isLoading: false,
       };
       break;
     }
@@ -33,6 +45,7 @@ export function restaurantCardReducer(state: State, { type, payload }: DispatchP
         ...nextState,
         restaurant: {} as Place & Restaurant,
         showCard: false,
+        isLoading: false,
       };
       break;
     /**
