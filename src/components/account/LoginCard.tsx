@@ -61,6 +61,7 @@ export default function LoginCard(props: Props): ReactElement {
   return (
     <Form
       {...layout}
+      className="login-card-form"
       name="loginCard"
       initialValues={{ remember: true }}
       onFinish={onFinish}
@@ -69,12 +70,19 @@ export default function LoginCard(props: Props): ReactElement {
     >
       <h1 className="login-title">Login</h1>
       <p>Login to see your favourite deals and upload promotions.</p>
-      <Form.Item name="email" className="input-wrapper" rules={InputRules.email} hasFeedback={true}>
+      <Form.Item
+        name="email"
+        className="account-input-wrapper"
+        label="Email"
+        rules={InputRules.email}
+        hasFeedback={true}
+      >
         <Input placeholder="Email" />
       </Form.Item>
       <Form.Item
         name="password"
-        className="input-wrapper"
+        className="account-input-wrapper"
+        label="Password"
         rules={InputRules.loginPassword}
         hasFeedback={true}
       >
@@ -96,7 +104,7 @@ export default function LoginCard(props: Props): ReactElement {
         </button>
       </Form.Item>
       <Form.Item className="register-button-container">
-        <p className="input-label">Don't have an account yet?</p>
+        <p className="no-account-text">Don't have an account yet?</p>
         <Button
           shape="round"
           className="button register-button"

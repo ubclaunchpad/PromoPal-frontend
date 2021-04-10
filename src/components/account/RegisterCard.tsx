@@ -59,7 +59,13 @@ export default function RegisterCard(props: Props): ReactElement {
   };
 
   return (
-    <Form {...layout} name="registerCard" onFinish={onFinish} onFinishFailed={onFinishFailed}>
+    <Form
+      {...layout}
+      className="register-card-form"
+      name="registerCard"
+      onFinish={onFinish}
+      onFinishFailed={onFinishFailed}
+    >
       <Tooltip className="back-button" title="Back">
         <Button shape="circle" onClick={props.onClickBack} icon={<ArrowLeftOutlined />} />
       </Tooltip>
@@ -69,33 +75,53 @@ export default function RegisterCard(props: Props): ReactElement {
 
       <Row gutter={6} style={{ marginBottom: 5 }}>
         <Col span={12}>
-          <Form.Item name="firstName" rules={InputRules.firstName} hasFeedback={true}>
+          <Form.Item
+            className="account-input-wrapper"
+            name="firstName"
+            label="First Name"
+            rules={InputRules.firstName}
+            hasFeedback={true}
+          >
             <Input placeholder="First name" />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="lastName" rules={InputRules.lastName} hasFeedback={true}>
+          <Form.Item
+            className="account-input-wrapper"
+            name="lastName"
+            label="Last Name"
+            rules={InputRules.lastName}
+            hasFeedback={true}
+          >
             <Input placeholder="Last name" />
           </Form.Item>
         </Col>
       </Row>
 
       <Form.Item
-        className="input-wrapper"
+        className="account-input-wrapper"
         name="username"
+        label="Username"
         rules={InputRules.username}
         hasFeedback={true}
       >
         <Input placeholder="Username" />
       </Form.Item>
 
-      <Form.Item className="input-wrapper" name="email" rules={InputRules.email} hasFeedback={true}>
+      <Form.Item
+        className="account-input-wrapper"
+        name="email"
+        label="Email"
+        rules={InputRules.email}
+        hasFeedback={true}
+      >
         <Input placeholder="Email" />
       </Form.Item>
 
       <Form.Item
-        className="input-wrapper"
+        className="account-input-wrapper"
         name="password"
+        label="Password"
         rules={InputRules.password}
         hasFeedback={true}
       >
@@ -103,8 +129,9 @@ export default function RegisterCard(props: Props): ReactElement {
       </Form.Item>
 
       <Form.Item
-        className="input-wrapper"
+        className="account-input-wrapper"
         name="confirmPassword"
+        label="Confirm Password"
         dependencies={['password']}
         rules={[
           {

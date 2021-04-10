@@ -36,7 +36,8 @@ export default function ForgotPasswordCard(props: Props): ReactElement {
   return (
     <Form
       {...layout}
-      name="registerCard"
+      className="forgot-password-form"
+      name="forgotPassword"
       initialValues={{ remember: true }}
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
@@ -46,7 +47,13 @@ export default function ForgotPasswordCard(props: Props): ReactElement {
       </Tooltip>
       <h1 className="reset-password-title">Reset Password</h1>
       <p>Please enter your email to reset your password.</p>
-      <Form.Item className="input-wrapper" name="email" rules={InputRules.email} hasFeedback={true}>
+      <Form.Item
+        className="account-input-wrapper"
+        label="Email"
+        name="email"
+        rules={InputRules.email}
+        hasFeedback={true}
+      >
         <Input placeholder="Email" />
       </Form.Item>
       <Form.Item className="reset-password-button-container">
