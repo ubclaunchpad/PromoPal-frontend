@@ -81,22 +81,24 @@ export default function PromotionDetails(props: Props): ReactElement {
 
   return (
     <Row className="promotion-details" gutter={2} justify="space-between">
-      <Col span={authUser ? 22 : 24}>
-        <Row>
-          <Title className="promotion-name">
-            {props.boldName ? parse(props.boldName) : props.name}
-          </Title>
-        </Row>
-        <Row>
-          <Text className="promotion-description">
-            {props.boldDescription ? parse(props.boldDescription) : props.description}
-          </Text>
-        </Row>
+      <Col className="promotion-details-section" span={authUser ? 22 : 24}>
+        <div>
+          <Row>
+            <Title className="promotion-name">
+              {props.boldName ? parse(props.boldName) : props.name}
+            </Title>
+          </Row>
+          <Row>
+            <Text className="promotion-description">
+              {props.boldDescription ? parse(props.boldDescription) : props.description}
+            </Text>
+          </Row>
 
-        <Row className="schedule-container">
-          <ClockCircleOutlined className="schedule-clock" />
-          <div className="schedule-times-container">{displaySchedules(props.schedules)}</div>
-        </Row>
+          <Row className="schedule-container">
+            <ClockCircleOutlined className="schedule-clock" />
+            <div className="schedule-times-container">{displaySchedules(props.schedules)}</div>
+          </Row>
+        </div>
 
         <Row>
           <Text className="footer-text">

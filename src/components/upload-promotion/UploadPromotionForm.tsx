@@ -394,7 +394,7 @@ export default function UploadPromotionForm(): ReactElement {
         <Input.TextArea
           allowClear={true}
           showCount={true}
-          maxLength={500}
+          maxLength={150}
           autoSize={{ minRows: 3, maxRows: 5 }}
           placeholder="Write details about the promotion here..."
         />
