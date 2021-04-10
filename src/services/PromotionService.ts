@@ -7,6 +7,7 @@ import {
   GetPromotionsResponse,
   PostPromotionsResponse,
 } from '../types/api';
+import { Image } from '../types/image';
 import {
   FilterOptions,
   GetPromotionDTO,
@@ -16,6 +17,7 @@ import {
 } from '../types/promotion';
 import { isError } from '../utils/api';
 import Routes from '../utils/routes';
+import AmazonS3Service from './AmazonS3Service';
 import GooglePlacesService from './GooglePlacesService';
 
 /**
@@ -68,14 +70,18 @@ export async function deletePromotion(id: string): Promise<void> {
  * Creates a new promotion.
  *
  * @param promotionDTO - An object containing the fields of the promotion
+ * @param image - An promotion image to upload
  */
-export async function postPromotion(promotionDTO: PostPromotionDTO): Promise<void> {
+export async function postPromotion(promotionDTO: PostPromotionDTO, image?: Image): Promise<void> {
   const url = Routes.PROMOTIONS.POST;
   return axios
     .post(url, promotionDTO)
-    .then(({ data }: AxiosResponse<PostPromotionsResponse>) => {
+    .then(async ({ data }: AxiosResponse<PostPromotionsResponse>) => {
       if (isError<PostPromotionsResponse>(data)) {
         return Promise.reject(data);
+      }
+      if (image) {
+        await AmazonS3Service.uploadImage(image, data.id);
       }
       return Promise.resolve();
     })

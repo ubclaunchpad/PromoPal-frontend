@@ -1,11 +1,11 @@
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 import { Image } from '../types/image';
 
 const maxImageBinaryLength = 1000000;
 
 class AmazonS3Service {
-  onFileChange(e: React.ChangeEvent<HTMLInputElement> | DragEvent): Promise<Image> {
+  public onFileChange(e: React.ChangeEvent<HTMLInputElement> | DragEvent): Promise<Image> {
     // Get the file from selection or drag and drop
     const files =
       (e as React.ChangeEvent<HTMLInputElement>)?.target?.files ||
@@ -38,9 +38,9 @@ class AmazonS3Service {
     });
   }
 
-  uploadImage(image: Image, promotionId: string): void {
+  public uploadImage(image: Image, promotionId: string): Promise<void> {
     // Get the presigned URL
-    axios
+    return axios
       .get(process.env.REACT_APP_AWS_PRESIGNED_URL_ENDPOINT as string, {
         params: {
           promotionId,
@@ -62,13 +62,14 @@ class AmazonS3Service {
           body: blobData,
         });
         // Uploaded photo URL will be https://promopal.s3-us-west-1.amazonaws.com/`promotionId`
+        return Promise.resolve();
       })
-      .catch((err: AxiosError) => {
-        return Promise.reject(err);
+      .catch(() => {
+        return Promise.resolve();
       });
   }
 
-  getImageUrl(promotionId: string): string {
+  public getImageUrl(promotionId: string): string {
     return `https://promopal.s3-us-west-1.amazonaws.com/${promotionId}`;
   }
 }

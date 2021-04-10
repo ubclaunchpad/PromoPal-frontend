@@ -4,13 +4,15 @@ import { DatePicker, Form, Input, InputNumber, message, Row, Select } from 'antd
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import moment from 'moment';
 import React, { ReactElement, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 
 import { useAuthUser } from '../../contexts/AuthUserContext';
 import EnumService from '../../services/EnumService';
 import * as PromotionService from '../../services/PromotionService';
+import { Image } from '../../types/image';
 import { Day, PostPromotionDTO, Schedule } from '../../types/promotion';
 import Button from '../button/Button';
+import ImageSelector from '../ImageSelector';
 import LocationSearchInput from '../restaurant/LocationSearchInput';
 import PromotionTime from './PromotionTime';
 
@@ -25,6 +27,8 @@ interface FormFields {
   promotionType: string;
   restaurant: string;
   restaurantAddress: string;
+  imageBinary?: string;
+  imageType?: string;
 }
 
 interface PromotionTimes {
@@ -52,9 +56,8 @@ export default function UploadPromotionForm(): ReactElement {
   const [datesEffective, setDatesEffective] = useState<PromotionDates>({ start: '', end: '' });
   const [times, setTimes] = useState<PromotionTimes>({});
 
-  // TODO: https://promopal.atlassian.net/browse/PP-80
   if (!authUser) {
-    return <p>Error: No user is logged in.</p>;
+    return <Redirect to="/account" />;
   }
 
   const initialValues: FormFields = {
@@ -126,7 +129,15 @@ export default function UploadPromotionForm(): ReactElement {
       userId: authUser.user.id,
     };
 
-    PromotionService.postPromotion(promotionDTO)
+    let image: Image | undefined;
+    if (formValues.imageBinary && formValues.imageType) {
+      image = {
+        imageBinary: formValues.imageBinary,
+        imageType: formValues.imageType,
+      };
+    }
+
+    PromotionService.postPromotion(promotionDTO, image)
       .then(() => {
         history.push('/promotions');
 
@@ -259,6 +270,16 @@ export default function UploadPromotionForm(): ReactElement {
    */
   const onDiscountTypeChange = (discountType: string[]): void => {
     form.setFieldsValue({ discountType });
+  };
+
+  /**
+   * Handler to be called when an image is selected.
+   *
+   * @param imageBinary: The selected image binary
+   * @param imageType: The selected image type
+   */
+  const onImageSelected = (imageBinary: string, imageType: string): void => {
+    form.setFieldsValue({ imageBinary: imageBinary, imageType: imageType });
   };
 
   return (
@@ -423,6 +444,10 @@ export default function UploadPromotionForm(): ReactElement {
         ]}
       >
         <DatePicker.RangePicker allowEmpty={[true, false]} onCalendarChange={onDatesSelected} />
+      </Form.Item>
+
+      <Form.Item label="Upload Image" name="uploadImage" labelAlign="left">
+        <ImageSelector onChange={onImageSelected} />
       </Form.Item>
 
       <Form.Item>

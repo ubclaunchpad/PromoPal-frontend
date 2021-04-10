@@ -17,7 +17,7 @@ export type EnumResponse = ApiResponse<string[]>;
 // Promotions
 export type GetPromotionsResponse = ApiResponse<Promotion[]>;
 export type DeletePromotionsResponse = ApiResponse<string>;
-export type PostPromotionsResponse = ApiResponse<void>;
+export type PostPromotionsResponse = ApiResponse<Promotion>;
 
 // Restaurants
 export type RestaurantDetailsResponse = ApiResponse<Place>;

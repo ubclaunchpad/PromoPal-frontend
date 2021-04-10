@@ -1,9 +1,14 @@
+import { Button, Image as Img } from 'antd';
 import React, { ReactElement, useState } from 'react';
 
 import AmazonS3Service from '../services/AmazonS3Service';
 import { Image } from '../types/image';
 
-export default function ImageSelector(): ReactElement {
+interface Props {
+  onChange: (imageBinary: string, imageType: string) => void;
+}
+
+export default function ImageSelector(props: Props): ReactElement {
   const [image, setImage] = useState<Image>({ imageBinary: '', imageType: '' });
 
   return (
@@ -15,16 +20,21 @@ export default function ImageSelector(): ReactElement {
           accept="image/jpeg, image/png, image/gif"
           onChange={(event) => {
             AmazonS3Service.onFileChange(event)
-              .then((image: Image) => setImage(image))
+              .then((image: Image) => {
+                setImage(image);
+                props.onChange(image.imageBinary, image.imageType);
+              })
               .catch((err: Error) => alert(err));
           }}
         />
       )}
       {/* Displays the image if an image is selected */}
-      {image.imageBinary && <img src={image.imageBinary} alt="" />}
-      {/* Displays the remove image button if an image is selected */}
       {image.imageBinary && (
-        <button onClick={() => setImage({ imageBinary: '', imageType: '' })}>Remove image</button>
+        // TODO: Style the image and remove button
+        <>
+          <Img height={200} width={200} src={image.imageBinary} />
+          <Button onClick={() => setImage({ imageBinary: '', imageType: '' })}>Remove image</Button>
+        </>
       )}
       {/* Displays the upload image button if an image is selected */}
       {/* TODO: https://promopal.atlassian.net/browse/PP-75
@@ -33,7 +43,7 @@ export default function ImageSelector(): ReactElement {
           after an promotion has been successfully saved to our backend db
       */}
       {image.imageBinary && (
-        <button onClick={() => AmazonS3Service.uploadImage(image, 'promotionId123')}>
+        <button onClick={() => AmazonS3Service.uploadImage(image, 'testpromoid')}>
           Upload image
         </button>
       )}
