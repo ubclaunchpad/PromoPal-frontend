@@ -10,6 +10,8 @@ export enum DispatchAction {
   SHOW_CARD,
   // Toggles restaurant card based on current state + given restaurant
   TOGGLE_CARD,
+  // Data is being fetched from the API
+  DATA_LOADING,
 }
 
 /**
@@ -55,5 +57,6 @@ export type DispatchParams = {
  */
 export type State = {
   showCard: boolean;
+  isLoading: boolean;
   restaurant: Place & Restaurant;
 };
