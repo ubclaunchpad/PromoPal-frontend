@@ -32,7 +32,13 @@ export function AuthUserProvider({
       if (firebaseUser) {
         axios.interceptors.request.use(
           async (request) => {
-            request.headers.authorization = await firebaseUser.getIdToken();
+            if (
+              request.url?.startsWith('/users') ||
+              request.url?.startsWith('/promotions') ||
+              request.url?.startsWith('/restaurants')
+            ) {
+              request.headers.authorization = await firebaseUser.getIdToken();
+            }
             return request;
           },
           (err: Error) => {

@@ -27,8 +27,6 @@ interface FormFields {
   promotionType: string;
   restaurant: string;
   restaurantAddress: string;
-  imageBinary?: string;
-  imageType?: string;
 }
 
 interface PromotionTimes {
@@ -55,6 +53,7 @@ export default function UploadPromotionForm(): ReactElement {
 
   const [datesEffective, setDatesEffective] = useState<PromotionDates>({ start: '', end: '' });
   const [times, setTimes] = useState<PromotionTimes>({});
+  const [image, setImage] = useState<Image>({ imageBinary: '', imageType: '' });
 
   if (!authUser) {
     return <Redirect to="/account" />;
@@ -128,14 +127,6 @@ export default function UploadPromotionForm(): ReactElement {
       startDate: formValues.datesEffective[0],
       userId: authUser.user.id,
     };
-
-    let image: Image | undefined;
-    if (formValues.imageBinary && formValues.imageType) {
-      image = {
-        imageBinary: formValues.imageBinary,
-        imageType: formValues.imageType,
-      };
-    }
 
     PromotionService.postPromotion(promotionDTO, image)
       .then(() => {
@@ -270,16 +261,6 @@ export default function UploadPromotionForm(): ReactElement {
    */
   const onDiscountTypeChange = (discountType: string[]): void => {
     form.setFieldsValue({ discountType });
-  };
-
-  /**
-   * Handler to be called when an image is selected.
-   *
-   * @param imageBinary: The selected image binary
-   * @param imageType: The selected image type
-   */
-  const onImageSelected = (imageBinary: string, imageType: string): void => {
-    form.setFieldsValue({ imageBinary: imageBinary, imageType: imageType });
   };
 
   return (
@@ -447,7 +428,7 @@ export default function UploadPromotionForm(): ReactElement {
       </Form.Item>
 
       <Form.Item label="Upload Image" name="uploadImage" labelAlign="left">
-        <ImageSelector onChange={onImageSelected} />
+        <ImageSelector image={image} setImage={setImage} />
       </Form.Item>
 
       <Form.Item>
