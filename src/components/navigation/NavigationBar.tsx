@@ -1,35 +1,42 @@
 import './NavigationBar.less';
 
-import { Menu } from 'antd';
+import { Button, Menu } from 'antd';
 import React, { CSSProperties, ReactElement, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 import { ReactComponent as Logo } from '../../assets/logo.svg';
+import { useAuthUser } from '../../contexts/AuthUserContext';
+import UserService from '../../services/UserService';
 import SearchBar from '../navigation/SearchBar';
 
 enum Pages {
   Home = 'Home',
   Account = 'Account',
   UploadPromotion = 'UploadPromotion',
+  MyPromotions = 'MyPromotions',
 }
 
 enum Paths {
   Home = '/',
   Account = '/account',
   UploadPromotion = '/promotion/upload',
+  MyPromotions = '/mypromotions',
 }
 
 const PathsToPages: { [path: string]: Pages } = {
   [Paths.Home]: Pages.Home,
   [Paths.Account]: Pages.Account,
   [Paths.UploadPromotion]: Pages.UploadPromotion,
+  [Paths.MyPromotions]: Pages.MyPromotions,
 };
 
 export default function NavigationBar(): ReactElement {
   const location: { pathname: string } = useLocation();
 
   const [current, setCurrent] = useState<Pages>(Pages.Home);
+  const authUser = useAuthUser();
 
+  // TODO: isActive is not highlighting the active page when the browser back button is pressed
   const isActive = (key: Pages): CSSProperties => ({
     fontWeight: current === key ? 'bold' : 'normal',
   });
@@ -40,8 +47,6 @@ export default function NavigationBar(): ReactElement {
   useEffect(() => {
     setCurrent(PathsToPages[location.pathname]);
   }, [location.pathname]);
-
-  const loggedIn = false;
 
   return (
     <header id="navigation-header" className="navigation-header">
@@ -61,7 +66,7 @@ export default function NavigationBar(): ReactElement {
             className="navigation-menu-item"
             style={isActive(Pages.Account)}
           >
-            <Link to={Paths.Account}>{loggedIn ? 'My Account' : 'Login'}</Link>
+            <Link to={Paths.Account}>{authUser ? 'My Account' : 'Login'}</Link>
           </Menu.Item>
           <Menu.Item
             key={Pages.UploadPromotion}
@@ -70,9 +75,17 @@ export default function NavigationBar(): ReactElement {
           >
             <Link to={Paths.UploadPromotion}>Upload Promotion</Link>
           </Menu.Item>
+          <Menu.Item
+            key={Pages.MyPromotions}
+            className="navigation-menu-item"
+            style={isActive(Pages.MyPromotions)}
+          >
+            <Link to={Paths.MyPromotions}>My Promotions</Link>
+          </Menu.Item>
         </Menu>
       </div>
       <SearchBar />
+      {authUser && <Button onClick={UserService.signUserOut}>Sign Out</Button>}
     </header>
   );
 }

@@ -1,20 +1,13 @@
-import { Col, Row } from 'antd';
-import React, { CSSProperties, ReactElement, useEffect, useState } from 'react';
+import { Col, Input, message, Row } from 'antd';
+import React, { ChangeEvent, CSSProperties, ReactElement, useState } from 'react';
+import { Redirect, useHistory } from 'react-router-dom';
 
 import AccountDetails from '../components/account/AccountDetails';
 import AccountPhoto from '../components/account/AccountPhoto';
 import ChangePassword from '../components/account/ChangePassword';
+import DeleteModal from '../components/modal/DeleteModal';
+import { useAuthUser } from '../contexts/AuthUserContext';
 import UserService from '../services/UserService';
-import { User } from '../types/user';
-
-const defaultUser: User = {
-  id: '',
-  email: '',
-  firstName: '',
-  lastName: '',
-  uploadedPromotions: [],
-  username: '',
-};
 
 const styles: { [identifier: string]: CSSProperties } = {
   body: {
@@ -27,34 +20,77 @@ const styles: { [identifier: string]: CSSProperties } = {
 };
 
 export default function MyAccount(): ReactElement {
-  const [user, setUser] = useState<User>(defaultUser);
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [password, setPassword] = useState<string>('');
 
-  /**
-   * On initial render, gets the details of the currently logged in user.
-   */
-  useEffect(() => {
-    UserService.getUser()
-      .then((user: User) => setUser(user))
-      .catch(() => setUser(defaultUser));
-  }, []);
+  const authUser = useAuthUser();
+  const history = useHistory();
 
+  const onDeleteUser = async (password: string): Promise<void> => {
+    return UserService.deleteUser(authUser?.user.id || '', password)
+      .then(() => {
+        setIsModalVisible(false);
+
+        const successMessage =
+          "Your account has successfully been deleted. We're sad to see you go!";
+        message.success(successMessage, 5);
+
+        return UserService.signUserOut();
+      })
+      .then(() => {
+        // Redirect user to login page
+        history.push('/account');
+      })
+      .catch(() => {
+        setIsModalVisible(false);
+
+        const errorMessage = 'An error occurred! Please try again later.';
+        message.error(errorMessage, 5);
+      });
+  };
+
+  const onDeleteCancel = async (): Promise<void> => {
+    setIsModalVisible(false);
+  };
+
+  const onPasswordChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    setPassword(event.target.value);
+  };
+
+  if (!authUser) {
+    return <Redirect to="/account" />;
+  }
   return (
     <Row style={styles.body} justify="space-around">
       <Col span={4}>
-        <AccountPhoto />
+        <AccountPhoto onDeleteUser={() => setIsModalVisible(true)} />
       </Col>
       <Col span={10}>
-        <AccountDetails
-          id={user.id}
-          email={user.email}
-          firstName={user.firstName}
-          lastName={user.lastName}
-          username={user.username}
-        />
+        <AccountDetails {...authUser} />
       </Col>
       <Col span={10}>
         <ChangePassword />
       </Col>
+      <DeleteModal
+        title="Delete Account"
+        description={
+          <>
+            <p>
+              Are you sure you want to delete your account?{' '}
+              <strong>This action is irreversible.</strong>
+            </p>
+            Please enter your password below to confirm.
+            <Input.Password
+              placeholder="Enter your password"
+              value={password}
+              onChange={onPasswordChange}
+            />
+          </>
+        }
+        isVisible={isModalVisible}
+        onOk={() => onDeleteUser(password)}
+        onCancel={onDeleteCancel}
+      />
     </Row>
   );
 }

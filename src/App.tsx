@@ -2,6 +2,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import React, { CSSProperties, ReactElement, useEffect, useState } from 'react';
 
+import { AuthUserProvider } from './contexts/AuthUserContext';
 import { DropdownProvider } from './contexts/DropdownContext';
 import { PromotionsListProvider } from './contexts/PromotionsListContext';
 import { RestaurantCardProvider } from './contexts/RestaurantCardContext';
@@ -55,13 +56,15 @@ function App(): ReactElement {
 
   return (
     <div className="App" style={styles.container}>
-      <PromotionsListProvider>
-        <RestaurantCardProvider>
-          <DropdownProvider>
-            {isLoading ? <Spin indicator={indicator} style={styles.spinner} /> : <Router />}
-          </DropdownProvider>
-        </RestaurantCardProvider>
-      </PromotionsListProvider>
+      <AuthUserProvider>
+        <PromotionsListProvider>
+          <RestaurantCardProvider>
+            <DropdownProvider>
+              {isLoading ? <Spin indicator={indicator} style={styles.spinner} /> : <Router />}
+            </DropdownProvider>
+          </RestaurantCardProvider>
+        </PromotionsListProvider>
+      </AuthUserProvider>
     </div>
   );
 }

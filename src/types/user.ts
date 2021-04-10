@@ -1,10 +1,21 @@
-import { Promotion } from './promotion';
+import { User as FirebaseUser } from '@firebase/auth-types';
 
 export interface User {
   id: string;
-  email: string;
   firstName: string;
   lastName: string;
-  uploadedPromotions: Promotion[];
   username: string;
+}
+
+export interface UserInput {
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  password: string;
+}
+
+export interface AuthUser {
+  user: User;
+  firebaseUser: FirebaseUser;
 }
