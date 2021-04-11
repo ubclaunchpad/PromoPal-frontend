@@ -1,4 +1,4 @@
-import './AccountDetails.css';
+import './AccountDetails.less';
 
 import { Button, Col, Form, Input, message, Row } from 'antd';
 import { Rule } from 'antd/lib/form';
@@ -39,8 +39,8 @@ export default function AccountDetails(authUser: AuthUser): ReactElement {
   function InputWrapper(inputProps: InputProps): ReactElement {
     return (
       <Form.Item name={inputProps.name} rules={inputProps.rules}>
-        <div className="input-wrapper">
-          <p className="input-label">{inputProps.label}</p>
+        <div className="account-input-wrapper">
+          <p className="account-input-label">{inputProps.label}</p>
           {inputProps.isPassword ? (
             <Input.Password placeholder="Enter your password to save changes" />
           ) : (

@@ -1,11 +1,19 @@
 .upload-promotion-form {
   .ant-form-item {
-    label {
-      font-weight: 400;
+    margin: 10px 0;
+
+    .ant-form-item-label {
+      font-weight: bold;
+      padding-bottom: 2px;
+    }
+
+    .ant-input-number {
+      width: 100%;
     }
 
     .ant-input,
     .ant-input-affix-wrapper,
+    .ant-input-number,
     .ant-select-selector,
     .ant-select-dropdown,
     .ant-picker {
@@ -14,6 +22,10 @@
 
     .ant-checkbox-group {
       width: 100%;
+
+      .ant-checkbox-wrapper {
+        font-weight: bold;
+      }
 
       & > * {
         padding-bottom: 10px;

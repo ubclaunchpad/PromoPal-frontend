@@ -1,0 +1,39 @@
+@import '../../variables.less';
+
+.account-details-container {
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: @shadow;
+  color: @black;
+  margin: 30px;
+  overflow: auto;
+  padding: 30px;
+
+  .save-button {
+    background-color: @yellow;
+    float: right;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+}
+
+.ant-row.ant-form-item {
+  margin: 5px 0;
+
+  .account-input-wrapper {
+    margin: 5px 0;
+
+    .account-input-label {
+      font-weight: bold;
+      margin: 5px 0;
+    }
+  }
+
+  .ant-form-item-explain {
+    color: @red;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    margin-top: 5px;
+    min-height: 0px;
+  }
+}

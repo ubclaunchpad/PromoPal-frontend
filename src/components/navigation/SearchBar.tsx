@@ -1,18 +1,12 @@
+import './SearchBar.less';
+
 import { Input } from 'antd';
-import React, { CSSProperties, ReactElement, useCallback } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 
 import { useDropdown } from '../../contexts/DropdownContext';
 import { DispatchAction, usePromotionsList } from '../../contexts/PromotionsListContext';
 
 const { Search } = Input;
-
-const styles: { [identifier: string]: CSSProperties } = {
-  search: {
-    width: '40%',
-    marginLeft: 'auto',
-    marginRight: '1%',
-  },
-};
 
 export default function SearchBar(): ReactElement {
   const { state: dropdownState } = useDropdown();
@@ -33,5 +27,11 @@ export default function SearchBar(): ReactElement {
     [dropdownState.resetCallbacks, promotionsDispatch]
   );
 
-  return <Search placeholder="Search..." onSearch={onSearch} style={styles.search} />;
+  return (
+    <Search
+      placeholder="Search by dish, cuisine, or location..."
+      onSearch={onSearch}
+      className="search-bar"
+    />
+  );
 }

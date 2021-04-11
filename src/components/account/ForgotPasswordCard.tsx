@@ -1,25 +1,18 @@
+import './ForgotPasswordCard.less';
+
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message, Tooltip } from 'antd';
-import React, { CSSProperties, ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 
 import UserService from '../../services/UserService';
 import { InputRules } from '../../types/rules';
 
-const styles: { [identifier: string]: CSSProperties } = {
-  button: {
-    float: 'left',
-  },
-  inputWrapper: {
-    marginBottom: 15,
-  },
-};
-
 const layout = {
   labelCol: {
-    span: 4,
+    span: 24,
   },
   wrapperCol: {
-    span: 8,
+    span: 24,
   },
 };
 
@@ -43,27 +36,29 @@ export default function ForgotPasswordCard(props: Props): ReactElement {
   return (
     <Form
       {...layout}
-      name="registerCard"
+      className="forgot-password-form"
+      name="forgotPassword"
       initialValues={{ remember: true }}
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
     >
-      <Tooltip title="Back">
+      <Tooltip className="back-button" title="Back">
         <Button shape="circle" onClick={props.onClickBack} icon={<ArrowLeftOutlined />} />
       </Tooltip>
-      <h1>Reset your password</h1>
+      <h1 className="reset-password-title">Reset Password</h1>
       <p>Please enter your email to reset your password.</p>
       <Form.Item
-        style={styles.inputWrapper}
+        className="account-input-wrapper"
+        label="Email"
         name="email"
         rules={InputRules.email}
         hasFeedback={true}
       >
         <Input placeholder="Email" />
       </Form.Item>
-      <Form.Item>
-        <Button className="button" style={styles.button} htmlType="submit">
-          Reset my password
+      <Form.Item className="reset-password-button-container">
+        <Button className="button reset-password-button" htmlType="submit">
+          Reset Password
         </Button>
       </Form.Item>
     </Form>

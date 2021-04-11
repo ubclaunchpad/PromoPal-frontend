@@ -1,14 +1,9 @@
+import './PromotionList.less';
+
 import { LoadingOutlined } from '@ant-design/icons';
 import { Place } from '@googlemaps/google-maps-services-js';
 import { message, Pagination, Spin } from 'antd';
-import React, {
-  CSSProperties,
-  ReactElement,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 
 import PromotionCard from '../components/promotion/PromotionCard';
 import { useAuthUser } from '../contexts/AuthUserContext';
@@ -27,26 +22,6 @@ import { Promotion, Restaurant, VoteState } from '../types/promotion';
 
 const PAGE_SIZE = 10;
 
-const styles: { [identifier: string]: CSSProperties } = {
-  container: {
-    backgroundColor: '#FFEDDC',
-    padding: 15,
-    overflow: 'auto',
-    scrollBehavior: 'smooth',
-    textAlign: 'center',
-  },
-  spinner: {
-    alignItems: 'center',
-    display: 'flex',
-    justifyContent: 'center',
-    height: '100%',
-    width: '100%',
-  },
-  spinnerIcon: {
-    fontSize: '4em',
-  },
-};
-
 /**
  * Selects the promotions that should be displayed on the current page.
  *
@@ -60,7 +35,6 @@ function getPage(promotions: Promotion[], page: number): Promotion[] {
 }
 
 interface Props {
-  dimensions: { width: string; height: string };
   pageNum: number;
   onPageChange: (pageNum: number) => void;
 }
@@ -74,12 +48,6 @@ export default function PromotionList(props: Props): ReactElement {
   const { state: promotionsState, dispatch: promotionsDispatch } = usePromotionsList();
   const { dispatch: restaurantDispatch } = useRestaurantCard();
   const authUser = useAuthUser();
-
-  const containerStyles = {
-    height: props.dimensions.height,
-    width: props.dimensions.width,
-    ...styles.container,
-  };
 
   /**
    * This hook is run everytime the promotionsListState changes. This function sorts and filters the promotions
@@ -283,12 +251,12 @@ export default function PromotionList(props: Props): ReactElement {
     });
   }, [promotionsDispatch, promotionsState.searchQuery, authUser]);
 
-  const indicator = <LoadingOutlined style={styles.spinnerIcon} spin />;
+  const indicator = <LoadingOutlined className="spinner-icon" spin={true} />;
 
   return (
-    <div style={containerStyles} ref={container}>
+    <div className="promotion-list-container" ref={container}>
       {promotionsState.isLoading && !promotionsState.hasError && (
-        <Spin indicator={indicator} style={styles.spinner} />
+        <Spin className="spinner" indicator={indicator} />
       )}
       {!promotionsState.isLoading &&
         !promotionsState.hasError &&

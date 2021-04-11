@@ -1,0 +1,82 @@
+@import '../../../../variables.less';
+
+.restaurant-tabs .promotions-tab {
+  max-height: 200px;
+  margin-bottom: 10px;
+
+  p {
+    margin-bottom: 0;
+  }
+
+  .ant-tabs-content.ant-tabs-content-top {
+    margin-bottom: 0;
+  }
+
+  .ant-tabs-content-holder {
+    margin-top: 3%;
+    max-height: 200px;
+    overflow: scroll;
+    padding-right: 15px;
+  }
+
+  .ant-tabs-nav-wrap {
+    background-color: @white;
+    margin-top: 0px;
+    margin-bottom: -10px;
+  }
+
+  .ant-tabs-nav-list {
+    .ant-tabs-ink-bar.ant-tabs-ink-bar-animated {
+      height: 2px;
+      background: @yellow;
+    }
+
+    .ant-tabs-tab {
+      padding: 8px;
+
+      &.ant-tabs-tab-active {
+        background-color: @white;
+
+        .ant-tabs-tab-btn {
+          font-weight: bold;
+        }
+      }
+
+      .ant-tabs-tab-btn {
+        color: @gray;
+      }
+    }
+  }
+
+  .promotion-info {
+    .clock-icon {
+      color: @gray;
+      font-size: 0.9em;
+    }
+
+    .description {
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
+
+    .expiration-date {
+      font-weight: bold;
+    }
+
+    .schedules {
+      color: @gray;
+      font-size: 0.8rem;
+
+      .schedules-time {
+        font-weight: bold;
+        margin: 0;
+      }
+    }
+  }
+
+  .schedules-empty {
+    color: @gray;
+    font-size: 0.8rem;
+    text-align: center;
+  }
+}

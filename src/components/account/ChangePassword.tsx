@@ -1,4 +1,5 @@
-import './AccountDetails.css';
+import './AccountDetails.less';
+import './ChangePassword.less';
 
 import { Button, Form, Input, message } from 'antd';
 import React, { ReactElement } from 'react';
@@ -26,7 +27,7 @@ export default function ChangePassword(): ReactElement {
   };
 
   return (
-    <div className="account-details-container">
+    <div className="change-password-container">
       <Form
         name="changePassword"
         initialValues={{ remember: true }}
@@ -34,21 +35,17 @@ export default function ChangePassword(): ReactElement {
         onFinishFailed={onFinishFailed}
       >
         <h1>Change Password</h1>
-        <Form.Item
-          name="oldPassword"
-          rules={InputRules.password}
-          hasFeedback={true}
-          style={{ marginTop: 16 }}
-        >
-          <Input.Password placeholder="Old Password" />
+        <Form.Item name="oldPassword" rules={InputRules.password} hasFeedback={true}>
+          <div className="account-input-wrapper">
+            <p className="account-input-label">Current Password</p>
+            <Input.Password placeholder="Current Password" />
+          </div>
         </Form.Item>
-        <Form.Item
-          name="newPassword"
-          rules={InputRules.password}
-          hasFeedback={true}
-          style={{ marginTop: 16 }}
-        >
-          <Input.Password placeholder="New Password" />
+        <Form.Item name="newPassword" rules={InputRules.password} hasFeedback={true}>
+          <div className="account-input-wrapper">
+            <p className="account-input-label">New Password</p>
+            <Input.Password placeholder="New Password" />
+          </div>
         </Form.Item>
         <Form.Item
           name="confirmNewPassword"
@@ -70,9 +67,11 @@ export default function ChangePassword(): ReactElement {
             }),
           ]}
           hasFeedback={true}
-          style={{ marginTop: 16 }}
         >
-          <Input.Password placeholder="Confirm New Password" />
+          <div className="account-input-wrapper">
+            <p className="account-input-label">Confirm New Password</p>
+            <Input.Password placeholder="Confirm New Password" />
+          </div>
         </Form.Item>
         <Form.Item noStyle={true}>
           <Button className="save-button" size="large" shape="round" htmlType="submit">

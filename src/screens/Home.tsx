@@ -11,8 +11,6 @@ import EnumService from '../services/EnumService';
 import { Dropdown, DropdownType } from '../types/dropdown';
 import { Sort } from '../types/promotion';
 
-const mapWidth = 65;
-
 /**
  * Gets the page number from the URL query params. Defaults to 1 if there is no `page` query param.
  *
@@ -26,7 +24,6 @@ export default function Home(): ReactElement {
   const history = useHistory();
   const location = useLocation();
 
-  const [height, setHeight] = useState<string>('');
   const [pageNum, setPageNum] = useState<number>(getPageNum(location));
 
   const { dispatch } = usePromotionsList();
@@ -110,7 +107,7 @@ export default function Home(): ReactElement {
       })),
     },
     {
-      text: 'Day of Week',
+      text: 'Day of the Week',
       type: DropdownType.MultiSelect,
       options: EnumService.daysOfWeek.map((dayOfWeek) => ({
         action: actions.dayOfWeek,
@@ -127,14 +124,6 @@ export default function Home(): ReactElement {
     },
   ];
 
-  useEffect(() => {
-    // Note: the following is not considered best practice, but it is used to calculate the height
-    // of the header + dropdown so that we can use it as an offset
-    const headerHeight = document.getElementById('navigation-header')?.offsetHeight;
-    const dropdownMenuHeight = document.getElementById('dropdown-menu')?.offsetHeight;
-    setHeight(`calc(100vh - ${headerHeight}px - ${dropdownMenuHeight}px)`);
-  }, []);
-
   /**
    * On page number change, update the query params to include the page number.
    */
@@ -148,8 +137,11 @@ export default function Home(): ReactElement {
 
   return (
     <>
-      <DropdownMenu dropdowns={dropdowns} shadow />
-      <div id="content-container" style={{ display: 'inline-flex', height, position: 'relative' }}>
+      <DropdownMenu dropdowns={dropdowns} shadow={true} location="home" />
+      <div
+        id="content-container"
+        style={{ display: 'inline-flex', height: '100%', overflow: 'hidden', position: 'relative' }}
+      >
         {restaurantCardState.showCard && (
           <RestaurantCard
             formattedAddress={restaurant.formatted_address}
@@ -166,12 +158,8 @@ export default function Home(): ReactElement {
             website={restaurant.website}
           />
         )}
-        <MapContainer dimensions={{ width: `${mapWidth}vw`, height }} />
-        <PromotionList
-          dimensions={{ width: `${100 - mapWidth}vw`, height }}
-          pageNum={pageNum}
-          onPageChange={setPageNum}
-        />
+        <MapContainer />
+        <PromotionList pageNum={pageNum} onPageChange={setPageNum} />
       </div>
     </>
   );

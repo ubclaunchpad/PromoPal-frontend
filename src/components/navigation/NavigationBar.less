@@ -3,6 +3,7 @@
 .navigation-header {
   align-items: center;
   display: inline-flex;
+  height: auto;
   justify-content: space-between;
   padding: 10px;
   width: 100%;
@@ -25,12 +26,27 @@
 
       .navigation-menu-item {
         color: @black;
+        font-weight: normal;
         line-height: 1.5rem;
+
+        &.navigation-menu-item--active {
+          font-weight: bold;
+        }
 
         & a:hover {
           font-weight: bold;
         }
       }
+    }
+  }
+
+  .sign-out-button {
+    border-radius: 5px;
+    box-shadow: 0 2px 6px fade(@black, 20%);
+    transition: all 0.5s ease-in-out;
+
+    &:hover {
+      box-shadow: 0 2px 10px fade(@black, 20%);
     }
   }
 }

@@ -1,8 +1,10 @@
+import './PhotosTab.less';
+
 import { PlacePhoto } from '@googlemaps/google-maps-services-js';
 import { Col, Empty, Image, Row } from 'antd';
 import React, { ReactElement } from 'react';
 
-import GooglePlacesService from '../../../services/GooglePlacesService';
+import GooglePlacesService from '../../../../services/GooglePlacesService';
 
 interface Props {
   photos?: PlacePhoto[];

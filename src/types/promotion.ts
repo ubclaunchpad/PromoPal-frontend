@@ -43,8 +43,11 @@ export interface GetPromotionDTO {
   discountType?: Discount['discountType'];
   discountValue?: Discount['discountValue'];
   expirationDate?: Promotion['expirationDate'];
+  lat?: number;
+  lon?: number;
   promotionType?: Promotion['promotionType'];
   searchQuery?: string;
+  sort?: Sort;
 }
 
 export interface PostPromotionDTO {

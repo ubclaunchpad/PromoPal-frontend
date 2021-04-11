@@ -1,4 +1,4 @@
-import './RestaurantCard.css';
+import './RestaurantCard.less';
 
 import { CloseCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import { OpeningHours, PlacePhoto } from '@googlemaps/google-maps-services-js';
@@ -88,11 +88,6 @@ export default function RestaurantCard(props: Props): ReactElement {
           </Col>
         </Row>
         <Header
-          // cuisine={
-          //   'Italian'
-          //   // todo: this should use a promotions cuisine https://promopal.atlassian.net/browse/PP-91
-          //   // restaurant.cuisine
-          // }
           distance={distance}
           priceLevel={props.priceLevel}
           name={props.name}

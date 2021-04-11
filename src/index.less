@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=ABeeZee&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
@@ -7,6 +8,7 @@
 
 // Import modifications to Ant Design theme
 @import './theme';
+@import './variables.less';
 
 body {
   margin: 0;
@@ -27,28 +29,26 @@ body {
   width: 100%;
 }
 
+.app-container {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+  width: 100%;
+}
+
 .ant-btn.button {
-  background-color: #ffc529;
-  float: right;
+  background-color: @yellow;
   font-weight: bold;
-  margin-top: 10;
 }
 
-.inputLabel {
-  margin: 5px 0;
-}
+.spinner {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
 
-.link-button {
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  text-decoration: underline;
-  display: inline;
-  margin: 0;
-  padding: 0;
-
-  &:focus,
-  &:hover {
-    text-decoration: none;
+  .spinner-icon {
+    font-size: 4em;
   }
 }

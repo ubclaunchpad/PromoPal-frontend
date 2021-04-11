@@ -1,6 +1,6 @@
 import './UploadPromotionForm.less';
 
-import { DatePicker, Form, Input, InputNumber, message, Row, Select } from 'antd';
+import { Col, DatePicker, Form, Input, InputNumber, message, Row, Select } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import moment from 'moment';
 import React, { ReactElement, useState } from 'react';
@@ -310,42 +310,6 @@ export default function UploadPromotionForm(): ReactElement {
       <Form.Item name="restaurantAddress" hidden={true} />
 
       <Form.Item
-        label="Discount"
-        labelAlign="left"
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
-      >
-        <Input.Group compact>
-          <Form.Item
-            name="discountValue"
-            rules={[
-              {
-                required: true,
-                message: 'Please input a discount value!',
-              },
-            ]}
-          >
-            <InputNumber onChange={onDiscountValueChange} />
-          </Form.Item>
-          <Form.Item
-            name="discountType"
-            rules={[
-              {
-                required: true,
-                message: 'Please select a discount type!',
-              },
-            ]}
-            style={{ marginLeft: '3px' }}
-          >
-            <Select
-              options={EnumService.discountTypes.map((type) => ({ value: type }))}
-              onChange={onDiscountTypeChange}
-            />
-          </Form.Item>
-        </Input.Group>
-      </Form.Item>
-
-      <Form.Item
         label="Cuisine Type"
         name="cuisineType"
         labelAlign="left"
@@ -384,6 +348,46 @@ export default function UploadPromotionForm(): ReactElement {
       </Form.Item>
 
       <Form.Item
+        label="Discount"
+        labelAlign="left"
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 24 }}
+      >
+        <Row gutter={6}>
+          <Col span={12}>
+            <Form.Item
+              name="discountValue"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input a discount value!',
+                },
+              ]}
+            >
+              <InputNumber onChange={onDiscountValueChange} />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="discountType"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please select a discount type!',
+                },
+              ]}
+              style={{ marginLeft: '3px' }}
+            >
+              <Select
+                options={EnumService.discountTypes.map((type) => ({ value: type }))}
+                onChange={onDiscountTypeChange}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form.Item>
+
+      <Form.Item
         label="Promotion Details"
         name="promotionDescription"
         labelAlign="left"
@@ -397,7 +401,7 @@ export default function UploadPromotionForm(): ReactElement {
         <Input.TextArea
           allowClear={true}
           showCount={true}
-          maxLength={500}
+          maxLength={150}
           autoSize={{ minRows: 3, maxRows: 5 }}
           placeholder="Write details about the promotion here..."
         />

@@ -1,32 +1,15 @@
+import './DropdownMenu.less';
+
 import { Col, Row, Typography } from 'antd';
-import React, { CSSProperties, ReactElement, useCallback } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 
 import { useDropdown } from '../contexts/DropdownContext';
 import { DispatchAction, usePromotionsList } from '../contexts/PromotionsListContext';
 import { Dropdown as DropdownType } from '../types/dropdown';
+import { className } from '../utils/component';
 import Dropdown from './dropdown/Dropdown';
 
 const { Text } = Typography;
-
-const styles: { [identifier: string]: CSSProperties } = {
-  clearAll: {
-    cursor: 'pointer',
-    fontSize: '0.8em',
-    marginLeft: 10,
-    marginRight: 10,
-    textDecoration: 'underline',
-  },
-  dropdownMenu: {
-    alignItems: 'center',
-    paddingBottom: 20,
-    position: 'relative',
-    width: '100%',
-    zIndex: 1000,
-  },
-  shadow: {
-    boxShadow: '0 4px 4px 0 #40333333',
-  },
-};
 
 function ClearAllButton(): ReactElement {
   const promotionsList = usePromotionsList();
@@ -41,7 +24,7 @@ function ClearAllButton(): ReactElement {
   }, [dropdown, promotionsList]);
 
   return (
-    <Col onClick={handleClearAll} style={styles.clearAll}>
+    <Col className="clear-all" onClick={handleClearAll}>
       <Text>Clear All</Text>
     </Col>
   );
@@ -54,21 +37,26 @@ function ClearAllButton(): ReactElement {
  * @param dropdowns The list of Dropdown objects for this menu with the title of the dropdown button,
  * the dropdown type (radio or multiple select), and the list of options to be selected
  * @param shadow Whether or not to display the surrounding box shadow
+ * @param location The place in the app where this dropdown is located, will be used to apply a class called
+ * `dropdown-menu-container--${location}` which is specific to this instance
  */
 export default function DropdownMenu({
   dropdowns,
   shadow = false,
+  location,
 }: {
   dropdowns: DropdownType[];
   shadow?: boolean;
+  location: string;
 }): ReactElement {
-  const dropdownStyle = {
-    ...styles.dropdownMenu,
-    ...(shadow && styles.shadow),
-  };
-
   return (
-    <Row id="dropdown-menu" style={dropdownStyle}>
+    <Row
+      id="dropdown-menu"
+      className={className(
+        { 'dropdown-menu-container--shadow': !!shadow },
+        `dropdown-menu-container dropdown-menu-container--${location}`
+      )}
+    >
       {dropdowns.map((dropdown, index) => (
         <Col key={index}>
           <Dropdown {...dropdown} />

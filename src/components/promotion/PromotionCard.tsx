@@ -1,3 +1,5 @@
+import './PromotionCard.less';
+
 import { Card } from 'antd';
 import React, { CSSProperties, ReactElement } from 'react';
 
@@ -10,15 +12,6 @@ const styles: { [identifier: string]: CSSProperties } = {
     display: 'inline-flex',
     padding: 10,
     textAlign: 'left',
-    width: '100%',
-  },
-  card: {
-    borderRadius: 15,
-    borderWidth: 0,
-    boxShadow: '2px 2px 4px 0px #40333333',
-    cursor: 'pointer',
-    display: 'inline-block',
-    marginBottom: 15,
     width: '100%',
   },
 };
@@ -50,7 +43,7 @@ interface Props {
 
 export default function PromotionCard(props: Props): ReactElement {
   return (
-    <Card style={styles.card} bodyStyle={styles.body} onClick={props.onCardClick}>
+    <Card className="restaurant-card" bodyStyle={styles.body} onClick={props.onCardClick}>
       <PromotionImage src={props.imageSrc} />
       <PromotionDetails
         boldName={props.boldName}

@@ -1,0 +1,37 @@
+@import '../../../../variables.less';
+
+.photos-tab {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  text-align: center;
+
+  .photo-caption {
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
+
+    a {
+      color: @gray;
+      font-size: 0.75rem;
+      text-decoration: underline;
+    }
+  }
+
+  .photo-container {
+    margin-top: 10px;
+    margin-bottom: 5px;
+
+    .ant-image-mask {
+      border-radius: 10px;
+    }
+
+    img {
+      border-radius: 10px;
+      object-fit: cover;
+    }
+  }
+}

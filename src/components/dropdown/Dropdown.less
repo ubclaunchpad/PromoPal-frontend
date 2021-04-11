@@ -1,0 +1,80 @@
+@import '../../variables.less';
+
+.dropdown-button {
+  background-color: #fff;
+  border-radius: 20px;
+  box-shadow: 0 2px 10px 0px #1a333333;
+  color: @black;
+  font-weight: bold;
+  margin-left: 10px;
+  margin-right: 10px;
+  padding: 8px;
+  padding-left: 15px;
+  padding-right: 15px;
+
+  &.dropdown-button--active {
+    background-color: @yellow;
+  }
+}
+
+.dropdown-menu {
+  background-color: #fff;
+  border-radius: 20px;
+  max-height: 80vh;
+  overflow: scroll;
+  padding-top: 15px;
+  padding-bottom: 15px;
+
+  .ant-radio-group {
+    width: 100%;
+  }
+
+  .dropdown-option-radio {
+    height: 50px;
+    vertical-align: middle;
+
+    .dropdown-radio {
+      margin: 0px;
+      padding-left: 10px;
+      padding-right: 10px;
+      width: 100%;
+
+      .dropdown-option {
+        display: inline;
+        top: 2px;
+
+        &.dropdown-option-text--large {
+          font-size: 1rem;
+        }
+      }
+
+      .dropdown-option-description {
+        font-size: 0.8rem;
+        color: @gray;
+      }
+    }
+
+    &:hover {
+      background-color: @light-gray;
+    }
+  }
+
+  .dropdown-option-multi {
+    height: 30px;
+    vertical-align: middle;
+
+    .dropdown-checkbox {
+      padding-left: 10px;
+      width: 100%;
+
+      .dropdown-option {
+        display: inline;
+        top: 0px;
+      }
+    }
+
+    &:hover {
+      background-color: @light-gray;
+    }
+  }
+}

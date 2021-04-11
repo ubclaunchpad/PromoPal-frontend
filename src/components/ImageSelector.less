@@ -1,0 +1,29 @@
+@import '../variables.less';
+
+.ant-image-mask {
+  border-radius: 10px;
+}
+
+.promotion-image-upload {
+  padding-top: 10px;
+
+  .image-selector-img {
+    border-radius: 5px;
+    object-fit: cover;
+  }
+
+  .remove-image-button-container {
+    padding-bottom: 10px;
+
+    .remove-image-button {
+      background-color: fade(@red, 75%);
+      border: none;
+      border-radius: 5px;
+
+      &:hover {
+        background-color: fade(@red, 90%);
+        color: @black;
+      }
+    }
+  }
+}
